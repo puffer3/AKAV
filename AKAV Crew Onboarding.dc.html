@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="./support.js"></script>
+</head>
+<body>
+<template id="__bundler_thumbnail" data-bg-color="#0b0d11">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0b0d11"/>
+    <text x="600" y="450" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-size="230" font-weight="900" fill="#b9c9d4" letter-spacing="12">AKAV</text>
+  </svg>
+</template>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&amp;family=Space+Grotesk:wght@400;500;600;700&amp;family=Space+Mono:wght@400;700&amp;family=Geist:wght@400;500;600;700&amp;family=Instrument+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  [data-font="grotesk"]{--font-body:'Space Grotesk',system-ui,sans-serif;}
+  [data-font="geist"]{--font-body:'Geist',system-ui,sans-serif;}
+  [data-font="instrument"]{--font-body:'Instrument Sans',system-ui,sans-serif;}
+  html,body{margin:0;padding:0;}
+  body{background:oklch(0.13 0.012 255);--font-body:'Space Grotesk',system-ui,sans-serif;font-family:var(--font-body);-webkit-font-smoothing:antialiased;}
+  input,select,textarea{width:100%;font-family:var(--font-body);font-size:16px;color:oklch(0.96 0.005 255);background:oklch(0.165 0.014 255);border:1.5px solid oklch(0.32 0.014 255);border-radius:11px;padding:14px 15px;outline:none;transition:border-color .15s,box-shadow .15s;}
+  textarea{min-height:80px;resize:vertical;line-height:1.5;}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in oklch, var(--accent) 30%, transparent);}
+  input[aria-invalid="true"]{border-color:oklch(0.70 0.19 25);box-shadow:0 0 0 3px color-mix(in oklch, oklch(0.70 0.19 25) 24%, transparent);}
+  input::placeholder,textarea::placeholder{color:oklch(0.52 0.012 255);}
+  label{display:block;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.74 0.012 255);margin-bottom:9px;}
+  button{font-family:var(--font-body);}
+  button[aria-pressed="true"]{background:var(--accent)!important;color:oklch(0.18 0.03 250)!important;}
+  button[aria-current="true"]{color:oklch(0.96 0.005 255)!important;}
+  button[aria-current="true"] b{background:var(--accent)!important;color:oklch(0.18 0.03 250)!important;}
+  input[type=checkbox]{width:24px;height:24px;min-width:24px;accent-color:var(--accent);cursor:pointer;padding:0;border-radius:6px;}
+  ::selection{background:var(--accent);color:#0b0e12;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+  @keyframes pop{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
+  @keyframes pageIn{from{opacity:0;}to{opacity:1;}}
+  @media (max-width:640px){
+    header{display:none!important;}
+    #phone-nav{display:flex!important;}
+    main{padding-bottom:104px!important;}
+    #lp-logo{position:relative!important;top:-80px!important;width:256%!important;max-width:none!important;}
+    #lp-card{position:relative!important;top:-56px!important;width:100%!important;max-width:100%!important;height:auto!important;padding:20px 18px!important;}
+    #lp-card p{font-size:14.5px!important;line-height:1.45!important;}
+    #lp-contact{position:relative!important;top:10px!important;}
+    #lp-bg{background-position:54% 42%!important;background-size:cover!important;}
+    #onb-logo-wrap{display:flex!important;padding-top:calc(env(safe-area-inset-top, 0px) + 24px)!important;}
+    #adm-logo-wrap{display:flex!important;padding-top:calc(env(safe-area-inset-top, 0px) + 24px)!important;}
+  }
+</style>
+</helmet>
+
+<div data-font="{{ fontKey }}" style="--accent:{{ accentColor }};min-height:100vh;position:relative;color:oklch(0.96 0.005 255);overflow:hidden;">
+
+  <div style="position:fixed;inset:0;z-index:0;background:radial-gradient(900px 520px at 18% -8%, oklch(0.34 0.05 215 / .38), transparent 60%),radial-gradient(760px 620px at 88% -4%, oklch(0.30 0.06 255 / .30), transparent 62%),radial-gradient(1300px 720px at 50% 118%, oklch(0.28 0.05 205 / .26), transparent 60%),oklch(0.125 0.012 255);"></div>
+  <div style="position:fixed;inset:0;z-index:0;opacity:.06;background-image:repeating-linear-gradient(90deg, #fff 0 1px, transparent 1px 64px),repeating-linear-gradient(0deg, #fff 0 1px, transparent 1px 64px);mask-image:radial-gradient(ellipse at 50% 0%, #000 30%, transparent 80%);"></div>
+  <sc-if value="{{ showClients }}" hint-placeholder-val="{{ false }}">
+    
+    
+  </sc-if>
+
+  <header id="topbar-bar" style="position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:22px clamp(18px,5vw,48px);border-bottom:1px solid oklch(0.26 0.014 255 / .8);">
+    <div style="display:flex;align-items:center;gap:18px;">
+      
+      <button onClick="{{ goHome }}" style="background:none;border:none;padding:0;cursor:pointer;display:flex;align-items:center;" aria-label="Back to onboarding form"><img id="topbar-logo" src="assets/akav-logo.png" alt="AKAV" style="height:36px;width:auto;display:block;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.4));"></button><nav style="display:flex;align-items:center;gap:4px;border-left:1px solid oklch(0.30 0.014 255);padding-left:14px;">
+        <button onClick="{{ setCrew }}" aria-current="{{ isCrew }}" style="border:none;background:transparent;color:oklch(0.60 0.012 255);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:8px 11px;border-radius:8px;cursor:pointer;">{{ t.navCrew }}</button>
+        <button onClick="{{ setClients }}" aria-current="{{ isClients }}" style="border:none;background:transparent;color:oklch(0.60 0.012 255);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:8px 11px;border-radius:8px;cursor:pointer;">{{ t.navClients }}</button>
+      </nav>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><button onClick="{{ openAdmin }}" style="display:flex;align-items:center;gap:8px;border:1.5px solid oklch(0.30 0.014 255);background:oklch(0.20 0.014 255);color:oklch(0.80 0.012 255);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:11px 18px;border-radius:999px;cursor:pointer;" style-hover="border-color:var(--accent);color:#fff;"><span style="font-size:12px;line-height:1;">◇</span> Admin</button></div>
+  </header>
+
+  <nav id="phone-nav" aria-label="Primary" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;gap:6px;background:oklch(0.135 0.012 255 / .94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid oklch(0.27 0.014 255);padding:8px 10px calc(10px + env(safe-area-inset-bottom, 0px));">
+    <button onClick="{{ setCrew }}" aria-current="{{ isCrew }}" style="flex:1;background:none;border:none;color:oklch(0.60 0.012 255);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:12px 4px;min-height:50px;border-radius:11px;cursor:pointer;">Onboarding</button>
+    <button onClick="{{ setClients }}" aria-current="{{ isClients }}" style="flex:1;background:none;border:none;color:oklch(0.60 0.012 255);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:12px 4px;min-height:50px;border-radius:11px;cursor:pointer;">Clients</button>
+    <button onClick="{{ openAdmin }}" aria-current="{{ isAdminView }}" style="flex:1;background:none;border:none;color:oklch(0.60 0.012 255);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:12px 4px;min-height:50px;border-radius:11px;cursor:pointer;">Admin</button>
+  </nav>
+
+  <main style="position:relative;z-index:2;max-width:760px;margin:0 auto;padding:clamp(26px,5vw,52px) clamp(18px,5vw,40px) 90px;">
+
+    <sc-if value="{{ isCrew }}" hint-placeholder-val="{{ true }}">
+      <div id="onb-logo-wrap" style="display:none;position:relative;justify-content:center;margin-bottom:18px;">
+        <img id="onb-logo" src="assets/akav-logo.png" alt="AKAV" style="height:40px;width:auto;display:block;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.4));">
+      </div>
+    </sc-if>
+    <sc-if value="{{ isAdminView }}" hint-placeholder-val="{{ false }}">
+      <div id="adm-logo-wrap" style="display:none;position:relative;justify-content:center;margin-bottom:18px;">
+        <img id="adm-logo" src="assets/akav-logo.png" alt="AKAV" style="height:40px;width:auto;display:block;filter:drop-shadow(2px 2px 0 rgba(0,0,0,.4));">
+      </div>
+    </sc-if>
+
+    <!-- ===================== CLIENTS SPLASH ===================== -->
+    <sc-if value="{{ showClients }}" hint-placeholder-val="{{ false }}">
+      <div style="position:relative;width:100vw;margin-left:calc(50% - 50vw);margin-top:calc(-1*clamp(26px,5vw,52px));min-height:calc(100vh - 88px);overflow:hidden;display:flex;align-items:center;justify-content:center;animation:pageIn .5s cubic-bezier(.22,.61,.36,1);">
+        <div id="lp-bg" style="position:absolute;inset:0;background:#0b0d11 url('assets/akav-bg.png') center/cover no-repeat;"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(rgba(6,8,11,.28),rgba(6,8,11,.28)),radial-gradient(ellipse at 50% 26%, rgba(8,10,14,.10), rgba(8,10,14,.50) 80%),linear-gradient(180deg, rgba(8,10,14,.55) 0%, rgba(8,10,14,.16) 30%, rgba(8,10,14,.16) 74%, rgba(8,10,14,.50) 93%, #000 100%);"></div>
+        <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;gap:clamp(8px,2vh,20px);padding:clamp(24px,5vh,64px) 24px;width:100%;max-width:1240px;justify-content:flex-start;box-sizing:border-box;">
+          <img id="lp-logo" src="assets/akav-landing-art.png" alt="AKAV" style="width:min(100%,1140px);height:auto;display:block;margin-bottom:{{ landingLogoGap }};filter:drop-shadow(4px 5px 0 rgba(0,0,0,.4));"><div style="display:flex;flex-direction:column;align-items:center;gap:{{ landingContactGap }};width:100%;position:relative;top:{{ landingBlurbY }};">
+            <div id="lp-card" style="background: rgba(13,17,23,.20); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,.15); border-radius: 24px; padding: clamp(26px,3.4vw,40px) clamp(28px,5vw,58px); max-width: 720px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 34px 90px -50px rgba(0,0,0,.7); width: 849px; height: 338px; opacity: 0.7">
+              <p style="font-family:var(--font-body);font-size:clamp(17px,1.9vw,22px);line-height:1.55;color:#fff;margin:0;">{{ t.clientsP1 }}</p>
+              <p style="font-family:var(--font-body);font-size:clamp(17px,1.9vw,22px);line-height:1.55;color:rgba(255,255,255,.82);margin:0;">{{ t.clientsP2 }}</p>
+            </div>
+            <a id="lp-contact" href="/cdn-cgi/l/email-protection#721a171e1e1d32131913045c111d1f" style="display: inline-flex; align-items: center; justify-content: center; background: rgba(18,22,28,.24); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1.5px solid rgba(255,255,255,.45); border-radius: 999px; padding: 17px 54px; text-decoration: none; font-family: 'Space Mono',monospace; font-size: 15px; letter-spacing: .28em; text-transform: uppercase; color: #fff; padding-top: 17px; padding-bottom: 17px" style-hover="background:var(--accent);color:oklch(0.18 0.03 250);border-color:var(--accent);">{{ t.contactBtn }}</a>
+          </div>
+          
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ===================== SUCCESS ===================== -->
+    <sc-if value="{{ showSuccess }}" hint-placeholder-val="{{ false }}">
+      <div style="animation:pageIn .5s cubic-bezier(.22,.61,.36,1);text-align:center;padding-top:6px;">
+        <div style="width:88px;height:88px;border-radius:50%;background:color-mix(in oklch, var(--accent) 18%, transparent);border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 26px;animation:pop .45s ease;">
+          <span style="font-size:42px;color:var(--accent);line-height:1;">✓</span>
+        </div>
+        <h1 style="font-family:var(--font-body);font-weight:700;font-size:clamp(26px,5vw,34px);color:#fff;margin:0 0 12px;letter-spacing:-.01em;">{{ rosterLine }}</h1>
+        <p style="color:oklch(0.74 0.012 255);font-size:16px;line-height:1.6;max-width:48ch;margin:0 auto 30px;">{{ t.gotPre }}<strong style="color:#fff;font-weight:600;">{{ sumEmail }}</strong>{{ t.gotPost }}</p>
+
+        <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:18px;padding:24px;text-align:left;max-width:480px;margin:0 auto 18px;display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <span style="font-size:15px;color:#fff;">{{ t.successContact }}</span>
+            <span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.completed }}</span>
+          </div>
+          <div style="height:1px;background:oklch(0.28 0.014 255);"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <span style="font-size:15px;color:#fff;">{{ t.w9Title }}</span>
+            <sc-if value="{{ w9Done }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.completed }}</span></sc-if>
+            <sc-if value="{{ w9Pending }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.stillToDo }}</span></sc-if>
+          </div>
+          <div style="height:1px;background:oklch(0.28 0.014 255);"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <span style="font-size:15px;color:#fff;">{{ t.bankTitle }}</span>
+            <sc-if value="{{ bankDone }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.completed }}</span></sc-if>
+            <sc-if value="{{ bankPending }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.stillToDo }}</span></sc-if>
+          </div>
+          <div style="height:1px;background:oklch(0.28 0.014 255);"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+            <span style="font-size:15px;color:#fff;">{{ t.additional }}</span>
+            <sc-if value="{{ additionalProvided }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.completed }}</span></sc-if>
+            <sc-if value="{{ additionalSkipped }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.70 0.012 255) 12%, transparent);color:oklch(0.72 0.012 255);border:1px solid oklch(0.34 0.014 255);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.skipped }}</span></sc-if>
+          </div>
+        </div>
+
+        <sc-if value="{{ anyQbPending }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:480px;margin:0 auto 28px;background:color-mix(in oklch, oklch(0.82 0.13 80) 10%, transparent);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 32%, transparent);border-radius:14px;padding:16px 18px;text-align:left;font-size:14px;line-height:1.55;color:oklch(0.86 0.06 80);">{{ t.qbReminder }}</div>
+        </sc-if>
+
+        <sc-if value="{{ additionalProvided }}" hint-placeholder-val="{{ false }}">
+          <p style="color:oklch(0.74 0.012 255);font-size:15px;line-height:1.6;max-width:46ch;margin:0 auto 26px;">{{ t.thanksExtra }}</p>
+        </sc-if>
+
+        <button onClick="{{ reset }}" style="background:transparent;color:oklch(0.80 0.012 255);border:1.5px solid oklch(0.34 0.014 255);border-radius:999px;padding:15px 28px;cursor:pointer;font-size:15px;font-weight:600;min-height:54px;">{{ t.startAnother }}</button>
+      </div>
+    </sc-if>
+
+    <!-- ===================== DIRECTION A - SINGLE PAGE ===================== -->
+    <sc-if value="{{ showA }}" hint-placeholder-val="{{ true }}">
+      <div style="animation:pageIn .45s cubic-bezier(.22,.61,.36,1);">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
+          <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);">{{ t.welcomeEyebrow }}</div>
+          <button onClick="{{ toggleLang }}" aria-label="Toggle language" style="flex:none;display:flex;align-items:center;gap:6px;border:1.5px solid var(--accent);background:color-mix(in oklch, var(--accent) 14%, transparent);color:var(--accent);font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:999px;cursor:pointer;" style-hover="background:var(--accent);color:oklch(0.18 0.03 250);">⊕ {{ langToggleLabel }}</button>
+        </div>
+        <h1 style="font-family:var(--font-body);font-weight:700;font-size:clamp(28px,6vw,40px);line-height:1.05;letter-spacing:-.02em;color:#fff;margin:0 0 14px;">{{ t.welcomeTitle }}</h1>
+        <p style="color:oklch(0.74 0.012 255);font-size:17px;line-height:1.6;max-width:54ch;margin:0 0 36px;">{{ t.intro }}</p>
+
+        <!-- Required core -->
+        <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:18px;padding:clamp(20px,4vw,30px);margin-bottom:20px;">
+          <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">{{ t.step1 }}</div>
+          <h2 style="font-family:var(--font-body);font-weight:600;font-size:21px;color:#fff;margin:0 0 22px;">{{ t.contactInfo }}</h2>
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <div>
+              <label for="a-name">{{ t.fullName }} <span style="color:var(--accent);">*</span></label>
+              <input id="a-name" type="text" value="{{ f.name }}" onChange="{{ onName }}" aria-invalid="{{ invalidName }}" aria-describedby="a-name-err" placeholder="Jordan Rivera" autoComplete="name">
+              <sc-if value="{{ errName }}" hint-placeholder-val="{{ false }}"><div id="a-name-err" role="alert" style="color:oklch(0.78 0.16 25);font-size:13.5px;margin-top:7px;">{{ errName }}</div></sc-if>
+            </div>
+            <div>
+              <label for="a-email">{{ t.emailLabel }} <span style="color:var(--accent);">*</span></label>
+              <input id="a-email" type="email" value="{{ f.email }}" onChange="{{ onEmail }}" aria-invalid="{{ invalidEmail }}" aria-describedby="a-email-err" placeholder="you@email.com" autoComplete="email">
+              <sc-if value="{{ errEmail }}" hint-placeholder-val="{{ false }}"><div id="a-email-err" role="alert" style="color:oklch(0.78 0.16 25);font-size:13.5px;margin-top:7px;">{{ errEmail }}</div></sc-if>
+            </div>
+            <div>
+              <label for="a-phone">{{ t.phone }} <span style="color:oklch(0.55 0.012 255);text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:12px;">{{ t.optional }}</span></label>
+              <input id="a-phone" type="tel" value="{{ f.phone }}" onChange="{{ onPhone }}" placeholder="(555) 012-3456" autoComplete="tel">
+            </div>
+          </div>
+        </div>
+
+        <!-- QB cards -->
+        <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:18px;padding:clamp(20px,4vw,30px);margin-bottom:20px;">
+          <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">{{ t.step2 }}</div>
+          <h2 style="font-family:var(--font-body);font-weight:600;font-size:21px;color:#fff;margin:0 0 6px;">{{ t.taxBanking }}</h2>
+          <p style="color:oklch(0.70 0.012 255);font-size:14.5px;line-height:1.55;margin:0 0 22px;max-width:52ch;">{{ t.taxDesc }}</p>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <!-- W9 -->
+            <div style="background:oklch(0.255 0.014 255);border:1.5px solid oklch(0.32 0.014 255);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+                <div>
+                  <div style="font-weight:600;font-size:17px;color:#fff;">{{ t.w9Title }}</div>
+                  <div style="font-size:14px;color:oklch(0.70 0.012 255);margin-top:4px;max-width:44ch;line-height:1.5;">{{ t.w9Desc }}</div>
+                </div>
+                <sc-if value="{{ w9Done }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.done }}</span></sc-if>
+                <sc-if value="{{ w9Pending }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.pending }}</span></sc-if>
+              </div>
+              <sc-if value="{{ w9Pending }}" hint-placeholder-val="{{ true }}"><button onClick="{{ openQbW9 }}" style="background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:13px 22px;font-weight:600;font-size:15px;cursor:pointer;align-self:flex-start;min-height:48px;">{{ t.completeInQb }}</button></sc-if>
+              <sc-if value="{{ w9Done }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:8px;color:oklch(0.84 0.13 155);font-size:14px;">{{ t.allSet }}</div></sc-if>
+            </div>
+            <!-- Banking -->
+            <div style="background:oklch(0.255 0.014 255);border:1.5px solid oklch(0.32 0.014 255);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+                <div>
+                  <div style="font-weight:600;font-size:17px;color:#fff;">{{ t.bankTitle }}</div>
+                  <div style="font-size:14px;color:oklch(0.70 0.012 255);margin-top:4px;max-width:44ch;line-height:1.5;">{{ t.bankDesc }}</div>
+                </div>
+                <sc-if value="{{ bankDone }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.done }}</span></sc-if>
+                <sc-if value="{{ bankPending }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.pending }}</span></sc-if>
+              </div>
+              <sc-if value="{{ bankPending }}" hint-placeholder-val="{{ true }}"><button onClick="{{ openQbBank }}" style="background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:13px 22px;font-weight:600;font-size:15px;cursor:pointer;align-self:flex-start;min-height:48px;">{{ t.completeInQb }}</button></sc-if>
+              <sc-if value="{{ bankDone }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:8px;color:oklch(0.84 0.13 155);font-size:14px;">{{ t.allSet }}</div></sc-if>
+            </div>
+          </div>
+        </div>
+
+        <!-- Optional expandable -->
+        <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:18px;padding:clamp(20px,4vw,30px);margin-bottom:20px;">
+          <button onClick="{{ toggleOptional }}" aria-expanded="{{ showOptional }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;background:transparent;border:none;cursor:pointer;padding:0;text-align:left;">
+            <span>
+              <span style="display:block;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.62 0.012 255);">{{ t.step3 }}</span>
+              <span style="display:block;font-family:var(--font-body);font-weight:600;font-size:21px;color:#fff;margin-top:5px;">{{ t.addMore }}</span>
+              <span style="display:block;color:oklch(0.66 0.012 255);font-size:14px;margin-top:4px;">{{ t.addMoreDesc }}</span>
+            </span>
+            <span style="font-size:26px;color:var(--accent);line-height:1;flex:none;">＋</span>
+          </button>
+          <sc-if value="{{ showOptional }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:26px;padding-top:26px;border-top:1px solid oklch(0.28 0.014 255);display:flex;flex-direction:column;gap:18px;">
+              <div>
+                <label for="a-pronouns">{{ t.pronouns }}</label>
+                <input id="a-pronouns" type="text" value="{{ f.pronouns }}" onChange="{{ onPronouns }}" placeholder="she/her · he/him · they/them">
+              </div>
+              <div>
+                <label for="a-address">{{ t.mailingAddress }}</label>
+                <input id="a-address" type="text" value="{{ f.address }}" onChange="{{ onAddress }}" placeholder="Street, city, state, ZIP" autoComplete="street-address">
+              </div>
+              <div>
+                <label for="a-city">{{ t.homeCity }}</label>
+                <input id="a-city" type="text" value="{{ f.city }}" onChange="{{ onCity }}" placeholder="e.g. Austin">
+              </div>
+              <div>
+                <label for="a-willtravel" style="display:flex;align-items:center;gap:12px;background:oklch(0.165 0.014 255);border:1.5px solid oklch(0.30 0.014 255);border-radius:12px;padding:15px 16px;cursor:pointer;margin:0;text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:15px;color:oklch(0.92 0.005 255);">
+                  <input id="a-willtravel" type="checkbox" checked="{{ f.willTravel }}" onChange="{{ onWillTravel }}">
+                  {{ t.willTravelLabel }}
+                </label>
+                <sc-if value="{{ f.willTravel }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:14px;">
+                    <label for="a-travel">{{ t.howFar }} <span style="color:oklch(0.55 0.012 255);text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:12px;">{{ t.milesParen }}</span></label>
+                    <input id="a-travel" type="number" min="0" value="{{ f.travel }}" onChange="{{ onTravel }}" placeholder="e.g. 100">
+                  </div>
+                </sc-if>
+              </div>
+              <div>
+                <label for="a-referred">{{ t.referred }}</label>
+                <input id="a-referred" type="text" value="{{ f.referredBy }}" onChange="{{ onReferred }}" placeholder="Name of crew member or contact">
+              </div>
+              <div>
+                <label for="a-linkedin">{{ t.linkedinLabel }} <span style="color:oklch(0.55 0.012 255);text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:12px;">{{ t.optional }}</span></label>
+                <input id="a-linkedin" type="url" value="{{ f.linkedin }}" onChange="{{ onLinkedin }}" placeholder="linkedin.com/in/yourname">
+              </div>
+              <label for="a-worked" style="display:flex;align-items:center;gap:12px;background:oklch(0.165 0.014 255);border:1.5px solid oklch(0.30 0.014 255);border-radius:12px;padding:15px 16px;cursor:pointer;margin:0;text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:15px;color:oklch(0.92 0.005 255);">
+                <input id="a-worked" type="checkbox" checked="{{ f.workedBefore }}" onChange="{{ onWorked }}">
+                {{ t.workedBeforeLabel }}
+              </label>
+
+              <div style="margin-top:6px;">
+                <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:oklch(0.66 0.012 255);margin-bottom:14px;">{{ t.emergency }}</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;">
+                  <div><label for="a-ecname">{{ t.ecNameLabel }}</label><input id="a-ecname" type="text" value="{{ f.ecName }}" onChange="{{ onEcName }}" placeholder="Full name"></div>
+                  <div><label for="a-ecphone">{{ t.phone }}</label><input id="a-ecphone" type="tel" value="{{ f.ecPhone }}" onChange="{{ onEcPhone }}" placeholder="(555) 012-3456"></div>
+                  <div><label for="a-ecrel">{{ t.relationship }}</label><input id="a-ecrel" type="text" value="{{ f.ecRel }}" onChange="{{ onEcRel }}" placeholder="e.g. Spouse"></div>
+                </div>
+              </div>
+
+              <div style="margin-top:6px;display:flex;flex-direction:column;gap:18px;">
+                <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:oklch(0.66 0.012 255);">{{ t.files }}</div>
+                <div>
+                  <label>{{ t.resume }} <span style="color:oklch(0.55 0.012 255);text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:12px;">{{ t.optional }}</span></label>
+                  <label for="a-resume-in" style="display:flex;align-items:center;gap:10px;justify-content:center;border:1.5px dashed oklch(0.36 0.014 255);border-radius:12px;padding:15px;color:oklch(0.74 0.012 255);cursor:pointer;text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:15px;margin:0;background:oklch(0.165 0.014 255);"><span style="font-size:18px;">↑</span> {{ t.chooseFile }}</label>
+                  <input id="a-resume-in" type="file" accept=".pdf,.doc,.docx" onChange="{{ onResume }}" style="display:none;">
+                  <sc-if value="{{ hasResume }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:oklch(0.20 0.014 255);border:1px solid oklch(0.30 0.014 255);border-radius:10px;padding:11px 14px;margin-top:9px;"><span style="font-size:14px;color:oklch(0.92 0.005 255);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ resumeMeta }}</span><button onClick="{{ removeResume }}" aria-label="Remove resume" style="border:none;background:transparent;color:oklch(0.62 0.012 255);font-size:17px;cursor:pointer;line-height:1;flex:none;">✕</button></div></sc-if>
+                </div>
+                <div>
+                  <label>{{ t.rateSheet }} <span style="color:oklch(0.55 0.012 255);text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:12px;">{{ t.optional }}</span></label>
+                  <label for="a-rate-in" style="display:flex;align-items:center;gap:10px;justify-content:center;border:1.5px dashed oklch(0.36 0.014 255);border-radius:12px;padding:15px;color:oklch(0.74 0.012 255);cursor:pointer;text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:15px;margin:0;background:oklch(0.165 0.014 255);"><span style="font-size:18px;">↑</span> {{ t.chooseFile }}</label>
+                  <input id="a-rate-in" type="file" accept=".pdf,.doc,.docx" onChange="{{ onRateSheet }}" style="display:none;">
+                  <sc-if value="{{ hasRate }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:oklch(0.20 0.014 255);border:1px solid oklch(0.30 0.014 255);border-radius:10px;padding:11px 14px;margin-top:9px;"><span style="font-size:14px;color:oklch(0.92 0.005 255);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ rateMeta }}</span><button onClick="{{ removeRate }}" aria-label="Remove rate sheet" style="border:none;background:transparent;color:oklch(0.62 0.012 255);font-size:17px;cursor:pointer;line-height:1;flex:none;">✕</button></div></sc-if>
+                </div>
+                <div>
+                  <label>{{ t.profilePhoto }} <span style="color:oklch(0.55 0.012 255);text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:12px;">{{ t.optional }}</span></label>
+                  <div style="display:flex;align-items:center;gap:16px;">
+                    {{ photoThumb }}
+                    <label for="a-photo-in" style="flex:1;display:flex;align-items:center;gap:10px;justify-content:center;border:1.5px dashed oklch(0.36 0.014 255);border-radius:12px;padding:15px;color:oklch(0.74 0.012 255);cursor:pointer;text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:15px;margin:0;background:oklch(0.165 0.014 255);"><span style="font-size:18px;">↑</span> {{ t.chooseImage }}</label>
+                  </div>
+                  <input id="a-photo-in" type="file" accept="image/png,image/jpeg" onChange="{{ onPhoto }}" style="display:none;">
+                </div>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- Terms + submit -->
+        <div style="margin-top:30px;margin-bottom:22px;padding-top:24px;border-top:1px solid oklch(0.26 0.014 255);">
+          <label for="a-terms" style="display:flex;align-items:flex-start;gap:13px;cursor:pointer;margin:0;text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:16px;line-height:1.55;color:oklch(0.80 0.012 255);">
+            <input id="a-terms" type="checkbox" checked="{{ f.terms }}" onChange="{{ onTerms }}" aria-describedby="a-terms-err" style="margin-top:1px;">
+            <span>{{ t.agreePre }}<span style="color:var(--accent);text-decoration:underline;">{{ t.termsLink }}</span>{{ t.agreePost }}</span>
+          </label>
+          <sc-if value="{{ errTerms }}" hint-placeholder-val="{{ false }}"><div id="a-terms-err" role="alert" style="color:oklch(0.78 0.16 25);font-size:13.5px;margin-top:9px;">{{ errTerms }}</div></sc-if>
+        </div>
+
+        <button onClick="{{ submit }}" style="width:100%;background:var(--accent);color:oklch(0.18 0.03 250);font-weight:700;font-size:17px;border:none;border-radius:14px;padding:18px;cursor:pointer;min-height:58px;margin-top:18px;" style-hover="filter:brightness(1.06);">{{ t.submit }}</button>
+
+        <!-- FAQ -->
+        <sc-if value="{{ showFaq }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-top:48px;">
+            <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:oklch(0.62 0.012 255);margin-bottom:18px;">{{ t.questions }}</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <sc-for list="{{ faqs }}" as="faq" hint-placeholder-count="5">
+                <div style="background:oklch(0.19 0.014 255);border:1px solid oklch(0.28 0.014 255);border-radius:14px;overflow:hidden;">
+                  <button onClick="{{ faq.toggle }}" aria-expanded="{{ faq.open }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;background:transparent;border:none;cursor:pointer;padding:18px 20px;text-align:left;color:#fff;font-size:16px;font-weight:500;">
+                    <span>{{ faq.q }}</span>
+                    <span style="font-size:22px;color:var(--accent);line-height:1;flex:none;">＋</span>
+                  </button>
+                  <sc-if value="{{ faq.open }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding:0 20px 20px;color:oklch(0.74 0.012 255);font-size:14.5px;line-height:1.6;">{{ faq.a }}</div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ===================== DIRECTION B - WIZARD ===================== -->
+    <sc-if value="{{ showB }}" hint-placeholder-val="{{ false }}">
+      <div style="animation:pageIn .45s cubic-bezier(.22,.61,.36,1);">
+        <!-- stepper -->
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
+          <sc-for list="{{ steps }}" as="st" hint-placeholder-count="4">
+            <button onClick="{{ st.go }}" aria-current="{{ st.current }}" style="display:flex;align-items:center;gap:9px;background:transparent;border:none;cursor:pointer;color:oklch(0.58 0.012 255);font-family:var(--font-body);font-size:14px;font-weight:500;padding:6px 10px;border-radius:999px;">
+              <b style="width:27px;height:27px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:oklch(0.28 0.014 255);color:oklch(0.70 0.012 255);font-family:'Space Mono',monospace;font-size:12px;font-weight:600;flex:none;">{{ st.num }}</b>
+              <span>{{ st.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="height:5px;background:oklch(0.24 0.014 255);border-radius:999px;overflow:hidden;margin-bottom:34px;">
+          <div style="height:100%;background:var(--accent);border-radius:999px;transition:width .35s ease;width:{{ progressPct }};"></div>
+        </div>
+
+        <!-- STEP 0 -->
+        <sc-if value="{{ showStep0 }}" hint-placeholder-val="{{ false }}">
+          <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:18px;padding:clamp(22px,4vw,32px);">
+            <h2 style="font-family:var(--font-body);font-weight:700;font-size:clamp(24px,5vw,30px);color:#fff;margin:0 0 8px;letter-spacing:-.01em;">First, the basics</h2>
+            <p style="color:oklch(0.72 0.012 255);font-size:16px;line-height:1.55;margin:0 0 26px;">Just your name and email to get going. That's genuinely all we need to create your profile.</p>
+            <div style="display:flex;flex-direction:column;gap:18px;">
+              <div>
+                <label for="b-name">{{ t.fullName }} <span style="color:var(--accent);">*</span></label>
+                <input id="b-name" type="text" value="{{ f.name }}" onChange="{{ onName }}" aria-invalid="{{ invalidName }}" aria-describedby="b-name-err" placeholder="Jordan Rivera" autoComplete="name">
+                <sc-if value="{{ errName }}" hint-placeholder-val="{{ false }}"><div id="b-name-err" role="alert" style="color:oklch(0.78 0.16 25);font-size:13.5px;margin-top:7px;">{{ errName }}</div></sc-if>
+              </div>
+              <div>
+                <label for="b-email">{{ t.emailLabel }} <span style="color:var(--accent);">*</span></label>
+                <input id="b-email" type="email" value="{{ f.email }}" onChange="{{ onEmail }}" aria-invalid="{{ invalidEmail }}" aria-describedby="b-email-err" placeholder="you@email.com" autoComplete="email">
+                <sc-if value="{{ errEmail }}" hint-placeholder-val="{{ false }}"><div id="b-email-err" role="alert" style="color:oklch(0.78 0.16 25);font-size:13.5px;margin-top:7px;">{{ errEmail }}</div></sc-if>
+              </div>
+              <div>
+                <label for="b-phone">{{ t.phone }} <span style="color:oklch(0.55 0.012 255);text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:12px;">{{ t.optional }}</span></label>
+                <input id="b-phone" type="tel" value="{{ f.phone }}" onChange="{{ onPhone }}" placeholder="(555) 012-3456" autoComplete="tel">
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- STEP 1 - QB -->
+        <sc-if value="{{ showStep1 }}" hint-placeholder-val="{{ false }}">
+          <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:18px;padding:clamp(22px,4vw,32px);">
+            <h2 style="font-family:var(--font-body);font-weight:700;font-size:clamp(24px,5vw,30px);color:#fff;margin:0 0 8px;letter-spacing:-.01em;">{{ t.taxBanking }}</h2>
+            <p style="color:oklch(0.72 0.012 255);font-size:16px;line-height:1.55;margin:0 0 24px;max-width:52ch;">Handled securely in QuickBooks, nothing sensitive is entered or stored here. Not ready? You can skip and finish these later.</p>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div style="background:oklch(0.255 0.014 255);border:1.5px solid oklch(0.32 0.014 255);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+                  <div><div style="font-weight:600;font-size:17px;color:#fff;">{{ t.w9Title }}</div><div style="font-size:14px;color:oklch(0.70 0.012 255);margin-top:4px;line-height:1.5;">{{ t.w9Desc }}</div></div>
+                  <sc-if value="{{ w9Done }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.done }}</span></sc-if>
+                  <sc-if value="{{ w9Pending }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.pending }}</span></sc-if>
+                </div>
+                <sc-if value="{{ w9Pending }}" hint-placeholder-val="{{ true }}"><button onClick="{{ openQbW9 }}" style="background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:13px 22px;font-weight:600;font-size:15px;cursor:pointer;align-self:flex-start;min-height:48px;">{{ t.completeInQb }}</button></sc-if>
+                <sc-if value="{{ w9Done }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:8px;color:oklch(0.84 0.13 155);font-size:14px;">{{ t.allSet }}</div></sc-if>
+              </div>
+              <div style="background:oklch(0.255 0.014 255);border:1.5px solid oklch(0.32 0.014 255);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px;">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+                  <div><div style="font-weight:600;font-size:17px;color:#fff;">{{ t.bankTitle }}</div><div style="font-size:14px;color:oklch(0.70 0.012 255);margin-top:4px;line-height:1.5;">{{ t.bankDesc }}</div></div>
+                  <sc-if value="{{ bankDone }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.done }}</span></sc-if>
+                  <sc-if value="{{ bankPending }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:5px 12px;border-radius:999px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;">{{ t.pending }}</span></sc-if>
+                </div>
+                <sc-if value="{{ bankPending }}" hint-placeholder-val="{{ true }}"><button onClick="{{ openQbBank }}" style="background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:13px 22px;font-weight:600;font-size:15px;cursor:pointer;align-self:flex-start;min-height:48px;">{{ t.completeInQb }}</button></sc-if>
+                <sc-if value="{{ bankDone }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:8px;color:oklch(0.84 0.13 155);font-size:14px;">{{ t.allSet }}</div></sc-if>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- STEP 2 - optional details -->
+        <sc-if value="{{ showStep2 }}" hint-placeholder-val="{{ false }}">
+          <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:18px;padding:clamp(22px,4vw,32px);">
+            <h2 style="font-family:var(--font-body);font-weight:700;font-size:clamp(24px,5vw,30px);color:#fff;margin:0 0 8px;letter-spacing:-.01em;">A bit about you</h2>
+            <p style="color:oklch(0.72 0.012 255);font-size:16px;line-height:1.55;margin:0 0 26px;">Everything here is optional. It just helps us book you for the right gigs. Add what you like and continue.</p>
+            <div style="display:flex;flex-direction:column;gap:18px;">
+              <div>
+                <label for="b-pronouns">{{ t.pronouns }}</label>
+                <input id="b-pronouns" type="text" value="{{ f.pronouns }}" onChange="{{ onPronouns }}" placeholder="she/her · he/him · they/them">
+              </div>
+              <div>
+                <label for="b-address">{{ t.mailingAddress }}</label>
+                <input id="b-address" type="text" value="{{ f.address }}" onChange="{{ onAddress }}" placeholder="Street, city, state, ZIP" autoComplete="street-address">
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;">
+                <div><label for="b-city">{{ t.homeCity }}</label><input id="b-city" type="text" value="{{ f.city }}" onChange="{{ onCity }}" placeholder="e.g. Austin"></div>
+                <div><label for="b-travel">Willing to travel {{ t.milesParen }}</label><input id="b-travel" type="number" min="0" value="{{ f.travel }}" onChange="{{ onTravel }}" placeholder="e.g. 100"></div>
+              </div>
+              <div>
+                <label for="b-referred">{{ t.referred }}</label>
+                <input id="b-referred" type="text" value="{{ f.referredBy }}" onChange="{{ onReferred }}" placeholder="Name of crew member or contact">
+              </div>
+              <label for="b-worked" style="display:flex;align-items:center;gap:12px;background:oklch(0.165 0.014 255);border:1.5px solid oklch(0.30 0.014 255);border-radius:12px;padding:15px 16px;cursor:pointer;margin:0;text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:15px;color:oklch(0.92 0.005 255);">
+                <input id="b-worked" type="checkbox" checked="{{ f.workedBefore }}" onChange="{{ onWorked }}">
+                {{ t.workedBeforeLabel }}
+              </label>
+              <div style="margin-top:6px;">
+                <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:oklch(0.66 0.012 255);margin-bottom:14px;">{{ t.emergency }}</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;">
+                  <div><label for="b-ecname">{{ t.ecNameLabel }}</label><input id="b-ecname" type="text" value="{{ f.ecName }}" onChange="{{ onEcName }}" placeholder="Full name"></div>
+                  <div><label for="b-ecphone">{{ t.phone }}</label><input id="b-ecphone" type="tel" value="{{ f.ecPhone }}" onChange="{{ onEcPhone }}" placeholder="(555) 012-3456"></div>
+                  <div><label for="b-ecrel">{{ t.relationship }}</label><input id="b-ecrel" type="text" value="{{ f.ecRel }}" onChange="{{ onEcRel }}" placeholder="e.g. Spouse"></div>
+                </div>
+              </div>
+              <div style="margin-top:6px;display:flex;flex-direction:column;gap:18px;">
+                <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:oklch(0.66 0.012 255);">{{ t.files }}</div>
+                <div>
+                  <label>{{ t.resume }} <span style="color:oklch(0.55 0.012 255);text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:12px;">{{ t.optional }}</span></label>
+                  <label for="b-resume-in" style="display:flex;align-items:center;gap:10px;justify-content:center;border:1.5px dashed oklch(0.36 0.014 255);border-radius:12px;padding:15px;color:oklch(0.74 0.012 255);cursor:pointer;text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:15px;margin:0;background:oklch(0.165 0.014 255);"><span style="font-size:18px;">↑</span> {{ t.chooseFile }}</label>
+                  <input id="b-resume-in" type="file" accept=".pdf,.doc,.docx" onChange="{{ onResume }}" style="display:none;">
+                  <sc-if value="{{ hasResume }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:oklch(0.20 0.014 255);border:1px solid oklch(0.30 0.014 255);border-radius:10px;padding:11px 14px;margin-top:9px;"><span style="font-size:14px;color:oklch(0.92 0.005 255);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ resumeMeta }}</span><button onClick="{{ removeResume }}" aria-label="Remove resume" style="border:none;background:transparent;color:oklch(0.62 0.012 255);font-size:17px;cursor:pointer;line-height:1;flex:none;">✕</button></div></sc-if>
+                </div>
+                <div>
+                  <label>{{ t.rateSheet }} <span style="color:oklch(0.55 0.012 255);text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:12px;">{{ t.optional }}</span></label>
+                  <label for="b-rate-in" style="display:flex;align-items:center;gap:10px;justify-content:center;border:1.5px dashed oklch(0.36 0.014 255);border-radius:12px;padding:15px;color:oklch(0.74 0.012 255);cursor:pointer;text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:15px;margin:0;background:oklch(0.165 0.014 255);"><span style="font-size:18px;">↑</span> {{ t.chooseFile }}</label>
+                  <input id="b-rate-in" type="file" accept=".pdf,.doc,.docx" onChange="{{ onRateSheet }}" style="display:none;">
+                  <sc-if value="{{ hasRate }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:oklch(0.20 0.014 255);border:1px solid oklch(0.30 0.014 255);border-radius:10px;padding:11px 14px;margin-top:9px;"><span style="font-size:14px;color:oklch(0.92 0.005 255);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ rateMeta }}</span><button onClick="{{ removeRate }}" aria-label="Remove rate sheet" style="border:none;background:transparent;color:oklch(0.62 0.012 255);font-size:17px;cursor:pointer;line-height:1;flex:none;">✕</button></div></sc-if>
+                </div>
+                <div>
+                  <label>{{ t.profilePhoto }} <span style="color:oklch(0.55 0.012 255);text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:12px;">{{ t.optional }}</span></label>
+                  <div style="display:flex;align-items:center;gap:16px;">
+                    {{ photoThumb }}
+                    <label for="b-photo-in" style="flex:1;display:flex;align-items:center;gap:10px;justify-content:center;border:1.5px dashed oklch(0.36 0.014 255);border-radius:12px;padding:15px;color:oklch(0.74 0.012 255);cursor:pointer;text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:15px;margin:0;background:oklch(0.165 0.014 255);"><span style="font-size:18px;">↑</span> {{ t.chooseImage }}</label>
+                  </div>
+                  <input id="b-photo-in" type="file" accept="image/png,image/jpeg" onChange="{{ onPhoto }}" style="display:none;">
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- STEP 3 - review -->
+        <sc-if value="{{ showStep3 }}" hint-placeholder-val="{{ false }}">
+          <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:18px;padding:clamp(22px,4vw,32px);">
+            <h2 style="font-family:var(--font-body);font-weight:700;font-size:clamp(24px,5vw,30px);color:#fff;margin:0 0 8px;letter-spacing:-.01em;">Quick review</h2>
+            <p style="color:oklch(0.72 0.012 255);font-size:16px;line-height:1.55;margin:0 0 24px;">Make sure this looks right, accept the terms, and you're done.</p>
+            <div style="display:flex;flex-direction:column;gap:1px;background:oklch(0.28 0.014 255);border:1px solid oklch(0.28 0.014 255);border-radius:12px;overflow:hidden;margin-bottom:22px;">
+              <div style="display:flex;justify-content:space-between;gap:12px;background:oklch(0.19 0.014 255);padding:14px 16px;"><span style="color:oklch(0.66 0.012 255);font-size:14px;">Name</span><span style="color:#fff;font-size:14px;text-align:right;">{{ sumName }}</span></div>
+              <div style="display:flex;justify-content:space-between;gap:12px;background:oklch(0.19 0.014 255);padding:14px 16px;"><span style="color:oklch(0.66 0.012 255);font-size:14px;">Email</span><span style="color:#fff;font-size:14px;text-align:right;">{{ sumEmail }}</span></div>
+              <div style="display:flex;justify-content:space-between;gap:12px;background:oklch(0.19 0.014 255);padding:14px 16px;"><span style="color:oklch(0.66 0.012 255);font-size:14px;">W-9 / Tax</span><sc-if value="{{ w9Done }}" hint-placeholder-val="{{ false }}"><span style="color:oklch(0.84 0.13 155);font-size:14px;">Completed ✓</span></sc-if><sc-if value="{{ w9Pending }}" hint-placeholder-val="{{ true }}"><span style="color:oklch(0.86 0.12 80);font-size:14px;">{{ t.pending }}</span></sc-if></div>
+              <div style="display:flex;justify-content:space-between;gap:12px;background:oklch(0.19 0.014 255);padding:14px 16px;"><span style="color:oklch(0.66 0.012 255);font-size:14px;">Banking</span><sc-if value="{{ bankDone }}" hint-placeholder-val="{{ false }}"><span style="color:oklch(0.84 0.13 155);font-size:14px;">Completed ✓</span></sc-if><sc-if value="{{ bankPending }}" hint-placeholder-val="{{ true }}"><span style="color:oklch(0.86 0.12 80);font-size:14px;">{{ t.pending }}</span></sc-if></div>
+            </div>
+            <label for="b-terms" style="display:flex;align-items:flex-start;gap:13px;cursor:pointer;margin:0;text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:16px;line-height:1.55;color:oklch(0.80 0.012 255);">
+              <input id="b-terms" type="checkbox" checked="{{ f.terms }}" onChange="{{ onTerms }}" aria-describedby="b-terms-err" style="margin-top:1px;">
+              <span>{{ t.agreePre }}<span style="color:var(--accent);text-decoration:underline;">{{ t.termsLink }}</span>{{ t.agreePost }}</span>
+            </label>
+            <sc-if value="{{ errTerms }}" hint-placeholder-val="{{ false }}"><div id="b-terms-err" role="alert" style="color:oklch(0.78 0.16 25);font-size:13.5px;margin-top:9px;">{{ errTerms }}</div></sc-if>
+          </div>
+        </sc-if>
+
+        <!-- wizard nav -->
+        <div style="display:flex;align-items:center;gap:12px;margin-top:22px;">
+          <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ back }}" style="background:transparent;color:oklch(0.80 0.012 255);border:1.5px solid oklch(0.34 0.014 255);border-radius:999px;padding:15px 26px;cursor:pointer;font-size:15px;font-weight:600;min-height:54px;">Back</button>
+          </sc-if>
+          <button onClick="{{ next }}" style="flex:1;background:var(--accent);color:oklch(0.18 0.03 250);font-weight:700;font-size:16px;border:none;border-radius:14px;padding:16px;cursor:pointer;min-height:54px;" style-hover="filter:brightness(1.06);">{{ nextLabel }}</button>
+        </div>
+
+        <!-- FAQ -->
+        <sc-if value="{{ showFaq }}" hint-placeholder-val="{{ true }}">
+          <div style="margin-top:48px;">
+            <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:oklch(0.62 0.012 255);margin-bottom:18px;">{{ t.questions }}</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <sc-for list="{{ faqs }}" as="faq" hint-placeholder-count="5">
+                <div style="background:oklch(0.19 0.014 255);border:1px solid oklch(0.28 0.014 255);border-radius:14px;overflow:hidden;">
+                  <button onClick="{{ faq.toggle }}" aria-expanded="{{ faq.open }}" style="width:100%;display:flex;align-items:center;justify-content:space-between;gap:14px;background:transparent;border:none;cursor:pointer;padding:18px 20px;text-align:left;color:#fff;font-size:16px;font-weight:500;">
+                    <span>{{ faq.q }}</span>
+                    <span style="font-size:22px;color:var(--accent);line-height:1;flex:none;">＋</span>
+                  </button>
+                  <sc-if value="{{ faq.open }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding:0 20px 20px;color:oklch(0.74 0.012 255);font-size:14.5px;line-height:1.6;">{{ faq.a }}</div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+
+    <!-- ===================== ADMIN LOGIN ===================== -->
+    <sc-if value="{{ showAdminLogin }}" hint-placeholder-val="{{ false }}">
+      <div style="animation:pageIn .45s cubic-bezier(.22,.61,.36,1);max-width:420px;margin:36px auto 0;">
+        <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;">Staff only</div>
+        <h1 style="font-family:var(--font-body);font-weight:700;font-size:30px;color:#fff;margin:0 0 8px;letter-spacing:-.01em;">Sign in</h1>
+        <p style="color:oklch(0.72 0.012 255);font-size:15px;line-height:1.55;margin:0 0 26px;">Username: admin Password: 1234</p>
+        <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:18px;padding:clamp(20px,4vw,28px);display:flex;flex-direction:column;gap:18px;">
+          <div>
+            <label for="login-user">Username</label>
+            <input id="login-user" type="text" value="{{ loginUser }}" onChange="{{ onLoginUser }}" onKeyDown="{{ onLoginKey }}" placeholder="admin" autoComplete="off">
+          </div>
+          <div>
+            <label for="login-pass">Password</label>
+            <input id="login-pass" type="password" value="{{ loginPass }}" onChange="{{ onLoginPass }}" onKeyDown="{{ onLoginKey }}" placeholder="••••" autoComplete="off">
+          </div>
+          <sc-if value="{{ loginErr }}" hint-placeholder-val="{{ false }}"><div role="alert" style="color:oklch(0.78 0.16 25);font-size:13.5px;">{{ loginErr }}</div></sc-if>
+          <div style="display:flex;gap:10px;margin-top:4px;">
+            <button onClick="{{ closeAdmin }}" style="flex:none;background:transparent;color:oklch(0.78 0.012 255);border:1.5px solid oklch(0.34 0.014 255);border-radius:12px;padding:14px 20px;cursor:pointer;font-size:15px;font-weight:600;min-height:52px;">Cancel</button>
+            <button onClick="{{ doLogin }}" style="flex:1;background:var(--accent);color:oklch(0.18 0.03 250);font-weight:700;font-size:16px;border:none;border-radius:12px;padding:14px;cursor:pointer;min-height:52px;" style-hover="filter:brightness(1.06);">Sign in</button>
+          </div>
+          
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ===================== ADMIN DASHBOARD ===================== -->
+    <sc-if value="{{ showAdminDash }}" hint-placeholder-val="{{ false }}">
+      <div style="animation:pageIn .45s cubic-bezier(.22,.61,.36,1);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px;">
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">Admin</div>
+            <h1 style="font-family:var(--font-body);font-weight:700;font-size:clamp(26px,5vw,34px);color:#fff;margin:0;letter-spacing:-.01em;">Crew submissions</h1>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <a href="{{ sheetViewUrl }}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;background:var(--accent);color:oklch(0.18 0.03 250);border:none;border-radius:999px;padding:11px 20px;cursor:pointer;font-size:14px;font-weight:700;text-decoration:none;" style-hover="filter:brightness(1.06);">Open Google Sheet ↗</a>
+            <button onClick="{{ syncDemo }}" style="background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:11px 18px;cursor:pointer;font-size:14px;font-weight:700;">{{ syncLabel }}</button>
+            <button onClick="{{ logout }}" style="background:transparent;color:oklch(0.80 0.012 255);border:1.5px solid oklch(0.34 0.014 255);border-radius:999px;padding:11px 18px;cursor:pointer;font-size:14px;font-weight:600;">Log out</button>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
+          <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:14px;padding:18px;">
+            <div style="font-family:var(--font-body);font-weight:700;font-size:30px;color:#fff;line-height:1;">{{ subTotal }}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.66 0.012 255);margin-top:8px;">Total</div>
+          </div>
+          <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:14px;padding:18px;">
+            <div style="font-family:var(--font-body);font-weight:700;font-size:30px;color:oklch(0.86 0.14 155);line-height:1;">{{ subOnboarded }}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.66 0.012 255);margin-top:8px;">Fully onboarded</div>
+          </div>
+          <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:14px;padding:18px;">
+            <div style="font-family:var(--font-body);font-weight:700;font-size:30px;color:oklch(0.86 0.12 80);line-height:1;">{{ subAwaiting }}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.66 0.012 255);margin-top:8px;">Awaiting QuickBooks</div>
+          </div>
+        </div>
+
+        <input type="text" value="{{ adminSearch }}" onChange="{{ onAdminSearch }}" placeholder="Search by name, email, or city…" style="margin-bottom:16px;">
+
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <sc-for list="{{ subsComplete }}" as="sub" hint-placeholder-count="3">
+            <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:14px;overflow:hidden;">
+              <button onClick="{{ sub.toggle }}" aria-expanded="{{ sub.open }}" style="width:100%;display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:transparent;border:none;cursor:pointer;padding:16px 18px;text-align:left;">
+                <span style="width:42px;height:42px;border-radius:50%;background:color-mix(in oklch, var(--accent) 16%, transparent);border:1px solid color-mix(in oklch, var(--accent) 40%, transparent);color:var(--accent);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;">{{ sub.avatar }}</span>
+                <span style="flex:1;min-width:140px;">
+                  <span style="display:flex;align-items:baseline;gap:8px;overflow:hidden;">
+                    <span style="font-family:var(--font-body);font-weight:600;font-size:16px;color:#fff;white-space:nowrap;">{{ sub.name }}</span>
+                    <span style="font-size:12.5px;color:oklch(0.62 0.012 255);font-family:'Space Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ sub.cityInline }}</span>
+                  </span>
+                  <span style="display:block;font-size:13px;color:oklch(0.66 0.012 255);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;">{{ sub.email }}</span>
+                </span>
+                <span style="display:flex;gap:6px;flex:none;">
+                  <sc-if value="{{ sub.w9Done }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">W-9 ✓</span></sc-if>
+                  <sc-if value="{{ sub.w9Pending }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">W-9</span></sc-if>
+                  <sc-if value="{{ sub.bankDone }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">Bank ✓</span></sc-if>
+                  <sc-if value="{{ sub.bankPending }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">Bank</span></sc-if>
+                </span>
+                <span style="font-size:12px;color:oklch(0.6 0.012 255);font-family:'Space Mono',monospace;flex:none;white-space:nowrap;">{{ sub.dateStr }}</span>
+              </button>
+              <sc-if value="{{ sub.isIncomplete }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:0 18px 16px;">
+                  <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;color:oklch(0.80 0.10 80);">{{ sub.missingLabel }}</span>
+                  <sc-if value="{{ sub.nudged }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px;color:oklch(0.84 0.13 155);font-size:13px;font-weight:600;">✓ Nudge sent</span></sc-if>
+                  <sc-if value="{{ sub.notNudged }}" hint-placeholder-val="{{ true }}"><button onClick="{{ sub.sendNudge }}" style="background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:color-mix(in oklch, var(--accent) 14%, transparent);">Send nudge</button></sc-if>
+                </div>
+              </sc-if>
+              <sc-if value="{{ sub.open }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:0 18px 20px;border-top:1px solid oklch(0.28 0.014 255);">
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px 24px;margin-top:16px;">
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Phone</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.phone }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">City</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.city }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Address</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.address }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Pronouns</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.pronouns }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Referred by</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.referredBy }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">LinkedIn</div><sc-if value="{{ sub.hasLinkedin }}" hint-placeholder-val="{{ false }}"><a href="{{ sub.linkedinUrl }}" target="_blank" rel="noopener" style="font-size:14px;color:var(--accent);text-decoration:underline;word-break:break-word;">{{ sub.linkedin }}</a></sc-if><sc-if value="{{ sub.noLinkedin }}" hint-placeholder-val="{{ true }}"><div style="font-size:14px;color:oklch(0.92 0.005 255);">Not provided</div></sc-if></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Worked before</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.worked }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Travel radius</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.travel }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">{{ t.emergency }}</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.ec }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Resume</div><sc-if value="{{ sub.hasResume }}" hint-placeholder-val="{{ false }}"><a href="{{ sub.resumeUrl }}" target="_blank" rel="noopener" style="font-size:14px;color:var(--accent);text-decoration:underline;word-break:break-word;">{{ sub.resume }}</a></sc-if><sc-if value="{{ sub.noResume }}" hint-placeholder-val="{{ true }}"><div style="font-size:14px;color:oklch(0.92 0.005 255);">Not provided</div></sc-if></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Rate sheet</div><sc-if value="{{ sub.hasRate }}" hint-placeholder-val="{{ false }}"><a href="{{ sub.rateUrl }}" target="_blank" rel="noopener" style="font-size:14px;color:var(--accent);text-decoration:underline;word-break:break-word;">{{ sub.rateSheet }}</a></sc-if><sc-if value="{{ sub.noRate }}" hint-placeholder-val="{{ true }}"><div style="font-size:14px;color:oklch(0.92 0.005 255);">Not provided</div></sc-if></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Profile photo</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.photo }}</div></div>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noComplete }}" hint-placeholder-val="{{ false }}">
+            <div style="background:oklch(0.19 0.014 255);border:1px dashed oklch(0.30 0.014 255);border-radius:14px;padding:34px 20px;text-align:center;color:oklch(0.66 0.012 255);font-size:15px;">No completed intakes to show.</div>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ hasIncomplete }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:34px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+              <h2 style="font-family:var(--font-body);font-weight:700;font-size:20px;color:#fff;margin:0;">Incomplete intakes</h2>
+              <span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:3px 11px;border-radius:999px;font-family:'Space Mono',monospace;font-size:11px;">{{ subIncompleteCount }}</span>
+            </div>
+            <p style="color:oklch(0.64 0.012 255);font-size:13.5px;line-height:1.5;margin:0 0 16px;">Started onboarding but still missing QuickBooks or contact info.</p>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <sc-for list="{{ subsIncomplete }}" as="sub" hint-placeholder-count="2">
+            <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:14px;overflow:hidden;">
+              <button onClick="{{ sub.toggle }}" aria-expanded="{{ sub.open }}" style="width:100%;display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:transparent;border:none;cursor:pointer;padding:16px 18px;text-align:left;">
+                <span style="width:42px;height:42px;border-radius:50%;background:color-mix(in oklch, var(--accent) 16%, transparent);border:1px solid color-mix(in oklch, var(--accent) 40%, transparent);color:var(--accent);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;">{{ sub.avatar }}</span>
+                <span style="flex:1;min-width:140px;">
+                  <span style="display:flex;align-items:baseline;gap:8px;overflow:hidden;">
+                    <span style="font-family:var(--font-body);font-weight:600;font-size:16px;color:#fff;white-space:nowrap;">{{ sub.name }}</span>
+                    <span style="font-size:12.5px;color:oklch(0.62 0.012 255);font-family:'Space Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ sub.cityInline }}</span>
+                  </span>
+                  <span style="display:block;font-size:13px;color:oklch(0.66 0.012 255);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;">{{ sub.email }}</span>
+                </span>
+                <span style="display:flex;gap:6px;flex:none;">
+                  <sc-if value="{{ sub.w9Done }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">W-9 ✓</span></sc-if>
+                  <sc-if value="{{ sub.w9Pending }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">W-9</span></sc-if>
+                  <sc-if value="{{ sub.bankDone }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">Bank ✓</span></sc-if>
+                  <sc-if value="{{ sub.bankPending }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">Bank</span></sc-if>
+                </span>
+                <span style="font-size:12px;color:oklch(0.6 0.012 255);font-family:'Space Mono',monospace;flex:none;white-space:nowrap;">{{ sub.dateStr }}</span>
+              </button>
+              <sc-if value="{{ sub.isIncomplete }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:0 18px 16px;">
+                  <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;color:oklch(0.80 0.10 80);">{{ sub.missingLabel }}</span>
+                  <sc-if value="{{ sub.nudged }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px;color:oklch(0.84 0.13 155);font-size:13px;font-weight:600;">✓ Nudge sent</span></sc-if>
+                  <sc-if value="{{ sub.notNudged }}" hint-placeholder-val="{{ true }}"><button onClick="{{ sub.sendNudge }}" style="background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:color-mix(in oklch, var(--accent) 14%, transparent);">Send nudge</button></sc-if>
+                </div>
+              </sc-if>
+              <sc-if value="{{ sub.open }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:0 18px 20px;border-top:1px solid oklch(0.28 0.014 255);">
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px 24px;margin-top:16px;">
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Phone</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.phone }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">City</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.city }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Address</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.address }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Pronouns</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.pronouns }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Referred by</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.referredBy }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">LinkedIn</div><sc-if value="{{ sub.hasLinkedin }}" hint-placeholder-val="{{ false }}"><a href="{{ sub.linkedinUrl }}" target="_blank" rel="noopener" style="font-size:14px;color:var(--accent);text-decoration:underline;word-break:break-word;">{{ sub.linkedin }}</a></sc-if><sc-if value="{{ sub.noLinkedin }}" hint-placeholder-val="{{ true }}"><div style="font-size:14px;color:oklch(0.92 0.005 255);">Not provided</div></sc-if></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Worked before</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.worked }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Travel radius</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.travel }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">{{ t.emergency }}</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.ec }}</div></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Resume</div><sc-if value="{{ sub.hasResume }}" hint-placeholder-val="{{ false }}"><a href="{{ sub.resumeUrl }}" target="_blank" rel="noopener" style="font-size:14px;color:var(--accent);text-decoration:underline;word-break:break-word;">{{ sub.resume }}</a></sc-if><sc-if value="{{ sub.noResume }}" hint-placeholder-val="{{ true }}"><div style="font-size:14px;color:oklch(0.92 0.005 255);">Not provided</div></sc-if></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Rate sheet</div><sc-if value="{{ sub.hasRate }}" hint-placeholder-val="{{ false }}"><a href="{{ sub.rateUrl }}" target="_blank" rel="noopener" style="font-size:14px;color:var(--accent);text-decoration:underline;word-break:break-word;">{{ sub.rateSheet }}</a></sc-if><sc-if value="{{ sub.noRate }}" hint-placeholder-val="{{ true }}"><div style="font-size:14px;color:oklch(0.92 0.005 255);">Not provided</div></sc-if></div>
+                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Profile photo</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.photo }}</div></div>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showFooter }}" hint-placeholder-val="{{ true }}">
+      <footer style="margin-top:44px;padding:22px 0 6px;border-top:1px solid oklch(0.24 0.014 255 / .8);text-align:center;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;line-height:1.7;color:oklch(0.54 0.012 255);">© 2026 AKAV LLC · Audio, Video &amp; Production Services · All rights reserved</footer>
+    </sc-if>
+  </main>
+
+  <!-- ===================== QB MOCK MODAL ===================== -->
+  <sc-if value="{{ showQbModal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:50;background:oklch(0.10 0.012 255 / .72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .2s ease;">
+      <div role="dialog" aria-modal="true" style="background:oklch(0.215 0.014 255);border:1.5px solid oklch(0.34 0.014 255);border-radius:20px;padding:30px;max-width:440px;width:100%;animation:pop .25s ease;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+          <div style="width:32px;height:32px;border-radius:8px;background:color-mix(in oklch, var(--accent) 20%, transparent);border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;color:var(--accent);font-family:'Space Mono',monospace;font-size:13px;font-weight:700;">QB</div>
+          <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:oklch(0.62 0.012 255);">{{ t.secureRedirect }}</span>
+        </div>
+        <h3 style="font-family:var(--font-body);font-weight:700;font-size:22px;color:#fff;margin:0 0 10px;">{{ qbModalTitle }}</h3>
+        <p style="color:oklch(0.74 0.012 255);font-size:15px;line-height:1.6;margin:0 0 24px;">{{ qbModalDesc }}</p>
+        <div style="display:flex;gap:10px;">
+          <button onClick="{{ closeQb }}" style="flex:none;background:transparent;color:oklch(0.78 0.012 255);border:1.5px solid oklch(0.34 0.014 255);border-radius:12px;padding:14px 20px;cursor:pointer;font-size:15px;font-weight:600;min-height:50px;">Cancel</button>
+          <button onClick="{{ completeQb }}" style="flex:1;background:var(--accent);color:oklch(0.18 0.03 250);font-weight:700;font-size:15px;border:none;border-radius:12px;padding:14px;cursor:pointer;min-height:50px;" style-hover="filter:brightness(1.06);">{{ t.markComplete }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+
+  <!-- ===================== EXPORT CSV MODAL ===================== -->
+  <sc-if value="{{ showExportModal }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:60;background:oklch(0.10 0.012 255 / .72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .2s ease;">
+      <div role="dialog" aria-modal="true" style="background:oklch(0.215 0.014 255);border:1.5px solid oklch(0.34 0.014 255);border-radius:20px;padding:30px;max-width:460px;width:100%;animation:pop .25s ease;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Export</div>
+        <h3 style="font-family:var(--font-body);font-weight:700;font-size:23px;color:#fff;margin:0 0 18px;">Export submissions to CSV</h3>
+        <div style="background:oklch(0.18 0.014 255);border:1px solid oklch(0.30 0.014 255);border-radius:14px;overflow:hidden;margin-bottom:18px;">
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:13px 16px;border-bottom:1px solid oklch(0.28 0.014 255);">
+            <span style="color:oklch(0.66 0.012 255);font-size:14px;">Last export</span>
+            <span style="color:#fff;font-size:14px;font-family:'Space Mono',monospace;">{{ lastExportLabel }}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;gap:12px;padding:13px 16px;">
+            <span style="color:oklch(0.66 0.012 255);font-size:14px;">New since last export</span>
+            <span style="color:var(--accent);font-size:14px;font-weight:700;font-family:'Space Mono',monospace;">{{ sinceCount }}</span>
+          </div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:oklch(0.62 0.012 255);margin-bottom:12px;">Submissions by city</div>
+        <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:24px;">
+          <sc-for list="{{ cityBreakdown }}" as="c" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span style="color:oklch(0.88 0.005 255);font-size:14px;min-width:96px;">{{ c.city }}</span>
+              <span style="flex:1;height:7px;background:oklch(0.26 0.014 255);border-radius:999px;overflow:hidden;"><span style="display:block;height:100%;background:var(--accent);border-radius:999px;width:{{ c.pct }};"></span></span>
+              <span style="color:oklch(0.72 0.012 255);font-size:13px;font-family:'Space Mono',monospace;min-width:18px;text-align:right;">{{ c.count }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button onClick="{{ closeExport }}" style="flex:none;background:transparent;color:oklch(0.78 0.012 255);border:1.5px solid oklch(0.34 0.014 255);border-radius:12px;padding:14px 20px;cursor:pointer;font-size:15px;font-weight:600;min-height:50px;">Close</button>
+          <button onClick="{{ downloadCsv }}" style="flex:1;background:var(--accent);color:oklch(0.18 0.03 250);font-weight:700;font-size:15px;border:none;border-radius:12px;padding:14px;cursor:pointer;min-height:50px;" style-hover="filter:brightness(1.06);">Download CSV</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:880,&quot;height&quot;:1100},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;oklch(0.82 0.12 210)&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;bodyFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Space Grotesk&quot;,&quot;Geist&quot;,&quot;Instrument Sans&quot;],&quot;default&quot;:&quot;Geist&quot;,&quot;tsType&quot;:&quot;'Space Grotesk' | 'Geist' | 'Instrument Sans'&quot;},&quot;showFaq&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;landingLogoGap&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:-40,&quot;min&quot;:-160,&quot;max&quot;:120,&quot;tsType&quot;:&quot;number&quot;},&quot;landingBlurbY&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:-150,&quot;min&quot;:-400,&quot;max&quot;:200,&quot;tsType&quot;:&quot;number&quot;},&quot;landingContactGap&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:26,&quot;min&quot;:0,&quot;max&quot;:140,&quot;tsType&quot;:&quot;number&quot;},&quot;sheetEndpoint&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://script.google.com/macros/s/AKfycbyCSyb-80aIfV1NHCnbvgpYdzuBVWSH6TzkkilwFIbunSIC_Vvi1JCdZuAWN3zm_08i/exec&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;sheetViewUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://docs.google.com/spreadsheets/d/1-yvBtc9m8Q3j2ssat9Ys0EnWFFS_YLqKmZBstgoPyYM/edit&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = {
+    direction: null,
+    section:'crew',
+    lang:'en',
+    step: 0,
+    form: { name:'', email:'', phone:'', address:'', pronouns:'', city:'', referredBy:'', linkedin:'', workedBefore:false, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', terms:false },
+    files: { resume:null, rateSheet:null, photo:null },
+    photoPreview:'',
+    qb: { w9:'pending', banking:'pending' },
+    qbModal:null,
+    errors:{},
+    showOptional:false,
+    openFaq:-1,
+    submitted:false,
+    adminView:false,
+    adminAuthed:false,
+    loginUser:'',
+    loginPass:'',
+    loginErr:'',
+    adminSearch:'',
+    openRow:null,
+    submissions:[],
+    nudged:{},
+    exportOpen:false,
+    syncMsg:'',
+    lastExport:null,
+  };
+
+  componentDidMount(){
+    let stored=[];
+    try{ stored=JSON.parse(localStorage.getItem('akav_submissions')||'[]'); }catch(e){ stored=[]; }
+    if(!Array.isArray(stored)) stored=[];
+    const seeds=this.seedSubs();
+    const seedIds=new Set(seeds.map(x=>x.id));
+    const userRecs=stored.filter(x=>x && x.id && !seedIds.has(x.id) && !/^s\d+$/.test(x.id));
+    const subs=userRecs.concat(seeds).sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt));
+    this.saveSubs(subs);
+    let le=null; try{ le=localStorage.getItem('akav_last_export')||null; }catch(e){ le=null; }
+    this.setState({ submissions:subs, lastExport:le });
+  }
+
+  seedSubs(){
+    const day=86400000, now=Date.now(), iso=(t)=>new Date(now-t).toISOString();
+    return [
+      { id:'s1', createdAt:iso(2*3600000), name:'Maya Chen', email:'maya.chen@email.com', phone:'(212) 555-0142', address:'1200 E 6th St, New York, NY 10009', pronouns:'she/her', city:'New York', referredBy:'Theo Vance', workedBefore:true, willTravel:true, travel:'150', ecName:'Lin Chen', ecPhone:'(212) 555-0190', ecRel:'Sister', w9:'complete', banking:'complete', resume:'maya-chen-resume.pdf', rateSheet:'maya-rates-2026.pdf', photo:true, linkedin:'linkedin.com/in/mayachen', photoUrl:'https://i.pravatar.cc/96?img=47', additional:true },
+      { id:'s2', createdAt:iso(1*day+3*3600000), name:'Devon Brooks', email:'devon.brooks@email.com', phone:'', address:'', pronouns:'', city:'Dallas', referredBy:'', linkedin:'', workedBefore:false, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'pending', resume:'', rateSheet:'', photo:false, photoUrl:'', additional:false },
+      { id:'s3', createdAt:iso(3*day), name:'Priya Nair', email:'priya.nair@email.com', phone:'(214) 555-0199', address:'', pronouns:'they/them', city:'Houston', referredBy:'Job board', workedBefore:false, willTravel:true, travel:'75', ecName:'Anil Nair', ecPhone:'(214) 555-0177', ecRel:'Father', w9:'pending', banking:'pending', resume:'priya-nair-cv.pdf', rateSheet:'', photo:true, photoUrl:'https://i.pravatar.cc/96?img=32', additional:true },
+      { id:'s4', createdAt:iso(6*day), name:'Marcus Webb', email:'m.webb@email.com', phone:'(832) 555-0123', address:'', pronouns:'he/him', city:'San Antonio', referredBy:'Maya Chen', workedBefore:true, willTravel:true, travel:'300', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'complete', resume:'', rateSheet:'webb-rate-sheet.pdf', photo:false, photoUrl:'', additional:true },
+      { id:'s5', createdAt:iso(4*3600000), name:'Sofia Reyes', email:'sofia.reyes@email.com', phone:'(323) 555-0181', address:'88 Sunset Blvd, Los Angeles, CA 90028', pronouns:'she/her', city:'Los Angeles', referredBy:'Instagram', workedBefore:true, willTravel:true, travel:'200', ecName:'Rosa Reyes', ecPhone:'(323) 555-0144', ecRel:'Mother', w9:'complete', banking:'complete', resume:'sofia-reyes-resume.pdf', rateSheet:'sofia-rates.pdf', photo:true, linkedin:'linkedin.com/in/sofiareyes', photoUrl:'https://i.pravatar.cc/96?img=5', additional:true },
+      { id:'s6', createdAt:iso(2*day+5*3600000), name:'Jamal Carter', email:'jamal.carter@email.com', phone:'(504) 555-0166', address:'', pronouns:'he/him', city:'New Orleans', referredBy:'Sofia Reyes', workedBefore:false, willTravel:false, travel:'', ecName:'Denise Carter', ecPhone:'(504) 555-0133', ecRel:'Spouse', w9:'complete', banking:'complete', resume:'', rateSheet:'', photo:false, photoUrl:'', additional:true },
+      { id:'s7', createdAt:iso(8*3600000), name:'Emily Tran', email:'emily.tran@email.com', phone:'(213) 555-0112', address:'', pronouns:'she/her', city:'Los Angeles', referredBy:'', workedBefore:false, willTravel:true, travel:'50', ecName:'', ecPhone:'', ecRel:'', w9:'pending', banking:'complete', resume:'emily-tran-cv.pdf', rateSheet:'', photo:false, photoUrl:'', additional:true },
+      { id:'s8', createdAt:iso(5*day), name:"Liam O'Brien", email:'liam.obrien@email.com', phone:'(646) 555-0150', address:'45 Bedford Ave, Brooklyn, NY 11211', pronouns:'he/him', city:'New York', referredBy:'Crew fair', workedBefore:true, willTravel:true, travel:'120', ecName:"Maeve O'Brien", ecPhone:'(646) 555-0151', ecRel:'Sister', w9:'complete', banking:'complete', resume:'liam-obrien-resume.pdf', rateSheet:'liam-rates.pdf', photo:true, linkedin:'linkedin.com/in/liamobrien', photoUrl:'https://i.pravatar.cc/96?img=12', additional:true },
+      { id:'s9', createdAt:iso(7*day), name:'Hana Suzuki', email:'hana.suzuki@email.com', phone:'(504) 555-0190', address:'', pronouns:'she/her', city:'New Orleans', referredBy:'Jamal Carter', workedBefore:true, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'complete', resume:'', rateSheet:'hana-rates.pdf', photo:false, photoUrl:'', additional:true },
+      { id:'s10', createdAt:iso(6*3600000), name:'Carlos Mendez', email:'carlos.mendez@email.com', phone:'(312) 555-0177', address:'', pronouns:'he/him', city:'Chicago', referredBy:'', workedBefore:false, willTravel:true, travel:'100', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'pending', resume:'', rateSheet:'', photo:false, photoUrl:'', additional:true },
+      { id:'s11', createdAt:iso(9*day), name:'Aisha Bello', email:'aisha.bello@email.com', phone:'(404) 555-0123', address:'', pronouns:'she/her', city:'Atlanta', referredBy:'Marcus Webb', workedBefore:true, willTravel:true, travel:'250', ecName:'Yusuf Bello', ecPhone:'(404) 555-0124', ecRel:'Brother', w9:'complete', banking:'complete', resume:'aisha-bello-resume.pdf', rateSheet:'', photo:true, linkedin:'linkedin.com/in/aishabello', photoUrl:'https://i.pravatar.cc/96?img=68', additional:true },
+      { id:'s12', createdAt:iso(10*day), name:'Noah Kim', email:'noah.kim@email.com', phone:'(615) 555-0145', address:'', pronouns:'he/him', city:'Nashville', referredBy:'', linkedin:'', workedBefore:false, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'complete', resume:'', rateSheet:'', photo:false, photoUrl:'', additional:false },
+    ];
+  }
+    saveSubs(subs){ try{ localStorage.setItem('akav_submissions', JSON.stringify(subs)); }catch(e){} }
+
+  additionalFilled(){
+    const f=this.state.form, st=this.state;
+    return (['address','pronouns','city','referredBy','travel','ecName','ecPhone','ecRel'].some(k=>String(f[k]||'').trim()!=='') || f.workedBefore || !!st.files.resume || !!st.files.rateSheet || !!st.files.photo);
+  }
+
+  fmtDate(iso){ try{ return new Date(iso).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch(e){ return ''; } }
+
+  openAdmin(){ this.setState({ adminView:true, loginErr:'' }); this.scrollTop(); }
+  closeAdmin(){ this.setState({ adminView:false, openRow:null }); this.scrollTop(); }
+  logout(){ this.setState({ adminView:false, adminAuthed:false, loginUser:'', loginPass:'', loginErr:'', openRow:null }); this.scrollTop(); }
+  doLogin(){
+    const { loginUser, loginPass } = this.state;
+    if(loginUser.trim()==='admin' && loginPass==='1234'){ this.setState({ adminAuthed:true, loginErr:'', loginPass:'' }); }
+    else { this.setState({ loginErr:'Wrong username or password. Try admin / 1234.' }); }
+  }
+  toggleRow(id){ this.setState(s=>({ openRow: s.openRow===id ? null : id })); }
+
+  openExport(){ this.setState({ exportOpen:true }); }
+  closeExport(){ this.setState({ exportOpen:false }); }
+  downloadCsv(){
+    const subs=this.state.submissions.filter(s=>this.isCompleteRec(s));
+    const cols=['createdAt','name','email','phone','city','address','pronouns','referredBy','linkedin','workedBefore','willTravel','travel','ecName','ecPhone','ecRel','w9','banking','resume','rateSheet','photo','additional'];
+    const esc=(v)=>{ v=(v==null?'':String(v)); return /[",\n]/.test(v) ? ('"'+v.replace(/"/g,'""')+'"') : v; };
+    const lines=[cols.join(',')].concat(subs.map(s=>cols.map(c=>esc(s[c])).join(',')));
+    const csv=lines.join('\n');
+    try{
+      const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download='akav-submissions-'+new Date().toISOString().slice(0,10)+'.csv';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(()=>URL.revokeObjectURL(url), 1500);
+    }catch(e){}
+    const now=new Date().toISOString();
+    try{ localStorage.setItem('akav_last_export', now); }catch(e){}
+    this.setState({ lastExport:now, exportOpen:false });
+  }
+
+  syncDemo(){
+    const url=(this.props.sheetEndpoint||'https://script.google.com/macros/s/AKfycbyCSyb-80aIfV1NHCnbvgpYdzuBVWSH6TzkkilwFIbunSIC_Vvi1JCdZuAWN3zm_08i/exec').trim();
+    if(!url) return;
+    const recs=this.state.submissions.slice();
+    if(!recs.length){ this.setState({ syncMsg:'No records' }); return; }
+    this.setState({ syncMsg:'Pushing '+recs.length+'\u2026' });
+    let done=0;
+    const post=(i)=>{
+      if(i>=recs.length){ this.setState({ syncMsg:'Pushed '+done+' \u2713' }); return; }
+      try{ fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(recs[i])}).then(function(){},function(){}); }catch(e){}
+      done++;
+      setTimeout(function(){ post(i+1); },300);
+    };
+    post(0);
+  }
+
+  sendNudge(id){ this.setState(s=>({ nudged: {...s.nudged, [id]:true} })); }
+  isCompleteRec(s){ return s.w9==='complete' && s.banking==='complete' && !!String(s.name||'').trim() && !!String(s.email||'').trim(); }
+
+  dir(){ return this.state.direction || this.props.startDirection || 'A'; }
+
+  componentWillMount(){ try{ const l=localStorage.getItem('akav_lang'); if(l==='es'||l==='en') this.state.lang=l; }catch(e){} }
+  setLang(l){ try{ localStorage.setItem('akav_lang', l); }catch(e){} this.setState({ lang:l }); }
+
+  dict(){
+    return {
+      en:{
+        navCrew:'Crew Onboarding', navClients:'Clients',
+        welcomeEyebrow:'Welcome to the crew', welcomeTitle:"Let's get you set up.",
+        intro:'Enter your name and email so we can reach you, then your QuickBooks tax and bank info so we can pay you, plus optional details in Step 3 that help us book gigs that are right for you.',
+        step1:'Step 1 · Required', contactInfo:'Your contact info',
+        fullName:'Full name', emailLabel:'Email', phone:'Phone', optional:'(optional)',
+        step2:'Step 2 · Required', taxBanking:'Tax & banking',
+        taxDesc:'Sensitive tax and banking information is handled securely by QuickBooks.',
+        w9Title:'W-9 / Tax form', w9Desc:'Complete your tax form securely in QuickBooks.',
+        done:'Done', pending:'Pending', completeInQb:'Complete in QuickBooks →',
+        allSet:"✓ All set, we'll sync your status automatically.",
+        bankTitle:'Banking details', bankDesc:"Add where you'd like to get paid, securely in QuickBooks.",
+        step3:'Step 3 · Optional', addMore:'Add more details', addMoreDesc:'Helps us match you to the right work',
+        pronouns:'Pronouns', mailingAddress:'Mailing address', homeCity:'Home city',
+        willTravelLabel:"I'm willing to travel for work", howFar:'How far will you travel?', milesParen:'(miles)',
+        referred:'Who referred you?', linkedinLabel:'LinkedIn profile',
+        workedBeforeLabel:"I've worked an AKAV event before",
+        emergency:'Emergency contact', ecNameLabel:'Name', relationship:'Relationship',
+        files:'Files', resume:'Resume', rateSheet:'Rate sheet', profilePhoto:'Profile photo',
+        chooseFile:'Choose a file (PDF or Word)', chooseImage:'Choose an image (JPG or PNG)',
+        agreePre:"I agree to AKAV's ", termsLink:'crew terms & safety policy', agreePost:', and confirm the info above is accurate.',
+        submit:'Submit my application', questions:'Questions?',
+        successContact:'Contact info', additional:'Additional details',
+        completed:'Completed', stillToDo:'Still to do', skipped:'Skipped',
+        qbReminder:"No rush, you can finish your QuickBooks steps anytime. We'll text and email you a reminder with the link.",
+        thanksExtra:"Thanks for the extra details. Welcome to the AKAV crew. We'll be in touch about your first gig.",
+        startAnother:'Start another submission',
+        gotPre:'We have your details. A confirmation is on its way to ', gotPost:". Here's where things stand:",
+        rosterPre:"You're on the roster, ",
+        secureRedirect:'Secure redirect · QuickBooks', cancel:'Cancel', markComplete:'Mark as complete (demo)',
+        qbDescW9:'In the live flow, this takes you to QuickBooks to fill out your W-9 securely. Nothing is entered or stored here. We will get a confirmation automatically once you finish.',
+        qbDescBank:'In the live flow, this takes you to QuickBooks to add your banking details securely. Nothing is entered or stored here. We will get a confirmation automatically once you finish.',
+        clientsP1:"AKAV's crews provide audio, video and production support to some of the world's most important and technologically complex events.",
+        clientsP2:'Our experienced team members provide the muscle and expertise needed to bring your next event to life with seamless professionalism.',
+        contactBtn:'Contact',
+        errName:'Please enter your full name.', errEmailReq:'Please enter your email address.',
+        errEmailBad:'Hmm, that email does not look right.', errTerms:'Please accept the terms to finish up.',
+        faq:[
+          {q:'Do I have to fill everything out?', a:'No. Only your name and email are required to get started. Everything else is optional. You can add it now or come back to it later.'},
+          {q:'What are the QuickBooks steps?', a:'Your W-9 (tax form) and banking details are handled securely inside QuickBooks. We never see or store that sensitive information, we just get a confirmation once you are done.'},
+          {q:'Can I come back and finish later?', a:'Yes. Just use the same email next time and we will pick up right where you left off. Nothing gets lost.'},
+          {q:'What files might I upload?', a:'A resume, a rate sheet, and a headshot, all optional. PDFs, Word docs, and common image formats all work.'},
+          {q:'Who do I contact if I get stuck?', a:'Email crew@akav.com or text the number on your invite, and a real person will walk you through it.'},
+        ],
+      },
+      es:{
+        navCrew:'Registro de Equipo', navClients:'Clientes',
+        welcomeEyebrow:'Bienvenido al equipo', welcomeTitle:'Vamos a registrarte.',
+        intro:'Escribe tu nombre y correo para poder contactarte, luego tu información de impuestos y banco en QuickBooks para poder pagarte, y datos opcionales en el Paso 3 que nos ayudan a ofrecerte el trabajo ideal.',
+        step1:'Paso 1 · Obligatorio', contactInfo:'Tu información de contacto',
+        fullName:'Nombre completo', emailLabel:'Correo electrónico', phone:'Teléfono', optional:'(opcional)',
+        step2:'Paso 2 · Obligatorio', taxBanking:'Impuestos y banco',
+        taxDesc:'La información sensible de impuestos y banco se gestiona de forma segura en QuickBooks.',
+        w9Title:'Formulario W-9 / Impuestos', w9Desc:'Completa tu formulario de impuestos de forma segura en QuickBooks.',
+        done:'Listo', pending:'Pendiente', completeInQb:'Completar en QuickBooks →',
+        allSet:'✓ Todo listo, sincronizaremos tu estado automáticamente.',
+        bankTitle:'Datos bancarios', bankDesc:'Agrega dónde quieres recibir tu pago, de forma segura en QuickBooks.',
+        step3:'Paso 3 · Opcional', addMore:'Agregar más detalles', addMoreDesc:'Nos ayuda a ofrecerte el trabajo adecuado',
+        pronouns:'Pronombres', mailingAddress:'Dirección postal', homeCity:'Ciudad de residencia',
+        willTravelLabel:'Estoy dispuesto a viajar por trabajo', howFar:'¿Qué tan lejos viajarías?', milesParen:'(millas)',
+        referred:'¿Quién te recomendó?', linkedinLabel:'Perfil de LinkedIn',
+        workedBeforeLabel:'He trabajado en un evento de AKAV antes',
+        emergency:'Contacto de emergencia', ecNameLabel:'Nombre', relationship:'Parentesco',
+        files:'Archivos', resume:'Currículum', rateSheet:'Lista de tarifas', profilePhoto:'Foto de perfil',
+        chooseFile:'Elige un archivo (PDF o Word)', chooseImage:'Elige una imagen (JPG o PNG)',
+        agreePre:'Acepto los ', termsLink:'términos y la política de seguridad del equipo de AKAV', agreePost:', y confirmo que la información anterior es correcta.',
+        submit:'Enviar mi solicitud', questions:'¿Preguntas?',
+        successContact:'Información de contacto', additional:'Datos adicionales',
+        completed:'Completado', stillToDo:'Pendiente', skipped:'Omitido',
+        qbReminder:'Sin prisa, puedes completar tus pasos de QuickBooks cuando quieras. Te enviaremos un recordatorio por mensaje y correo con el enlace.',
+        thanksExtra:'Gracias por los datos adicionales. Bienvenido al equipo de AKAV. Te contactaremos sobre tu primer trabajo.',
+        startAnother:'Enviar otra solicitud',
+        gotPre:'Tenemos tus datos. Enviaremos una confirmación a ', gotPost:'. Esto es lo que falta:',
+        rosterPre:'Ya estás en el equipo, ',
+        secureRedirect:'Redirección segura · QuickBooks', cancel:'Cancelar', markComplete:'Marcar como completado (demo)',
+        qbDescW9:'En el flujo real, esto te lleva a QuickBooks para completar tu W-9 de forma segura. Aquí no se ingresa ni se guarda nada. Recibiremos una confirmación automáticamente cuando termines.',
+        qbDescBank:'En el flujo real, esto te lleva a QuickBooks para agregar tus datos bancarios de forma segura. Aquí no se ingresa ni se guarda nada. Recibiremos una confirmación automáticamente cuando termines.',
+        clientsP1:'Los equipos de AKAV brindan soporte de audio, video y producción para algunos de los eventos más importantes y tecnológicamente complejos del mundo.',
+        clientsP2:'Nuestro equipo con experiencia aporta la fuerza y la pericia necesarias para dar vida a tu próximo evento con profesionalismo impecable.',
+        contactBtn:'Contacto',
+        errName:'Por favor escribe tu nombre completo.', errEmailReq:'Por favor escribe tu correo electrónico.',
+        errEmailBad:'Mmm, ese correo no parece correcto.', errTerms:'Acepta los términos para finalizar.',
+        faq:[
+          {q:'¿Tengo que llenar todo?', a:'No. Solo se requieren tu nombre y correo para empezar. Todo lo demás es opcional. Puedes agregarlo ahora o volver más tarde.'},
+          {q:'¿Qué son los pasos de QuickBooks?', a:'Tu W-9 (formulario de impuestos) y tus datos bancarios se gestionan de forma segura dentro de QuickBooks. Nunca vemos ni guardamos esa información sensible, solo recibimos una confirmación cuando terminas.'},
+          {q:'¿Puedo volver y terminar más tarde?', a:'Sí. Solo usa el mismo correo la próxima vez y continuaremos justo donde lo dejaste. No se pierde nada.'},
+          {q:'¿Qué archivos puedo subir?', a:'Un currículum, una lista de tarifas y una foto, todos opcionales. Funcionan PDF, documentos de Word y los formatos de imagen comunes.'},
+          {q:'¿A quién contacto si me atoro?', a:'Escribe a crew@akav.com o envía un mensaje al número de tu invitación, y una persona real te ayudará.'},
+        ],
+      },
+    };
+  }
+
+  setField(k,v){ this.setState(s=>({ form:{...s.form,[k]:v}, errors:{...s.errors,[k]:undefined} })); }
+
+  scrollTop(){ try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ try{ window.scrollTo(0,0); }catch(_){} } }
+
+  validateCore(){
+    const f=this.state.form; const e={};
+    const t=this.dict()[this.state.lang||'en'];
+    if(!f.name.trim()) e.name=t.errName;
+    if(!f.email.trim()) e.email=t.errEmailReq;
+    else if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email.trim())) e.email=t.errEmailBad;
+    return e;
+  }
+
+  next(){
+    const s=this.state;
+    if(s.step===0){ const e=this.validateCore(); if(Object.keys(e).length){ this.setState({errors:e}); return; } }
+    if(s.step>=3){ this.submit(); return; }
+    this.setState({step:s.step+1}); this.scrollTop();
+  }
+  back(){ this.setState(s=>({step:Math.max(0,s.step-1)})); this.scrollTop(); }
+  goStep(n){ this.setState({step:n}); this.scrollTop(); }
+
+  submit(){
+    const e=this.validateCore();
+    if(!this.state.form.terms) e.terms=this.dict()[this.state.lang||'en'].errTerms;
+    if(Object.keys(e).length){
+      const goCore = e.name || e.email;
+      this.setState({ errors:e, ...(this.dir()==='B' ? {step: goCore?0:3} : {}) });
+      this.scrollTop();
+      return;
+    }
+    const f=this.state.form, st=this.state;
+    const rec = {
+      id: 'r'+Date.now(),
+      createdAt: new Date().toISOString(),
+      name:f.name, email:f.email, phone:f.phone, address:f.address, pronouns:f.pronouns,
+      city:f.city, referredBy:f.referredBy, linkedin:f.linkedin, workedBefore:f.workedBefore, willTravel:f.willTravel, travel:f.travel,
+      ecName:f.ecName, ecPhone:f.ecPhone, ecRel:f.ecRel,
+      w9:st.qb.w9, banking:st.qb.banking,
+      resume: st.files.resume ? st.files.resume.name : '',
+      rateSheet: st.files.rateSheet ? st.files.rateSheet.name : '',
+      photo: !!st.files.photo,
+      additional: this.additionalFilled(),
+    };
+    const subs = [rec, ...this.state.submissions];
+    this.saveSubs(subs);
+    this.postToSheet(rec);
+    this.setState({ submitted:true, submissions:subs }); this.scrollTop();
+  }
+
+  postToSheet(rec){
+    const url = (this.props.sheetEndpoint || 'https://script.google.com/macros/s/AKfycbyCSyb-80aIfV1NHCnbvgpYdzuBVWSH6TzkkilwFIbunSIC_Vvi1JCdZuAWN3zm_08i/exec').trim();
+    if(!url) return;
+    try {
+      fetch(url, { method:'POST', mode:'no-cors', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(rec) }).catch(function(){});
+    } catch(e){}
+  }
+
+  onFile(kind,e){
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    const meta = { name:file.name, size:file.size };
+    this.setState(s=>({ files:{...s.files,[kind]:meta} }));
+    if(kind==='photo'){ const r=new FileReader(); r.onload=()=>this.setState({photoPreview:r.result}); r.readAsDataURL(file); }
+  }
+  removeFile(kind){ this.setState(s=>({ files:{...s.files,[kind]:null}, ...(kind==='photo'?{photoPreview:''}:{}) })); }
+
+  openQb(which){ this.setState({qbModal:which}); }
+  closeQb(){ this.setState({qbModal:null}); }
+  completeQb(){ const w=this.state.qbModal; if(!w) return; const key = w==='w9' ? 'w9' : 'banking'; this.setState(s=>({ qb:{...s.qb,[key]:'complete'}, qbModal:null })); }
+
+  fmtSize(b){ if(!b) return ''; const u=['B','KB','MB']; let i=0,n=b; while(n>=1024 && i<2){ n/=1024; i++; } return (n<10 && i>0 ? n.toFixed(1) : Math.round(n)) + ' ' + u[i]; }
+
+  renderVals(){
+    const f=this.state.form, st=this.state, dir=this.dir();
+    const section = st.section || 'crew';
+    const lang = st.lang || 'en';
+    const t = this.dict()[lang];
+    const err = st.errors || {};
+    const w9Done = st.qb.w9==='complete', bankDone = st.qb.banking==='complete';
+    const fileMeta = (m)=> m ? (m.name + '   \u00b7   ' + this.fmtSize(m.size)) : '';
+    const field = (k)=>(e)=>this.setField(k, e.target.value);
+    const stepDefs=[{num:'1',label:'You'},{num:'2',label:'Tax & banking'},{num:'3',label:'Details'},{num:'4',label:'Review'}];
+    const steps = stepDefs.map((d,i)=>({ num:d.num, label:d.label, current: st.step===i, go:()=>this.goStep(i) }));
+    const faqs = t.faq.map((d,i)=>({ q:d.q, a:d.a, open: st.openFaq===i, toggle:()=>this.setState(s=>({ openFaq: s.openFaq===i ? -1 : i })) }));
+
+    return {
+      accentColor: this.props.accentColor || 'oklch(0.82 0.12 210)',
+      fontKey: ({'Space Grotesk':'grotesk','Geist':'geist','Instrument Sans':'instrument'})[this.props.bodyFont] || 'geist',
+      showFaq: this.props.showFaq !== false,
+      landingLogoGap: (this.props.landingLogoGap ?? -40) + 'px',
+      landingBlurbY: (this.props.landingBlurbY ?? -150) + 'px',
+      landingContactGap: (this.props.landingContactGap ?? 26) + 'px',
+      isAdminView: !!this.state.adminView,
+      t, lang,
+      langToggleLabel: lang==='en' ? 'Español' : 'English',
+      toggleLang: ()=>this.setLang(lang==='en'?'es':'en'),
+      rosterLine: t.rosterPre + (f.name || (lang==='es'?'amigo':'friend')) + '.',
+      isA: dir==='A', isB: dir==='B',
+      setDirA: ()=>this.setState({direction:'A'}),
+      setDirB: ()=>this.setState({direction:'B'}),
+      showSuccess: !st.adminView && section==='crew' && st.submitted,
+      showA: !st.adminView && section==='crew' && !st.submitted && dir==='A',
+      showB: !st.adminView && section==='crew' && !st.submitted && dir==='B',
+      showClients: !st.adminView && section==='clients',
+      isCrew: !st.adminView && section==='crew',
+      isClients: !st.adminView && section==='clients',
+      showFooter: !st.adminView && (section==='crew' || section==='clients'),
+      sheetViewUrl: this.props.sheetViewUrl || 'https://docs.google.com/spreadsheets/d/1-yvBtc9m8Q3j2ssat9Ys0EnWFFS_YLqKmZBstgoPyYM/edit',
+      setCrew:()=>this.setState({ section:'crew', adminView:false }),
+      setClients:()=>this.setState({ section:'clients', adminView:false }),
+      f,
+      onName:field('name'), onEmail:field('email'), onPhone:field('phone'), onAddress:field('address'),
+      onPronouns:field('pronouns'), onCity:field('city'), onReferred:field('referredBy'), onLinkedin:field('linkedin'), onTravel:field('travel'),
+      onEcName:field('ecName'), onEcPhone:field('ecPhone'), onEcRel:field('ecRel'),
+      onWorked:(e)=>this.setField('workedBefore', e.target.checked),
+      onTerms:(e)=>this.setField('terms', e.target.checked),
+      onResume:(e)=>this.onFile('resume',e), onRateSheet:(e)=>this.onFile('rateSheet',e), onPhoto:(e)=>this.onFile('photo',e),
+      removeResume:()=>this.removeFile('resume'), removeRate:()=>this.removeFile('rateSheet'), removePhoto:()=>this.removeFile('photo'),
+      errName: err.name||'', errEmail: err.email||'', errTerms: err.terms||'',
+      invalidName: !!err.name, invalidEmail: !!err.email,
+      w9Done, w9Pending: !w9Done, bankDone, bankPending: !bankDone,
+      openQbW9:()=>this.openQb('w9'), openQbBank:()=>this.openQb('banking'),
+      showQbModal: st.qbModal!=null,
+      qbModalTitle: st.qbModal==='w9' ? t.w9Title : t.bankTitle,
+      qbModalDesc: st.qbModal==='w9' ? t.qbDescW9 : t.qbDescBank,
+      completeQb:()=>this.completeQb(), closeQb:()=>this.closeQb(),
+      hasResume: !!st.files.resume, resumeMeta: fileMeta(st.files.resume),
+      hasRate: !!st.files.rateSheet, rateMeta: fileMeta(st.files.rateSheet),
+      hasPhoto: !!st.files.photo, photoMeta: fileMeta(st.files.photo), photoPreview: st.photoPreview,
+      photoThumb: st.photoPreview ? React.createElement('img', { src: st.photoPreview, alt:'Profile preview', style:{ width:64, height:64, borderRadius:12, objectFit:'cover', border:'1.5px solid oklch(0.34 0.014 255)', flex:'none' } }) : null,
+      showOptional: st.showOptional, toggleOptional:()=>this.setState(s=>({ showOptional: !s.showOptional })),
+      next:()=>this.next(), back:()=>this.back(), submit:()=>this.submit(),
+      showBack: dir==='B' && st.step>0,
+      nextLabel: st.step===3 ? t.submit : 'Continue',
+      progressPct: (((st.step+1)/4)*100) + '%',
+      steps,
+      showStep0: dir==='B' && st.step===0,
+      showStep1: dir==='B' && st.step===1,
+      showStep2: dir==='B' && st.step===2,
+      showStep3: dir==='B' && st.step===3,
+      faqs,
+      anyQbPending: !w9Done || !bankDone,
+      additionalProvided: (['address','pronouns','city','referredBy','travel','ecName','ecPhone','ecRel'].some(k=>String(f[k]||'').trim()!=='') || f.workedBefore || !!st.files.resume || !!st.files.rateSheet || !!st.files.photo),
+      additionalSkipped: !(['address','pronouns','city','referredBy','travel','ecName','ecPhone','ecRel'].some(k=>String(f[k]||'').trim()!=='') || f.workedBefore || !!st.files.resume || !!st.files.rateSheet || !!st.files.photo),
+      reset:()=>this.setState({ submitted:false, step:0 }),
+      sumName: f.name || 'Not provided',
+      sumEmail: f.email || 'Not provided',
+
+      // ---- Admin ----
+      openAdmin:()=>this.openAdmin(),
+      goHome:()=>this.setState({ section:'crew', adminView:false, submitted:false, step:0, openRow:null, qbModal:null, exportOpen:false }),
+      closeAdmin:()=>this.closeAdmin(),
+      logout:()=>this.logout(),
+      showAdminLogin: st.adminView && !st.adminAuthed,
+      showAdminDash: st.adminView && st.adminAuthed,
+      loginUser: st.loginUser,
+      loginPass: st.loginPass,
+      onLoginUser:(e)=>this.setState({ loginUser:e.target.value, loginErr:'' }),
+      onLoginPass:(e)=>this.setState({ loginPass:e.target.value, loginErr:'' }),
+      onLoginKey:(e)=>{ if(e.key==='Enter') this.doLogin(); },
+      doLogin:()=>this.doLogin(),
+      loginErr: st.loginErr,
+      adminSearch: st.adminSearch,
+      onAdminSearch:(e)=>this.setState({ adminSearch:e.target.value }),
+      subTotal: st.submissions.length,
+      subOnboarded: st.submissions.filter(x=>x.w9==='complete' && x.banking==='complete').length,
+      subAwaiting: st.submissions.filter(x=>!(x.w9==='complete' && x.banking==='complete')).length,
+      hasSubs: (()=>{ const q=st.adminSearch.trim().toLowerCase(); return st.submissions.some(x=>!q || (x.name+' '+x.email+' '+x.city).toLowerCase().includes(q)); })(),
+      noSubs: (()=>{ const q=st.adminSearch.trim().toLowerCase(); return !st.submissions.some(x=>!q || (x.name+' '+x.email+' '+x.city).toLowerCase().includes(q)); })(),
+      ...(()=>{
+        const q=st.adminSearch.trim().toLowerCase();
+        const match=(x)=>!q || ((x.name||'')+' '+(x.email||'')+' '+(x.city||'')).toLowerCase().includes(q);
+        const isComplete=(s)=>this.isCompleteRec(s);
+        const missingLabel=(s)=>{ const m=[]; if(!String(s.name||'').trim() || !String(s.email||'').trim()) m.push('Contact info'); if(s.w9!=='complete') m.push('W-9'); if(s.banking!=='complete') m.push('Banking'); return m.length ? ('Needs: '+m.join(' \u00b7 ')) : ''; };
+        const DOC='https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+        const mapSub=(s)=>{
+          const ini=(s.name||'?').trim().split(/\s+/).map(x=>x[0]||'').slice(0,2).join('').toUpperCase()||'?';
+          const pic=s.photoUrl||'';
+          return {
+          id:s.id, name:s.name||'Not provided', email:s.email||'Not provided',
+          city:s.city||'Not provided', cityInline:String(s.city||'').trim(), phone:s.phone||'Not provided',
+          dateStr:this.fmtDate(s.createdAt),
+          initials:ini, photoUrl:pic,
+          avatar: pic
+            ? React.createElement('img',{src:pic,alt:'',style:{width:'100%',height:'100%',objectFit:'cover',borderRadius:'50%',display:'block'}})
+            : React.createElement('span',{style:{fontFamily:"'Space Mono',monospace",fontSize:13,fontWeight:700}}, ini),
+          w9Done:s.w9==='complete', w9Pending:s.w9!=='complete',
+          bankDone:s.banking==='complete', bankPending:s.banking!=='complete',
+          fullyDone: isComplete(s), isIncomplete: !isComplete(s),
+          missingLabel: missingLabel(s), hasMissing: !!missingLabel(s),
+          nudged: !!st.nudged[s.id], notNudged: !st.nudged[s.id], sendNudge:()=>this.sendNudge(s.id),
+          hasAdd: !!s.additional,
+          open: st.openRow===s.id,
+          toggle:()=>this.toggleRow(s.id),
+          address:s.address||'Not provided', pronouns:s.pronouns||'Not provided',
+          referredBy:s.referredBy||'Not provided', linkedin:s.linkedin||'Not provided', hasLinkedin:!!s.linkedin, noLinkedin:!s.linkedin, linkedinUrl:(s.linkedin?(/^https?:/i.test(s.linkedin)?s.linkedin:('https://'+s.linkedin)):''),
+          travel: s.willTravel ? (s.travel ? (s.travel+' mi') : 'Any distance') : 'Not traveling',
+          worked: s.workedBefore?'Yes':'No',
+          ec: (s.ecName||s.ecPhone||s.ecRel) ? [s.ecName, s.ecRel, s.ecPhone].filter(Boolean).join(' \u00b7 ') : 'Not provided',
+          resume:s.resume||'Not provided', hasResume:!!s.resume, noResume:!s.resume, resumeUrl: s.resume?DOC:'',
+          rateSheet:s.rateSheet||'Not provided', hasRate:!!s.rateSheet, noRate:!s.rateSheet, rateUrl: s.rateSheet?DOC:'',
+          photo: s.photo?'Uploaded':'Not provided',
+          };
+        };
+        const filtered=st.submissions.filter(match);
+        const subsComplete=filtered.filter(isComplete).map(mapSub);
+        const subsIncomplete=filtered.filter(x=>!isComplete(x)).map(mapSub);
+        return { subsComplete, subsIncomplete, subCompleteCount: subsComplete.length, subIncompleteCount: subsIncomplete.length, noComplete: subsComplete.length===0, hasIncomplete: subsIncomplete.length>0 };
+      })(),
+
+      showExportModal: st.exportOpen,
+      openExport:()=>this.openExport(),
+      closeExport:()=>this.closeExport(),
+      downloadCsv:()=>this.downloadCsv(),
+      syncDemo:()=>this.syncDemo(),
+      syncLabel: st.syncMsg || 'Sync demo data',
+      onWillTravel:(e)=>this.setField('willTravel', e.target.checked),
+      lastExportLabel: st.lastExport ? this.fmtDate(st.lastExport) : 'Never',
+      sinceCount: (()=>{ const le=st.lastExport?Date.parse(st.lastExport):0; return st.submissions.filter(s=>this.isCompleteRec(s) && (!le || Date.parse(s.createdAt)>le)).length; })(),
+      cityBreakdown: (()=>{ const m={}; st.submissions.filter(s=>this.isCompleteRec(s)).forEach(s=>{ const c=(String(s.city||'').trim())||'Unknown'; m[c]=(m[c]||0)+1; }); const arr=Object.keys(m).map(c=>({city:c,count:m[c]})).sort((a,b)=>b.count-a.count); const max=arr.reduce((x,y)=>Math.max(x,y.count),1); return arr.map(x=>({city:x.city,count:x.count,pct:Math.round(x.count/max*100)+'%'})); })(),
+    };
+  }
+}
+</script>
+</body>
+</html>
