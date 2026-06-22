@@ -188,7 +188,7 @@ function doPost(e) {
       if (col.type === 'link' || col.type === 'photo') {
         var url = data[col.key] || '';
         if (url && url.indexOf('http') === 0) {
-          var label = col.type === 'photo' ? '📷 Photo' : col.header;
+          var label = col.type === 'photo' ? 'Photo' : col.header;
           // Escape any double-quotes in the URL (shouldn't occur but safe)
           var safeUrl = url.replace(/"/g, '""');
           sheet.getRange(newRow, j + 1)
