@@ -51,6 +51,15 @@
     #onb-logo-wrap{display:flex!important;padding-top:calc(env(safe-area-inset-top, 0px) + 24px)!important;}
     #adm-logo-wrap{display:flex!important;padding-top:calc(env(safe-area-inset-top, 0px) + 24px)!important;}
   }
+  @media (max-width:900px){
+    #adm-cols{flex-direction:column!important;}
+    #adm-card{width:100%!important;position:static!important;max-height:none!important;}
+    #adm-shell{flex-direction:column!important;}
+    #adm-side{width:100%!important;flex-direction:row!important;flex-wrap:wrap!important;align-items:center!important;}
+  }
+  @media (max-width:700px){
+    #adm-search{grid-template-columns:1fr!important;}
+  }
 </style>
 </helmet>
 
@@ -71,16 +80,16 @@
         <button onClick="{{ setClients }}" aria-current="{{ isClients }}" style="border:none;background:transparent;color:oklch(0.60 0.012 255);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:8px 11px;border-radius:8px;cursor:pointer;">{{ t.navClients }}</button>
       </nav>
     </div>
-    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><button onClick="{{ openAdmin }}" style="display:flex;align-items:center;gap:8px;border:1.5px solid oklch(0.30 0.014 255);background:oklch(0.20 0.014 255);color:oklch(0.80 0.012 255);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:11px 18px;border-radius:999px;cursor:pointer;" style-hover="border-color:var(--accent);color:#fff;"><span style="font-size:12px;line-height:1;">◇</span> Admin</button></div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;"><a href="admin.html" style="display:flex;align-items:center;gap:8px;border:1.5px solid oklch(0.30 0.014 255);background:oklch(0.20 0.014 255);color:oklch(0.80 0.012 255);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:11px 18px;border-radius:999px;cursor:pointer;text-decoration:none;" style-hover="border-color:var(--accent);color:#fff;"><span style="font-size:12px;line-height:1;">◇</span> Admin</a></div>
   </header>
 
   <nav id="phone-nav" aria-label="Primary" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:60;gap:6px;background:oklch(0.135 0.012 255 / .94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid oklch(0.27 0.014 255);padding:8px 10px calc(10px + env(safe-area-inset-bottom, 0px));">
     <button onClick="{{ setCrew }}" aria-current="{{ isCrew }}" style="flex:1;background:none;border:none;color:oklch(0.60 0.012 255);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:12px 4px;min-height:50px;border-radius:11px;cursor:pointer;">Onboarding</button>
     <button onClick="{{ setClients }}" aria-current="{{ isClients }}" style="flex:1;background:none;border:none;color:oklch(0.60 0.012 255);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:12px 4px;min-height:50px;border-radius:11px;cursor:pointer;">Clients</button>
-    <button onClick="{{ openAdmin }}" aria-current="{{ isAdminView }}" style="flex:1;background:none;border:none;color:oklch(0.60 0.012 255);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:12px 4px;min-height:50px;border-radius:11px;cursor:pointer;">Admin</button>
+    <a href="admin.html" style="flex:1;background:none;border:none;color:oklch(0.60 0.012 255);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:12px 4px;min-height:50px;border-radius:11px;cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;">Admin</a>
   </nav>
 
-  <main style="position:relative;z-index:2;max-width:760px;margin:0 auto;padding:clamp(26px,5vw,52px) clamp(18px,5vw,40px) 90px;">
+  <main style="position:relative;z-index:2;max-width:{{ mainMaxWidth }};margin:0 auto;padding:clamp(26px,5vw,52px) clamp(18px,5vw,40px) 90px;">
 
     <sc-if value="{{ isCrew }}" hint-placeholder-val="{{ true }}">
       <div id="onb-logo-wrap" style="display:none;position:relative;justify-content:center;margin-bottom:18px;">
@@ -261,6 +270,11 @@
                 </sc-if>
               </div>
               <div>
+                <label>{{ t.positionsLabel }}</label>
+                <div style="color:oklch(0.55 0.012 255);text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:12.5px;margin:-6px 0 10px;">{{ t.positionsHint }}</div>
+                {{ positionsEl }}
+              </div>
+              <div>
                 <label for="a-referred">{{ t.referred }}</label>
                 <input id="a-referred" type="text" value="{{ f.referredBy }}" onChange="{{ onReferred }}" placeholder="Name of crew member or contact">
               </div>
@@ -313,8 +327,62 @@
         <div style="margin-top:30px;margin-bottom:22px;padding-top:24px;border-top:1px solid oklch(0.26 0.014 255);">
           <label for="a-terms" style="display:flex;align-items:flex-start;gap:13px;cursor:pointer;margin:0;text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:16px;line-height:1.55;color:oklch(0.80 0.012 255);">
             <input id="a-terms" type="checkbox" checked="{{ f.terms }}" onChange="{{ onTerms }}" aria-describedby="a-terms-err" style="margin-top:1px;">
-            <span>{{ t.agreePre }}<span style="color:var(--accent);text-decoration:underline;">{{ t.termsLink }}</span>{{ t.agreePost }}</span>
+            <span>{{ t.agreePre }}<span onClick="{{ toggleTerms }}" role="button" tabIndex="0" style="color:var(--accent);text-decoration:underline;cursor:pointer;">{{ t.termsLink }}</span>{{ t.agreePost }}</span>
           </label>
+          <sc-if value="{{ showTerms }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:14px;background:oklch(0.17 0.014 255);border:1px solid oklch(0.28 0.014 255);border-radius:14px;padding:22px clamp(18px,3.5vw,28px);animation:fadeUp .25s ease;">
+            <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:oklch(0.62 0.012 255);margin-bottom:16px;">Contract terms &amp; rates</div>
+    
+            <!-- Overtime -->
+            <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Overtime</div>
+            <ul style="list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:9px;color:oklch(0.80 0.012 255);font-size:14.5px;line-height:1.6;">
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>OT (1.5x hourly on top of day rate) will be incurred after 10 hours on the clock</li>
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>DT (2x hourly on top of day rate) will be incurred after 14 hours on the clock</li>
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>All hours worked between 12am and 6am will be billed at OT (1.5x hourly)</li>
+            </ul>
+    
+            <!-- Meals -->
+            <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Meals</div>
+            <ul style="list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:9px;color:oklch(0.80 0.012 255);font-size:14.5px;line-height:1.6;">
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>One hour walk away meal breaks will be off clock</li>
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>A meal or one hour meal break must be provided after 5 hours</li>
+              <li style="padding-left:18px;position:relative;color:#fff;font-weight:600;"><span style="position:absolute;left:0;color:var(--accent);">·</span>ALL MEAL PENALTY MUST BE APPROVED BY PM BEFORE IT IS INCURRED</li>
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>Meal Penalty (1.5x hourly on top of day rate) will incur after 5 hours worked with a half hour grace period / one hour grace period if meal is being provided. This grace should not be abused by the client, please contact Coordinator directly if this is a concern</li>
+            </ul>
+    
+            <!-- Short-turn -->
+            <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Short-turn</div>
+            <ul style="list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:9px;color:oklch(0.80 0.012 255);font-size:14.5px;line-height:1.6;">
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>Short-turnaround will be billed if less than 8 hours between 10 hour shifts at 1.5x hourly</li>
+            </ul>
+    
+            <!-- Cancellation -->
+            <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Cancellation</div>
+            <ul style="list-style:none;margin:0 0 30px;padding:0;display:flex;flex-direction:column;gap:9px;color:oklch(0.80 0.012 255);font-size:14.5px;line-height:1.6;">
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>If position is cancelled within 48 hours of call time, contractor will be paid 50% of wages due (when refundable)</li>
+            </ul>
+    
+            <!-- Independent Contractor Agreement -->
+            <div style="border-top:1px solid oklch(0.28 0.014 255);padding-top:24px;">
+              <div style="font-weight:600;font-size:16px;color:#fff;margin-bottom:16px;line-height:1.4;">Terms &amp; Conditions of Independent Contractor Agreement</div>
+              <ol style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:11px;color:oklch(0.78 0.012 255);font-size:14px;line-height:1.6;">
+                <li>The Term of this Agreement is for the specific Event, Location, and Date(s) identified, and automatically terminates at the conclusion of the Event.</li>
+                <li>You agree to perform the work specified in a professional and efficient manner.</li>
+                <li>You certify that you are an Independent Contractor seeking and receiving work from multiple sources, and booking work as you see fit.</li>
+                <li>You have not entered into an employee-employer engagement or contract with AKAV LLC. Instead, you have agreed to perform the work specified herein on an independent contractor basis for the specific Event identified above.</li>
+                <li>You have unique skills, knowledge and training sufficient to perform the work specified herein.</li>
+                <li>You have your own tools to perform the work specified herein.</li>
+                <li>You shall be responsible for your own expenses, if any, associated with your independent contractor services for the Event.</li>
+                <li>You agree to follow the house rules of the Event and Client workplace, which may be provided separately.</li>
+                <li>You agree to complete a W-9, or already have one on file with AKAV LLC.</li>
+                <li>You agree to maintain business liability relating to your work performed and if you have employees to also have workmen&rsquo;s compensation insurance.</li>
+                <li>This Agreement is subject to the laws of California.</li>
+                <li>You agree this Agreement may be executed through electronic signature and in multiple originals.</li>
+                <li>If any portion of this Agreement is determined to be invalid and unenforceable, the remaining portions of the Agreement shall remain in full force.</li>
+              </ol>
+            </div>
+          </div>
+          </sc-if>
           <sc-if value="{{ errTerms }}" hint-placeholder-val="{{ false }}"><div id="a-terms-err" role="alert" style="color:oklch(0.78 0.16 25);font-size:13.5px;margin-top:9px;">{{ errTerms }}</div></sc-if>
         </div>
 
@@ -484,8 +552,62 @@
             </div>
             <label for="b-terms" style="display:flex;align-items:flex-start;gap:13px;cursor:pointer;margin:0;text-transform:none;letter-spacing:normal;font-family:var(--font-body);font-size:16px;line-height:1.55;color:oklch(0.80 0.012 255);">
               <input id="b-terms" type="checkbox" checked="{{ f.terms }}" onChange="{{ onTerms }}" aria-describedby="b-terms-err" style="margin-top:1px;">
-              <span>{{ t.agreePre }}<span style="color:var(--accent);text-decoration:underline;">{{ t.termsLink }}</span>{{ t.agreePost }}</span>
+              <span>{{ t.agreePre }}<span onClick="{{ toggleTerms }}" role="button" tabIndex="0" style="color:var(--accent);text-decoration:underline;cursor:pointer;">{{ t.termsLink }}</span>{{ t.agreePost }}</span>
             </label>
+          <sc-if value="{{ showTerms }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:14px;background:oklch(0.17 0.014 255);border:1px solid oklch(0.28 0.014 255);border-radius:14px;padding:22px clamp(18px,3.5vw,28px);animation:fadeUp .25s ease;">
+            <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:oklch(0.62 0.012 255);margin-bottom:16px;">Contract terms &amp; rates</div>
+    
+            <!-- Overtime -->
+            <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Overtime</div>
+            <ul style="list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:9px;color:oklch(0.80 0.012 255);font-size:14.5px;line-height:1.6;">
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>OT (1.5x hourly on top of day rate) will be incurred after 10 hours on the clock</li>
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>DT (2x hourly on top of day rate) will be incurred after 14 hours on the clock</li>
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>All hours worked between 12am and 6am will be billed at OT (1.5x hourly)</li>
+            </ul>
+    
+            <!-- Meals -->
+            <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Meals</div>
+            <ul style="list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:9px;color:oklch(0.80 0.012 255);font-size:14.5px;line-height:1.6;">
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>One hour walk away meal breaks will be off clock</li>
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>A meal or one hour meal break must be provided after 5 hours</li>
+              <li style="padding-left:18px;position:relative;color:#fff;font-weight:600;"><span style="position:absolute;left:0;color:var(--accent);">·</span>ALL MEAL PENALTY MUST BE APPROVED BY PM BEFORE IT IS INCURRED</li>
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>Meal Penalty (1.5x hourly on top of day rate) will incur after 5 hours worked with a half hour grace period / one hour grace period if meal is being provided. This grace should not be abused by the client, please contact Coordinator directly if this is a concern</li>
+            </ul>
+    
+            <!-- Short-turn -->
+            <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Short-turn</div>
+            <ul style="list-style:none;margin:0 0 26px;padding:0;display:flex;flex-direction:column;gap:9px;color:oklch(0.80 0.012 255);font-size:14.5px;line-height:1.6;">
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>Short-turnaround will be billed if less than 8 hours between 10 hour shifts at 1.5x hourly</li>
+            </ul>
+    
+            <!-- Cancellation -->
+            <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Cancellation</div>
+            <ul style="list-style:none;margin:0 0 30px;padding:0;display:flex;flex-direction:column;gap:9px;color:oklch(0.80 0.012 255);font-size:14.5px;line-height:1.6;">
+              <li style="padding-left:18px;position:relative;"><span style="position:absolute;left:0;color:var(--accent);">·</span>If position is cancelled within 48 hours of call time, contractor will be paid 50% of wages due (when refundable)</li>
+            </ul>
+    
+            <!-- Independent Contractor Agreement -->
+            <div style="border-top:1px solid oklch(0.28 0.014 255);padding-top:24px;">
+              <div style="font-weight:600;font-size:16px;color:#fff;margin-bottom:16px;line-height:1.4;">Terms &amp; Conditions of Independent Contractor Agreement</div>
+              <ol style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:11px;color:oklch(0.78 0.012 255);font-size:14px;line-height:1.6;">
+                <li>The Term of this Agreement is for the specific Event, Location, and Date(s) identified, and automatically terminates at the conclusion of the Event.</li>
+                <li>You agree to perform the work specified in a professional and efficient manner.</li>
+                <li>You certify that you are an Independent Contractor seeking and receiving work from multiple sources, and booking work as you see fit.</li>
+                <li>You have not entered into an employee-employer engagement or contract with AKAV LLC. Instead, you have agreed to perform the work specified herein on an independent contractor basis for the specific Event identified above.</li>
+                <li>You have unique skills, knowledge and training sufficient to perform the work specified herein.</li>
+                <li>You have your own tools to perform the work specified herein.</li>
+                <li>You shall be responsible for your own expenses, if any, associated with your independent contractor services for the Event.</li>
+                <li>You agree to follow the house rules of the Event and Client workplace, which may be provided separately.</li>
+                <li>You agree to complete a W-9, or already have one on file with AKAV LLC.</li>
+                <li>You agree to maintain business liability relating to your work performed and if you have employees to also have workmen&rsquo;s compensation insurance.</li>
+                <li>This Agreement is subject to the laws of California.</li>
+                <li>You agree this Agreement may be executed through electronic signature and in multiple originals.</li>
+                <li>If any portion of this Agreement is determined to be invalid and unenforceable, the remaining portions of the Agreement shall remain in full force.</li>
+              </ol>
+            </div>
+          </div>
+          </sc-if>
             <sc-if value="{{ errTerms }}" hint-placeholder-val="{{ false }}"><div id="b-terms-err" role="alert" style="color:oklch(0.78 0.16 25);font-size:13.5px;margin-top:9px;">{{ errTerms }}</div></sc-if>
           </div>
         </sc-if>
@@ -521,174 +643,6 @@
     </sc-if>
 
 
-    <!-- ===================== ADMIN LOGIN ===================== -->
-    <sc-if value="{{ showAdminLogin }}" hint-placeholder-val="{{ false }}">
-      <div style="animation:pageIn .45s cubic-bezier(.22,.61,.36,1);max-width:420px;margin:36px auto 0;">
-        <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;">Staff only</div>
-        <h1 style="font-family:var(--font-body);font-weight:700;font-size:30px;color:#fff;margin:0 0 8px;letter-spacing:-.01em;">Sign in</h1>
-        <p style="color:oklch(0.72 0.012 255);font-size:15px;line-height:1.55;margin:0 0 26px;">Username: admin Password: 1234</p>
-        <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:18px;padding:clamp(20px,4vw,28px);display:flex;flex-direction:column;gap:18px;">
-          <div>
-            <label for="login-user">Username</label>
-            <input id="login-user" type="text" value="{{ loginUser }}" onChange="{{ onLoginUser }}" onKeyDown="{{ onLoginKey }}" placeholder="admin" autoComplete="off">
-          </div>
-          <div>
-            <label for="login-pass">Password</label>
-            <input id="login-pass" type="password" value="{{ loginPass }}" onChange="{{ onLoginPass }}" onKeyDown="{{ onLoginKey }}" placeholder="••••" autoComplete="off">
-          </div>
-          <sc-if value="{{ loginErr }}" hint-placeholder-val="{{ false }}"><div role="alert" style="color:oklch(0.78 0.16 25);font-size:13.5px;">{{ loginErr }}</div></sc-if>
-          <div style="display:flex;gap:10px;margin-top:4px;">
-            <button onClick="{{ closeAdmin }}" style="flex:none;background:transparent;color:oklch(0.78 0.012 255);border:1.5px solid oklch(0.34 0.014 255);border-radius:12px;padding:14px 20px;cursor:pointer;font-size:15px;font-weight:600;min-height:52px;">Cancel</button>
-            <button onClick="{{ doLogin }}" style="flex:1;background:var(--accent);color:oklch(0.18 0.03 250);font-weight:700;font-size:16px;border:none;border-radius:12px;padding:14px;cursor:pointer;min-height:52px;" style-hover="filter:brightness(1.06);">Sign in</button>
-          </div>
-          
-        </div>
-      </div>
-    </sc-if>
-
-    <!-- ===================== ADMIN DASHBOARD ===================== -->
-    <sc-if value="{{ showAdminDash }}" hint-placeholder-val="{{ false }}">
-      <div style="animation:pageIn .45s cubic-bezier(.22,.61,.36,1);">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px;">
-          <div>
-            <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">Admin</div>
-            <h1 style="font-family:var(--font-body);font-weight:700;font-size:clamp(26px,5vw,34px);color:#fff;margin:0;letter-spacing:-.01em;">Crew submissions</h1>
-          </div>
-          <div style="display:flex;gap:10px;">
-            <a href="{{ sheetViewUrl }}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:8px;background:var(--accent);color:oklch(0.18 0.03 250);border:none;border-radius:999px;padding:11px 20px;cursor:pointer;font-size:14px;font-weight:700;text-decoration:none;" style-hover="filter:brightness(1.06);">Open Google Sheet ↗</a>
-            <button onClick="{{ syncDemo }}" style="background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:11px 18px;cursor:pointer;font-size:14px;font-weight:700;">{{ syncLabel }}</button>
-            <button onClick="{{ logout }}" style="background:transparent;color:oklch(0.80 0.012 255);border:1.5px solid oklch(0.34 0.014 255);border-radius:999px;padding:11px 18px;cursor:pointer;font-size:14px;font-weight:600;">Log out</button>
-          </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;">
-          <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:14px;padding:18px;">
-            <div style="font-family:var(--font-body);font-weight:700;font-size:30px;color:#fff;line-height:1;">{{ subTotal }}</div>
-            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.66 0.012 255);margin-top:8px;">Total</div>
-          </div>
-          <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:14px;padding:18px;">
-            <div style="font-family:var(--font-body);font-weight:700;font-size:30px;color:oklch(0.86 0.14 155);line-height:1;">{{ subOnboarded }}</div>
-            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.66 0.012 255);margin-top:8px;">Fully onboarded</div>
-          </div>
-          <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:14px;padding:18px;">
-            <div style="font-family:var(--font-body);font-weight:700;font-size:30px;color:oklch(0.86 0.12 80);line-height:1;">{{ subAwaiting }}</div>
-            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.66 0.012 255);margin-top:8px;">Awaiting QuickBooks</div>
-          </div>
-        </div>
-
-        <input type="text" value="{{ adminSearch }}" onChange="{{ onAdminSearch }}" placeholder="Search by name, email, or city…" style="margin-bottom:16px;">
-
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <sc-for list="{{ subsComplete }}" as="sub" hint-placeholder-count="3">
-            <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:14px;overflow:hidden;">
-              <button onClick="{{ sub.toggle }}" aria-expanded="{{ sub.open }}" style="width:100%;display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:transparent;border:none;cursor:pointer;padding:16px 18px;text-align:left;">
-                <span style="width:42px;height:42px;border-radius:50%;background:color-mix(in oklch, var(--accent) 16%, transparent);border:1px solid color-mix(in oklch, var(--accent) 40%, transparent);color:var(--accent);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;">{{ sub.avatar }}</span>
-                <span style="flex:1;min-width:140px;">
-                  <span style="display:flex;align-items:baseline;gap:8px;overflow:hidden;">
-                    <span style="font-family:var(--font-body);font-weight:600;font-size:16px;color:#fff;white-space:nowrap;">{{ sub.name }}</span>
-                    <span style="font-size:12.5px;color:oklch(0.62 0.012 255);font-family:'Space Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ sub.cityInline }}</span>
-                  </span>
-                  <span style="display:block;font-size:13px;color:oklch(0.66 0.012 255);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;">{{ sub.email }}</span>
-                </span>
-                <span style="display:flex;gap:6px;flex:none;">
-                  <sc-if value="{{ sub.w9Done }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">W-9 ✓</span></sc-if>
-                  <sc-if value="{{ sub.w9Pending }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">W-9</span></sc-if>
-                  <sc-if value="{{ sub.bankDone }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">Bank ✓</span></sc-if>
-                  <sc-if value="{{ sub.bankPending }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">Bank</span></sc-if>
-                </span>
-                <span style="font-size:12px;color:oklch(0.6 0.012 255);font-family:'Space Mono',monospace;flex:none;white-space:nowrap;">{{ sub.dateStr }}</span>
-              </button>
-              <sc-if value="{{ sub.isIncomplete }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:0 18px 16px;">
-                  <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;color:oklch(0.80 0.10 80);">{{ sub.missingLabel }}</span>
-                  <sc-if value="{{ sub.nudged }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px;color:oklch(0.84 0.13 155);font-size:13px;font-weight:600;">✓ Nudge sent</span></sc-if>
-                  <sc-if value="{{ sub.notNudged }}" hint-placeholder-val="{{ true }}"><button onClick="{{ sub.sendNudge }}" style="background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:color-mix(in oklch, var(--accent) 14%, transparent);">Send nudge</button></sc-if>
-                </div>
-              </sc-if>
-              <sc-if value="{{ sub.open }}" hint-placeholder-val="{{ false }}">
-                <div style="padding:0 18px 20px;border-top:1px solid oklch(0.28 0.014 255);">
-                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px 24px;margin-top:16px;">
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Phone</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.phone }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">City</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.city }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Address</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.address }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Pronouns</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.pronouns }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Referred by</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.referredBy }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">LinkedIn</div><sc-if value="{{ sub.hasLinkedin }}" hint-placeholder-val="{{ false }}"><a href="{{ sub.linkedinUrl }}" target="_blank" rel="noopener" style="font-size:14px;color:var(--accent);text-decoration:underline;word-break:break-word;">{{ sub.linkedin }}</a></sc-if><sc-if value="{{ sub.noLinkedin }}" hint-placeholder-val="{{ true }}"><div style="font-size:14px;color:oklch(0.92 0.005 255);">Not provided</div></sc-if></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Worked before</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.worked }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Travel radius</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.travel }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">{{ t.emergency }}</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.ec }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Resume</div><sc-if value="{{ sub.hasResume }}" hint-placeholder-val="{{ false }}"><a href="{{ sub.resumeUrl }}" target="_blank" rel="noopener" style="font-size:14px;color:var(--accent);text-decoration:underline;word-break:break-word;">{{ sub.resume }}</a></sc-if><sc-if value="{{ sub.noResume }}" hint-placeholder-val="{{ true }}"><div style="font-size:14px;color:oklch(0.92 0.005 255);">Not provided</div></sc-if></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Rate sheet</div><sc-if value="{{ sub.hasRate }}" hint-placeholder-val="{{ false }}"><a href="{{ sub.rateUrl }}" target="_blank" rel="noopener" style="font-size:14px;color:var(--accent);text-decoration:underline;word-break:break-word;">{{ sub.rateSheet }}</a></sc-if><sc-if value="{{ sub.noRate }}" hint-placeholder-val="{{ true }}"><div style="font-size:14px;color:oklch(0.92 0.005 255);">Not provided</div></sc-if></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Profile photo</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.photo }}</div></div>
-                  </div>
-                </div>
-              </sc-if>
-            </div>
-          </sc-for>
-          <sc-if value="{{ noComplete }}" hint-placeholder-val="{{ false }}">
-            <div style="background:oklch(0.19 0.014 255);border:1px dashed oklch(0.30 0.014 255);border-radius:14px;padding:34px 20px;text-align:center;color:oklch(0.66 0.012 255);font-size:15px;">No completed intakes to show.</div>
-          </sc-if>
-        </div>
-
-        <sc-if value="{{ hasIncomplete }}" hint-placeholder-val="{{ false }}">
-          <div style="margin-top:34px;">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
-              <h2 style="font-family:var(--font-body);font-weight:700;font-size:20px;color:#fff;margin:0;">Incomplete intakes</h2>
-              <span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:3px 11px;border-radius:999px;font-family:'Space Mono',monospace;font-size:11px;">{{ subIncompleteCount }}</span>
-            </div>
-            <p style="color:oklch(0.64 0.012 255);font-size:13.5px;line-height:1.5;margin:0 0 16px;">Started onboarding but still missing QuickBooks or contact info.</p>
-            <div style="display:flex;flex-direction:column;gap:10px;">
-              <sc-for list="{{ subsIncomplete }}" as="sub" hint-placeholder-count="2">
-            <div style="background:oklch(0.205 0.014 255);border:1.5px solid oklch(0.295 0.014 255);border-radius:14px;overflow:hidden;">
-              <button onClick="{{ sub.toggle }}" aria-expanded="{{ sub.open }}" style="width:100%;display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:transparent;border:none;cursor:pointer;padding:16px 18px;text-align:left;">
-                <span style="width:42px;height:42px;border-radius:50%;background:color-mix(in oklch, var(--accent) 16%, transparent);border:1px solid color-mix(in oklch, var(--accent) 40%, transparent);color:var(--accent);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;">{{ sub.avatar }}</span>
-                <span style="flex:1;min-width:140px;">
-                  <span style="display:flex;align-items:baseline;gap:8px;overflow:hidden;">
-                    <span style="font-family:var(--font-body);font-weight:600;font-size:16px;color:#fff;white-space:nowrap;">{{ sub.name }}</span>
-                    <span style="font-size:12.5px;color:oklch(0.62 0.012 255);font-family:'Space Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ sub.cityInline }}</span>
-                  </span>
-                  <span style="display:block;font-size:13px;color:oklch(0.66 0.012 255);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px;">{{ sub.email }}</span>
-                </span>
-                <span style="display:flex;gap:6px;flex:none;">
-                  <sc-if value="{{ sub.w9Done }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">W-9 ✓</span></sc-if>
-                  <sc-if value="{{ sub.w9Pending }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">W-9</span></sc-if>
-                  <sc-if value="{{ sub.bankDone }}" hint-placeholder-val="{{ true }}"><span style="background:color-mix(in oklch, oklch(0.80 0.15 155) 16%, transparent);color:oklch(0.86 0.14 155);border:1px solid color-mix(in oklch, oklch(0.80 0.15 155) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">Bank ✓</span></sc-if>
-                  <sc-if value="{{ sub.bankPending }}" hint-placeholder-val="{{ false }}"><span style="background:color-mix(in oklch, oklch(0.82 0.13 80) 16%, transparent);color:oklch(0.86 0.12 80);border:1px solid color-mix(in oklch, oklch(0.82 0.13 80) 38%, transparent);padding:4px 9px;border-radius:7px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.04em;white-space:nowrap;">Bank</span></sc-if>
-                </span>
-                <span style="font-size:12px;color:oklch(0.6 0.012 255);font-family:'Space Mono',monospace;flex:none;white-space:nowrap;">{{ sub.dateStr }}</span>
-              </button>
-              <sc-if value="{{ sub.isIncomplete }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:0 18px 16px;">
-                  <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.04em;color:oklch(0.80 0.10 80);">{{ sub.missingLabel }}</span>
-                  <sc-if value="{{ sub.nudged }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px;color:oklch(0.84 0.13 155);font-size:13px;font-weight:600;">✓ Nudge sent</span></sc-if>
-                  <sc-if value="{{ sub.notNudged }}" hint-placeholder-val="{{ true }}"><button onClick="{{ sub.sendNudge }}" style="background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:999px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;" style-hover="background:color-mix(in oklch, var(--accent) 14%, transparent);">Send nudge</button></sc-if>
-                </div>
-              </sc-if>
-              <sc-if value="{{ sub.open }}" hint-placeholder-val="{{ false }}">
-                <div style="padding:0 18px 20px;border-top:1px solid oklch(0.28 0.014 255);">
-                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px 24px;margin-top:16px;">
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Phone</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.phone }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">City</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.city }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Address</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.address }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Pronouns</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.pronouns }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Referred by</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.referredBy }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">LinkedIn</div><sc-if value="{{ sub.hasLinkedin }}" hint-placeholder-val="{{ false }}"><a href="{{ sub.linkedinUrl }}" target="_blank" rel="noopener" style="font-size:14px;color:var(--accent);text-decoration:underline;word-break:break-word;">{{ sub.linkedin }}</a></sc-if><sc-if value="{{ sub.noLinkedin }}" hint-placeholder-val="{{ true }}"><div style="font-size:14px;color:oklch(0.92 0.005 255);">Not provided</div></sc-if></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Worked before</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.worked }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Travel radius</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.travel }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">{{ t.emergency }}</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.ec }}</div></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Resume</div><sc-if value="{{ sub.hasResume }}" hint-placeholder-val="{{ false }}"><a href="{{ sub.resumeUrl }}" target="_blank" rel="noopener" style="font-size:14px;color:var(--accent);text-decoration:underline;word-break:break-word;">{{ sub.resume }}</a></sc-if><sc-if value="{{ sub.noResume }}" hint-placeholder-val="{{ true }}"><div style="font-size:14px;color:oklch(0.92 0.005 255);">Not provided</div></sc-if></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Rate sheet</div><sc-if value="{{ sub.hasRate }}" hint-placeholder-val="{{ false }}"><a href="{{ sub.rateUrl }}" target="_blank" rel="noopener" style="font-size:14px;color:var(--accent);text-decoration:underline;word-break:break-word;">{{ sub.rateSheet }}</a></sc-if><sc-if value="{{ sub.noRate }}" hint-placeholder-val="{{ true }}"><div style="font-size:14px;color:oklch(0.92 0.005 255);">Not provided</div></sc-if></div>
-                    <div><div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.6 0.012 255);margin-bottom:4px;">Profile photo</div><div style="font-size:14px;color:oklch(0.92 0.005 255);word-break:break-word;">{{ sub.photo }}</div></div>
-                  </div>
-                </div>
-              </sc-if>
-            </div>
-          </sc-for>
-            </div>
-          </div>
-        </sc-if>
-      </div>
-    </sc-if>
 
     <sc-if value="{{ showFooter }}" hint-placeholder-val="{{ true }}">
       <footer style="margin-top:44px;padding:22px 0 6px;border-top:1px solid oklch(0.24 0.014 255 / .8);text-align:center;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.1em;line-height:1.7;color:oklch(0.54 0.012 255);">© 2026 AKAV LLC · Audio, Video &amp; Production Services · All rights reserved</footer>
@@ -714,50 +668,20 @@
   </sc-if>
 
 
-  <!-- ===================== EXPORT CSV MODAL ===================== -->
-  <sc-if value="{{ showExportModal }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;inset:0;z-index:60;background:oklch(0.10 0.012 255 / .72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .2s ease;">
-      <div role="dialog" aria-modal="true" style="background:oklch(0.215 0.014 255);border:1.5px solid oklch(0.34 0.014 255);border-radius:20px;padding:30px;max-width:460px;width:100%;animation:pop .25s ease;">
-        <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Export</div>
-        <h3 style="font-family:var(--font-body);font-weight:700;font-size:23px;color:#fff;margin:0 0 18px;">Export submissions to CSV</h3>
-        <div style="background:oklch(0.18 0.014 255);border:1px solid oklch(0.30 0.014 255);border-radius:14px;overflow:hidden;margin-bottom:18px;">
-          <div style="display:flex;justify-content:space-between;gap:12px;padding:13px 16px;border-bottom:1px solid oklch(0.28 0.014 255);">
-            <span style="color:oklch(0.66 0.012 255);font-size:14px;">Last export</span>
-            <span style="color:#fff;font-size:14px;font-family:'Space Mono',monospace;">{{ lastExportLabel }}</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;gap:12px;padding:13px 16px;">
-            <span style="color:oklch(0.66 0.012 255);font-size:14px;">New since last export</span>
-            <span style="color:var(--accent);font-size:14px;font-weight:700;font-family:'Space Mono',monospace;">{{ sinceCount }}</span>
-          </div>
-        </div>
-        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:oklch(0.62 0.012 255);margin-bottom:12px;">Submissions by city</div>
-        <div style="display:flex;flex-direction:column;gap:9px;margin-bottom:24px;">
-          <sc-for list="{{ cityBreakdown }}" as="c" hint-placeholder-count="3">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <span style="color:oklch(0.88 0.005 255);font-size:14px;min-width:96px;">{{ c.city }}</span>
-              <span style="flex:1;height:7px;background:oklch(0.26 0.014 255);border-radius:999px;overflow:hidden;"><span style="display:block;height:100%;background:var(--accent);border-radius:999px;width:{{ c.pct }};"></span></span>
-              <span style="color:oklch(0.72 0.012 255);font-size:13px;font-family:'Space Mono',monospace;min-width:18px;text-align:right;">{{ c.count }}</span>
-            </div>
-          </sc-for>
-        </div>
-        <div style="display:flex;gap:10px;">
-          <button onClick="{{ closeExport }}" style="flex:none;background:transparent;color:oklch(0.78 0.012 255);border:1.5px solid oklch(0.34 0.014 255);border-radius:12px;padding:14px 20px;cursor:pointer;font-size:15px;font-weight:600;min-height:50px;">Close</button>
-          <button onClick="{{ downloadCsv }}" style="flex:1;background:var(--accent);color:oklch(0.18 0.03 250);font-weight:700;font-size:15px;border:none;border-radius:12px;padding:14px;cursor:pointer;min-height:50px;" style-hover="filter:brightness(1.06);">Download CSV</button>
-        </div>
-      </div>
-    </div>
-  </sc-if>
-
 </div>
 </x-dc>
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:880,&quot;height&quot;:1100},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;oklch(0.82 0.12 210)&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;bodyFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Space Grotesk&quot;,&quot;Geist&quot;,&quot;Instrument Sans&quot;],&quot;default&quot;:&quot;Geist&quot;,&quot;tsType&quot;:&quot;'Space Grotesk' | 'Geist' | 'Instrument Sans'&quot;},&quot;showFaq&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;landingLogoGap&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:-40,&quot;min&quot;:-160,&quot;max&quot;:120,&quot;tsType&quot;:&quot;number&quot;},&quot;landingBlurbY&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:-150,&quot;min&quot;:-400,&quot;max&quot;:200,&quot;tsType&quot;:&quot;number&quot;},&quot;landingContactGap&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:26,&quot;min&quot;:0,&quot;max&quot;:140,&quot;tsType&quot;:&quot;number&quot;},&quot;sheetEndpoint&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://script.google.com/macros/s/AKfycbyCSyb-80aIfV1NHCnbvgpYdzuBVWSH6TzkkilwFIbunSIC_Vvi1JCdZuAWN3zm_08i/exec&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;sheetViewUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://docs.google.com/spreadsheets/d/1-yvBtc9m8Q3j2ssat9Ys0EnWFFS_YLqKmZBstgoPyYM/edit&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:880,&quot;height&quot;:1100},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;oklch(0.82 0.12 210)&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;bodyFont&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Space Grotesk&quot;,&quot;Geist&quot;,&quot;Instrument Sans&quot;],&quot;default&quot;:&quot;Geist&quot;,&quot;tsType&quot;:&quot;'Space Grotesk' | 'Geist' | 'Instrument Sans'&quot;},&quot;showFaq&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;landingLogoGap&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:-40,&quot;min&quot;:-160,&quot;max&quot;:120,&quot;tsType&quot;:&quot;number&quot;},&quot;landingBlurbY&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:-150,&quot;min&quot;:-400,&quot;max&quot;:200,&quot;tsType&quot;:&quot;number&quot;},&quot;landingContactGap&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:26,&quot;min&quot;:0,&quot;max&quot;:140,&quot;tsType&quot;:&quot;number&quot;},&quot;sheetEndpoint&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://script.google.com/macros/s/AKfycbyzco-WM03sFZ34l56BQ6Q96u0HlflYSDn0yYHO7nuiCod5ii7HLcsqCFAAw8e5cFpk/exec&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;sheetViewUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://docs.google.com/spreadsheets/d/1-yvBtc9m8Q3j2ssat9Ys0EnWFFS_YLqKmZBstgoPyYM/edit&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+/* The 9 canonical AKAV roles. Self-declared at intake — "qualified" vs
+   merely "claimed" is an open policy question (CLIENT_QUESTIONS #8). */
+const CREW_POSITIONS = ['Stage Hand','Graphics Operator','Playback Operator','Video Engineer (V1)','Technical Director','Camera Operator','LED Technician','Video Utility / V2','Breakout AV Technician'];
+
 class Component extends DCLogic {
   state = {
     direction: null,
     section:'crew',
     lang:'en',
     step: 0,
-    form: { name:'', email:'', phone:'', address:'', pronouns:'', city:'', referredBy:'', linkedin:'', workedBefore:false, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', terms:false },
+    form: { name:'', email:'', phone:'', address:'', pronouns:'', city:'', referredBy:'', linkedin:'', workedBefore:false, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', terms:false, positions:[''] },
     files: { resume:null, rateSheet:null, photo:null },
     photoPreview:'',
     qb: { w9:'pending', banking:'pending' },
@@ -766,12 +690,27 @@ class Component extends DCLogic {
     showOptional:false,
     openFaq:-1,
     submitted:false,
+    termsOpen:false,
     adminView:false,
     adminAuthed:false,
     loginUser:'',
     loginPass:'',
     loginErr:'',
     adminSearch:'',
+    adminNameQ:'',
+    adminCityQ:'',
+    adminJobQ:'',
+    selectedIds:{},
+    card:null,
+    jobView:null,
+    jobs:[],
+    jobModalOpen:false,
+    adminTab:'crew',
+    jobSel:'',
+    jobPm:'',
+    jobName:'',
+    jobCity:'',
+    notes:{},
     openRow:null,
     submissions:[],
     nudged:{},
@@ -790,24 +729,33 @@ class Component extends DCLogic {
     const subs=userRecs.concat(seeds).sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt));
     this.saveSubs(subs);
     let le=null; try{ le=localStorage.getItem('akav_last_export')||null; }catch(e){ le=null; }
-    this.setState({ submissions:subs, lastExport:le });
+    let notes={}; try{ notes=JSON.parse(localStorage.getItem('akav_notes')||'{}'); }catch(e){ notes={}; }
+    if(!notes || typeof notes!=='object' || Array.isArray(notes)) notes={};
+    let jobs=[]; try{ jobs=JSON.parse(localStorage.getItem('akav_jobs')||'[]'); }catch(e){ jobs=[]; }
+    if(!Array.isArray(jobs)) jobs=[];
+    this.setState({ submissions:subs, lastExport:le, notes, jobs });
   }
 
   seedSubs(){
     const day=86400000, now=Date.now(), iso=(t)=>new Date(now-t).toISOString();
     return [
-      { id:'s1', createdAt:iso(2*3600000), name:'Maya Chen', email:'maya.chen@email.com', phone:'(212) 555-0142', address:'1200 E 6th St, New York, NY 10009', pronouns:'she/her', city:'New York', referredBy:'Theo Vance', workedBefore:true, willTravel:true, travel:'150', ecName:'Lin Chen', ecPhone:'(212) 555-0190', ecRel:'Sister', w9:'complete', banking:'complete', resume:'maya-chen-resume.pdf', rateSheet:'maya-rates-2026.pdf', photo:true, linkedin:'linkedin.com/in/mayachen', photoUrl:'https://i.pravatar.cc/96?img=47', additional:true },
-      { id:'s2', createdAt:iso(1*day+3*3600000), name:'Devon Brooks', email:'devon.brooks@email.com', phone:'', address:'', pronouns:'', city:'Dallas', referredBy:'', linkedin:'', workedBefore:false, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'pending', resume:'', rateSheet:'', photo:false, photoUrl:'', additional:false },
-      { id:'s3', createdAt:iso(3*day), name:'Priya Nair', email:'priya.nair@email.com', phone:'(214) 555-0199', address:'', pronouns:'they/them', city:'Houston', referredBy:'Job board', workedBefore:false, willTravel:true, travel:'75', ecName:'Anil Nair', ecPhone:'(214) 555-0177', ecRel:'Father', w9:'pending', banking:'pending', resume:'priya-nair-cv.pdf', rateSheet:'', photo:true, photoUrl:'https://i.pravatar.cc/96?img=32', additional:true },
-      { id:'s4', createdAt:iso(6*day), name:'Marcus Webb', email:'m.webb@email.com', phone:'(832) 555-0123', address:'', pronouns:'he/him', city:'San Antonio', referredBy:'Maya Chen', workedBefore:true, willTravel:true, travel:'300', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'complete', resume:'', rateSheet:'webb-rate-sheet.pdf', photo:false, photoUrl:'', additional:true },
-      { id:'s5', createdAt:iso(4*3600000), name:'Sofia Reyes', email:'sofia.reyes@email.com', phone:'(323) 555-0181', address:'88 Sunset Blvd, Los Angeles, CA 90028', pronouns:'she/her', city:'Los Angeles', referredBy:'Instagram', workedBefore:true, willTravel:true, travel:'200', ecName:'Rosa Reyes', ecPhone:'(323) 555-0144', ecRel:'Mother', w9:'complete', banking:'complete', resume:'sofia-reyes-resume.pdf', rateSheet:'sofia-rates.pdf', photo:true, linkedin:'linkedin.com/in/sofiareyes', photoUrl:'https://i.pravatar.cc/96?img=5', additional:true },
-      { id:'s6', createdAt:iso(2*day+5*3600000), name:'Jamal Carter', email:'jamal.carter@email.com', phone:'(504) 555-0166', address:'', pronouns:'he/him', city:'New Orleans', referredBy:'Sofia Reyes', workedBefore:false, willTravel:false, travel:'', ecName:'Denise Carter', ecPhone:'(504) 555-0133', ecRel:'Spouse', w9:'complete', banking:'complete', resume:'', rateSheet:'', photo:false, photoUrl:'', additional:true },
-      { id:'s7', createdAt:iso(8*3600000), name:'Emily Tran', email:'emily.tran@email.com', phone:'(213) 555-0112', address:'', pronouns:'she/her', city:'Los Angeles', referredBy:'', workedBefore:false, willTravel:true, travel:'50', ecName:'', ecPhone:'', ecRel:'', w9:'pending', banking:'complete', resume:'emily-tran-cv.pdf', rateSheet:'', photo:false, photoUrl:'', additional:true },
-      { id:'s8', createdAt:iso(5*day), name:"Liam O'Brien", email:'liam.obrien@email.com', phone:'(646) 555-0150', address:'45 Bedford Ave, Brooklyn, NY 11211', pronouns:'he/him', city:'New York', referredBy:'Crew fair', workedBefore:true, willTravel:true, travel:'120', ecName:"Maeve O'Brien", ecPhone:'(646) 555-0151', ecRel:'Sister', w9:'complete', banking:'complete', resume:'liam-obrien-resume.pdf', rateSheet:'liam-rates.pdf', photo:true, linkedin:'linkedin.com/in/liamobrien', photoUrl:'https://i.pravatar.cc/96?img=12', additional:true },
-      { id:'s9', createdAt:iso(7*day), name:'Hana Suzuki', email:'hana.suzuki@email.com', phone:'(504) 555-0190', address:'', pronouns:'she/her', city:'New Orleans', referredBy:'Jamal Carter', workedBefore:true, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'complete', resume:'', rateSheet:'hana-rates.pdf', photo:false, photoUrl:'', additional:true },
-      { id:'s10', createdAt:iso(6*3600000), name:'Carlos Mendez', email:'carlos.mendez@email.com', phone:'(312) 555-0177', address:'', pronouns:'he/him', city:'Chicago', referredBy:'', workedBefore:false, willTravel:true, travel:'100', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'pending', resume:'', rateSheet:'', photo:false, photoUrl:'', additional:true },
-      { id:'s11', createdAt:iso(9*day), name:'Aisha Bello', email:'aisha.bello@email.com', phone:'(404) 555-0123', address:'', pronouns:'she/her', city:'Atlanta', referredBy:'Marcus Webb', workedBefore:true, willTravel:true, travel:'250', ecName:'Yusuf Bello', ecPhone:'(404) 555-0124', ecRel:'Brother', w9:'complete', banking:'complete', resume:'aisha-bello-resume.pdf', rateSheet:'', photo:true, linkedin:'linkedin.com/in/aishabello', photoUrl:'https://i.pravatar.cc/96?img=68', additional:true },
-      { id:'s12', createdAt:iso(10*day), name:'Noah Kim', email:'noah.kim@email.com', phone:'(615) 555-0145', address:'', pronouns:'he/him', city:'Nashville', referredBy:'', linkedin:'', workedBefore:false, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'complete', resume:'', rateSheet:'', photo:false, photoUrl:'', additional:false },
+      { id:'s1', createdAt:iso(2*3600000), name:'Maya Chen', email:'maya.chen@email.com', phone:'(212) 555-0142', address:'1200 E 6th St, New York, NY 10009', pronouns:'she/her', city:'New York', referredBy:'Theo Vance', workedBefore:true, willTravel:true, travel:'150', ecName:'Lin Chen', ecPhone:'(212) 555-0190', ecRel:'Sister', w9:'complete', banking:'complete', resume:'maya-chen-resume.pdf', rateSheet:'maya-rates-2026.pdf', photo:true, linkedin:'linkedin.com/in/mayachen', photoUrl:'https://i.pravatar.cc/96?img=47', positions:['Technical Director','Graphics Operator'], grade:9.2, grades:{skill:9.5,reliability:9.0,attitude:9.4,comms:8.9}, additional:true },
+      { id:'s2', createdAt:iso(1*day+3*3600000), name:'Devon Brooks', email:'devon.brooks@email.com', phone:'', address:'', pronouns:'', city:'Dallas', referredBy:'', linkedin:'', workedBefore:false, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'pending', resume:'', rateSheet:'', photo:false, photoUrl:'', positions:['Camera Operator'], additional:false },
+      { id:'s3', createdAt:iso(3*day), name:'Priya Nair', email:'priya.nair@email.com', phone:'(214) 555-0199', address:'', pronouns:'they/them', city:'Houston', referredBy:'Job board', workedBefore:false, willTravel:true, travel:'75', ecName:'Anil Nair', ecPhone:'(214) 555-0177', ecRel:'Father', w9:'pending', banking:'pending', resume:'priya-nair-cv.pdf', rateSheet:'', photo:true, photoUrl:'https://i.pravatar.cc/96?img=32', positions:['Playback Operator','Graphics Operator'], grade:8.1, grades:{skill:8.4,reliability:7.8,attitude:8.6,comms:7.6}, additional:true },
+      { id:'s4', createdAt:iso(6*day), name:'Marcus Webb', email:'m.webb@email.com', phone:'(832) 555-0123', address:'', pronouns:'he/him', city:'San Antonio', referredBy:'Maya Chen', workedBefore:true, willTravel:true, travel:'300', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'complete', resume:'', rateSheet:'webb-rate-sheet.pdf', photo:false, photoUrl:'', positions:['Video Engineer (V1)','Technical Director'], grade:8.8, grades:{skill:9.1,reliability:8.7,attitude:8.2,comms:9.0}, additional:true },
+      { id:'s5', createdAt:iso(4*3600000), name:'Sofia Reyes', email:'sofia.reyes@email.com', phone:'(323) 555-0181', address:'88 Sunset Blvd, Los Angeles, CA 90028', pronouns:'she/her', city:'Los Angeles', referredBy:'Instagram', workedBefore:true, willTravel:true, travel:'200', ecName:'Rosa Reyes', ecPhone:'(323) 555-0144', ecRel:'Mother', w9:'complete', banking:'complete', resume:'sofia-reyes-resume.pdf', rateSheet:'sofia-rates.pdf', photo:true, linkedin:'linkedin.com/in/sofiareyes', photoUrl:'https://i.pravatar.cc/96?img=5', positions:['LED Technician','Camera Operator'], grade:9.5, grades:{skill:9.6,reliability:9.4,attitude:9.7,comms:9.3}, additional:true },
+      { id:'s6', createdAt:iso(2*day+5*3600000), name:'Jamal Carter', email:'jamal.carter@email.com', phone:'(504) 555-0166', address:'', pronouns:'he/him', city:'New Orleans', referredBy:'Sofia Reyes', workedBefore:false, willTravel:false, travel:'', ecName:'Denise Carter', ecPhone:'(504) 555-0133', ecRel:'Spouse', w9:'complete', banking:'complete', resume:'', rateSheet:'', photo:false, photoUrl:'', positions:['Video Utility / V2','Breakout AV Technician'], grade:7.4, grades:{skill:7.0,reliability:8.1,attitude:7.6,comms:6.9}, additional:true },
+      { id:'s7', createdAt:iso(8*3600000), name:'Emily Tran', email:'emily.tran@email.com', phone:'(213) 555-0112', address:'', pronouns:'she/her', city:'Los Angeles', referredBy:'', workedBefore:false, willTravel:true, travel:'50', ecName:'', ecPhone:'', ecRel:'', w9:'pending', banking:'complete', resume:'emily-tran-cv.pdf', rateSheet:'', photo:false, photoUrl:'', positions:['Graphics Operator'], grade:8.3, grades:{skill:8.8,reliability:8.0,attitude:8.5,comms:7.9}, additional:true },
+      { id:'s8', createdAt:iso(5*day), name:"Liam O'Brien", email:'liam.obrien@email.com', phone:'(646) 555-0150', address:'45 Bedford Ave, Brooklyn, NY 11211', pronouns:'he/him', city:'New York', referredBy:'Crew fair', workedBefore:true, willTravel:true, travel:'120', ecName:"Maeve O'Brien", ecPhone:'(646) 555-0151', ecRel:'Sister', w9:'complete', banking:'complete', resume:'liam-obrien-resume.pdf', rateSheet:'liam-rates.pdf', photo:true, linkedin:'linkedin.com/in/liamobrien', photoUrl:'https://i.pravatar.cc/96?img=12', positions:['Video Engineer (V1)','Playback Operator'], grade:9.0, grades:{skill:9.2,reliability:9.1,attitude:8.6,comms:9.1}, additional:true },
+      { id:'s9', createdAt:iso(7*day), name:'Hana Suzuki', email:'hana.suzuki@email.com', phone:'(504) 555-0190', address:'', pronouns:'she/her', city:'New Orleans', referredBy:'Jamal Carter', workedBefore:true, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'complete', resume:'', rateSheet:'hana-rates.pdf', photo:false, photoUrl:'', positions:['Camera Operator','LED Technician'], grade:8.6, grades:{skill:8.9,reliability:8.8,attitude:8.4,comms:8.3}, additional:true },
+      { id:'s10', createdAt:iso(6*3600000), name:'Carlos Mendez', email:'carlos.mendez@email.com', phone:'(312) 555-0177', address:'', pronouns:'he/him', city:'Chicago', referredBy:'', workedBefore:false, willTravel:true, travel:'100', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'pending', resume:'', rateSheet:'', photo:false, photoUrl:'', positions:['Breakout AV Technician','Video Utility / V2'], grade:7.9, grades:{skill:7.5,reliability:8.3,attitude:8.0,comms:7.8}, additional:true },
+      { id:'s11', createdAt:iso(9*day), name:'Aisha Bello', email:'aisha.bello@email.com', phone:'(404) 555-0123', address:'', pronouns:'she/her', city:'Atlanta', referredBy:'Marcus Webb', workedBefore:true, willTravel:true, travel:'250', ecName:'Yusuf Bello', ecPhone:'(404) 555-0124', ecRel:'Brother', w9:'complete', banking:'complete', resume:'aisha-bello-resume.pdf', rateSheet:'', photo:true, linkedin:'linkedin.com/in/aishabello', photoUrl:'https://i.pravatar.cc/96?img=68', positions:['Technical Director','Video Engineer (V1)'], grade:9.3, grades:{skill:9.4,reliability:9.5,attitude:9.0,comms:9.3}, additional:true },
+      { id:'s12', createdAt:iso(10*day), name:'Noah Kim', email:'noah.kim@email.com', phone:'(615) 555-0145', address:'', pronouns:'he/him', city:'Nashville', referredBy:'', linkedin:'', workedBefore:false, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'complete', resume:'', rateSheet:'', photo:false, photoUrl:'', positions:['Video Utility / V2'], grade:6.8, grades:{skill:6.5,reliability:7.4,attitude:6.9,comms:6.4}, additional:false },
+      { id:'s13', createdAt:iso(11*3600000), name:'Tyler Nguyen', email:'tyler.nguyen@email.com', phone:'(310) 555-0161', address:'', pronouns:'he/him', city:'Los Angeles', referredBy:'Sofia Reyes', linkedin:'', workedBefore:true, willTravel:true, travel:'60', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'complete', resume:'', rateSheet:'', photo:false, photoUrl:'', positions:['Stage Hand'], grade:8.4, grades:{skill:8.2,reliability:8.8,attitude:8.6,comms:8.0}, additional:true },
+      { id:'s14', createdAt:iso(1*day+8*3600000), name:'Rachel Adeyemi', email:'rachel.adeyemi@email.com', phone:'(917) 555-0138', address:'', pronouns:'she/her', city:'New York', referredBy:'Crew fair', linkedin:'', workedBefore:true, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'complete', resume:'rachel-adeyemi-resume.pdf', rateSheet:'', photo:false, photoUrl:'', positions:['Stage Hand'], grade:8.9, grades:{skill:8.7,reliability:9.2,attitude:9.0,comms:8.6}, additional:true },
+      { id:'s15', createdAt:iso(4*day+2*3600000), name:'DeShawn Miller', email:'deshawn.miller@email.com', phone:'(678) 555-0155', address:'', pronouns:'he/him', city:'Atlanta', referredBy:'Aisha Bello', linkedin:'', workedBefore:false, willTravel:true, travel:'120', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'pending', resume:'', rateSheet:'', photo:false, photoUrl:'', positions:['Stage Hand'], grade:7.6, grades:{skill:7.4,reliability:7.9,attitude:8.1,comms:7.0}, additional:true },
+      { id:'s16', createdAt:iso(2*day+9*3600000), name:'Lucas Ortiz', email:'lucas.ortiz@email.com', phone:'(469) 555-0170', address:'', pronouns:'he/him', city:'Dallas', referredBy:'', linkedin:'', workedBefore:true, willTravel:true, travel:'200', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'complete', resume:'', rateSheet:'', photo:false, photoUrl:'', positions:['Stage Hand'], grade:8.0, grades:{skill:7.8,reliability:8.4,attitude:8.2,comms:7.6}, additional:true },
+      { id:'s17', createdAt:iso(5*day+6*3600000), name:'Grace Park', email:'grace.park@email.com', phone:'(773) 555-0119', address:'', pronouns:'she/her', city:'Chicago', referredBy:'Carlos Mendez', linkedin:'', workedBefore:true, willTravel:false, travel:'', ecName:'', ecPhone:'', ecRel:'', w9:'complete', banking:'complete', resume:'', rateSheet:'', photo:false, photoUrl:'', positions:['Stage Hand'], grade:9.1, grades:{skill:9.0,reliability:9.3,attitude:9.2,comms:8.8}, additional:true },
     ];
   }
     saveSubs(subs){ try{ localStorage.setItem('akav_submissions', JSON.stringify(subs)); }catch(e){} }
@@ -829,11 +777,34 @@ class Component extends DCLogic {
   }
   toggleRow(id){ this.setState(s=>({ openRow: s.openRow===id ? null : id })); }
 
+  toggleSel(id){ this.setState(s=>{ const sel={...s.selectedIds}; if(sel[id]) delete sel[id]; else sel[id]=true; return { selectedIds:sel }; }); }
+  clearSel(){ this.setState({ selectedIds:{} }); }
+  openCard(id){ this.setState({ card:id, jobView:null, adminTab:'crew' }); }
+  closeCard(){ this.setState({ card:null }); }
+  setNote(id,val){ this.setState(s=>{ const n={...s.notes,[id]:val}; try{ localStorage.setItem('akav_notes', JSON.stringify(n)); }catch(e){} return { notes:n }; }); }
+  createJob(){
+    const crewIds=Object.keys(this.state.selectedIds||{});
+    const sel=this.state.jobSel;
+    let jobs, viewId;
+    if(sel){
+      if(!(this.state.jobs||[]).some(j=>j.id===sel)) return;
+      jobs=(this.state.jobs||[]).map(j=> j.id===sel ? {...j, crewIds:Array.from(new Set((j.crewIds||[]).concat(crewIds)))} : j);
+      viewId=sel;
+    } else {
+      const name=(this.state.jobName||'').trim(); if(!name) return;
+      const job={ id:'j'+Date.now(), name, city:(this.state.jobCity||'').trim(), pm:(this.state.jobPm||'').trim(), crewIds, createdAt:new Date().toISOString() };
+      jobs=[job].concat(this.state.jobs||[]); viewId=job.id;
+    }
+    try{ localStorage.setItem('akav_jobs', JSON.stringify(jobs)); }catch(e){}
+    this.setState({ jobs, jobModalOpen:false, jobName:'', jobCity:'', jobPm:'', jobSel:'', selectedIds:{}, jobView:viewId, card:null, adminTab:'jobs' });
+  }
+  deleteJob(id){ const jobs=(this.state.jobs||[]).filter(j=>j.id!==id); try{ localStorage.setItem('akav_jobs', JSON.stringify(jobs)); }catch(e){} this.setState(s=>({ jobs, jobView: s.jobView===id?null:s.jobView })); }
+
   openExport(){ this.setState({ exportOpen:true }); }
   closeExport(){ this.setState({ exportOpen:false }); }
   downloadCsv(){
     const subs=this.state.submissions.filter(s=>this.isCompleteRec(s));
-    const cols=['createdAt','name','email','phone','city','address','pronouns','referredBy','linkedin','workedBefore','willTravel','travel','ecName','ecPhone','ecRel','w9','banking','resume','rateSheet','photo','additional'];
+    const cols=['createdAt','name','email','phone','city','address','pronouns','referredBy','linkedin','workedBefore','willTravel','travel','ecName','ecPhone','ecRel','w9','banking','resume','rateSheet','photo','positions','grade','additional'];
     const esc=(v)=>{ v=(v==null?'':String(v)); return /[",\n]/.test(v) ? ('"'+v.replace(/"/g,'""')+'"') : v; };
     const lines=[cols.join(',')].concat(subs.map(s=>cols.map(c=>esc(s[c])).join(',')));
     const csv=lines.join('\n');
@@ -850,7 +821,7 @@ class Component extends DCLogic {
   }
 
   syncDemo(){
-    const url=(this.props.sheetEndpoint||'https://script.google.com/macros/s/AKfycbyCSyb-80aIfV1NHCnbvgpYdzuBVWSH6TzkkilwFIbunSIC_Vvi1JCdZuAWN3zm_08i/exec').trim();
+    const url=(this.props.sheetEndpoint||'https://script.google.com/macros/s/AKfycbyzco-WM03sFZ34l56BQ6Q96u0HlflYSDn0yYHO7nuiCod5ii7HLcsqCFAAw8e5cFpk/exec').trim();
     if(!url) return;
     const recs=this.state.submissions.slice();
     if(!recs.length){ this.setState({ syncMsg:'No records' }); return; }
@@ -891,6 +862,8 @@ class Component extends DCLogic {
         pronouns:'Pronouns', mailingAddress:'Mailing address', homeCity:'Home city',
         willTravelLabel:"I'm willing to travel for work", howFar:'How far will you travel?', milesParen:'(miles)',
         referred:'Who referred you?', linkedinLabel:'LinkedIn profile',
+        positionsLabel:'Positions you work', positionsHint:'Pick the roles you can be booked for. Add as many as apply.',
+        positionsPick:'Choose a position…', positionsAdd:'＋ Add another position', positionsRemove:'Remove',
         workedBeforeLabel:"I've worked an AKAV event before",
         emergency:'Emergency contact', ecNameLabel:'Name', relationship:'Relationship',
         files:'Files', resume:'Resume', rateSheet:'Rate sheet', profilePhoto:'Profile photo',
@@ -936,6 +909,8 @@ class Component extends DCLogic {
         pronouns:'Pronombres', mailingAddress:'Dirección postal', homeCity:'Ciudad de residencia',
         willTravelLabel:'Estoy dispuesto a viajar por trabajo', howFar:'¿Qué tan lejos viajarías?', milesParen:'(millas)',
         referred:'¿Quién te recomendó?', linkedinLabel:'Perfil de LinkedIn',
+        positionsLabel:'Puestos que trabajas', positionsHint:'Elige los puestos para los que podemos contratarte. Agrega todos los que apliquen.',
+        positionsPick:'Elige un puesto…', positionsAdd:'＋ Agregar otro puesto', positionsRemove:'Quitar',
         workedBeforeLabel:'He trabajado en un evento de AKAV antes',
         emergency:'Contacto de emergencia', ecNameLabel:'Nombre', relationship:'Parentesco',
         files:'Archivos', resume:'Currículum', rateSheet:'Lista de tarifas', profilePhoto:'Foto de perfil',
@@ -1006,6 +981,8 @@ class Component extends DCLogic {
       name:f.name, email:f.email, phone:f.phone, address:f.address, pronouns:f.pronouns,
       city:f.city, referredBy:f.referredBy, linkedin:f.linkedin, workedBefore:f.workedBefore, willTravel:f.willTravel, travel:f.travel,
       ecName:f.ecName, ecPhone:f.ecPhone, ecRel:f.ecRel,
+      positions: (Array.isArray(f.positions)?f.positions:[]).filter(Boolean)
+        .filter(function(v,i,a2){ return a2.indexOf(v)===i; }),
       w9:st.qb.w9, banking:st.qb.banking,
       resume: st.files.resume ? st.files.resume.name : '',
       rateSheet: st.files.rateSheet ? st.files.rateSheet.name : '',
@@ -1019,7 +996,7 @@ class Component extends DCLogic {
   }
 
   postToSheet(rec){
-    const url = (this.props.sheetEndpoint || 'https://script.google.com/macros/s/AKfycbyCSyb-80aIfV1NHCnbvgpYdzuBVWSH6TzkkilwFIbunSIC_Vvi1JCdZuAWN3zm_08i/exec').trim();
+    const url = (this.props.sheetEndpoint || 'https://script.google.com/macros/s/AKfycbyzco-WM03sFZ34l56BQ6Q96u0HlflYSDn0yYHO7nuiCod5ii7HLcsqCFAAw8e5cFpk/exec').trim();
     if(!url) return;
     try {
       fetch(url, { method:'POST', mode:'no-cors', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify(rec) }).catch(function(){});
@@ -1058,6 +1035,7 @@ class Component extends DCLogic {
       accentColor: this.props.accentColor || 'oklch(0.82 0.12 210)',
       fontKey: ({'Space Grotesk':'grotesk','Geist':'geist','Instrument Sans':'instrument'})[this.props.bodyFont] || 'geist',
       showFaq: this.props.showFaq !== false,
+      mainMaxWidth: (st.adminView && st.adminAuthed) ? 'min(1560px,97vw)' : '760px',
       landingLogoGap: (this.props.landingLogoGap ?? -40) + 'px',
       landingBlurbY: (this.props.landingBlurbY ?? -150) + 'px',
       landingContactGap: (this.props.landingContactGap ?? 26) + 'px',
@@ -1085,6 +1063,8 @@ class Component extends DCLogic {
       onEcName:field('ecName'), onEcPhone:field('ecPhone'), onEcRel:field('ecRel'),
       onWorked:(e)=>this.setField('workedBefore', e.target.checked),
       onTerms:(e)=>this.setField('terms', e.target.checked),
+      toggleTerms:(e)=>{ if(e&&e.preventDefault) e.preventDefault(); if(e&&e.stopPropagation) e.stopPropagation(); this.setState(x=>({ termsOpen:!x.termsOpen })); },
+      showTerms: !!st.termsOpen,
       onResume:(e)=>this.onFile('resume',e), onRateSheet:(e)=>this.onFile('rateSheet',e), onPhoto:(e)=>this.onFile('photo',e),
       removeResume:()=>this.removeFile('resume'), removeRate:()=>this.removeFile('rateSheet'), removePhoto:()=>this.removeFile('photo'),
       errName: err.name||'', errEmail: err.email||'', errTerms: err.terms||'',
@@ -1099,6 +1079,26 @@ class Component extends DCLogic {
       hasRate: !!st.files.rateSheet, rateMeta: fileMeta(st.files.rateSheet),
       hasPhoto: !!st.files.photo, photoMeta: fileMeta(st.files.photo), photoPreview: st.photoPreview,
       photoThumb: st.photoPreview ? React.createElement('img', { src: st.photoPreview, alt:'Profile preview', style:{ width:64, height:64, borderRadius:12, objectFit:'cover', border:'1.5px solid oklch(0.34 0.014 255)', flex:'none' } }) : null,
+      positionsEl: (()=>{
+        const el=React.createElement;
+        const rows=(Array.isArray(st.form.positions)&&st.form.positions.length)?st.form.positions:[''];
+        const taken=rows.filter(Boolean);
+        const setAt=(i,v)=>this.setState(s2=>{ const p=(s2.form.positions||['']).slice(); p[i]=v; return { form:{...s2.form, positions:p} }; });
+        const removeAt=(i)=>this.setState(s2=>{ const p=(s2.form.positions||['']).slice(); p.splice(i,1); return { form:{...s2.form, positions:p.length?p:['']} }; });
+        const addRow=()=>this.setState(s2=>({ form:{...s2.form, positions:(s2.form.positions||['']).concat([''])} }));
+        const selStyle={ flex:1, minWidth:0 };
+        return el('div',{style:{display:'flex',flexDirection:'column',gap:10}},
+          rows.map((val,i)=>el('div',{key:i,style:{display:'flex',gap:8,alignItems:'center'}},
+            el('select',{value:val||'',style:selStyle,onChange:(e)=>setAt(i,e.target.value)},
+              [el('option',{key:'_',value:''},t.positionsPick)].concat(
+                CREW_POSITIONS.filter(r=>r===val || taken.indexOf(r)<0).map(r=>el('option',{key:r,value:r},r)))),
+            rows.length>1 ? el('button',{type:'button',title:t.positionsRemove,onClick:()=>removeAt(i),
+              style:{flex:'none',width:44,height:44,borderRadius:12,background:'oklch(0.165 0.014 255)',border:'1.5px solid oklch(0.30 0.014 255)',color:'oklch(0.72 0.012 255)',cursor:'pointer',fontSize:18,lineHeight:1}},'\u00d7') : null)),
+          (taken.length<CREW_POSITIONS.length)
+            ? el('button',{type:'button',onClick:addRow,
+                style:{alignSelf:'flex-start',background:'transparent',border:'1.5px dashed oklch(0.34 0.014 255)',color:'oklch(0.82 0.012 255)',borderRadius:12,padding:'11px 16px',cursor:'pointer',fontSize:14,fontWeight:600,fontFamily:'var(--font-body)'}},t.positionsAdd)
+            : null);
+      })(),
       showOptional: st.showOptional, toggleOptional:()=>this.setState(s=>({ showOptional: !s.showOptional })),
       next:()=>this.next(), back:()=>this.back(), submit:()=>this.submit(),
       showBack: dir==='B' && st.step>0,
@@ -1131,54 +1131,163 @@ class Component extends DCLogic {
       onLoginKey:(e)=>{ if(e.key==='Enter') this.doLogin(); },
       doLogin:()=>this.doLogin(),
       loginErr: st.loginErr,
-      adminSearch: st.adminSearch,
-      onAdminSearch:(e)=>this.setState({ adminSearch:e.target.value }),
-      subTotal: st.submissions.length,
-      subOnboarded: st.submissions.filter(x=>x.w9==='complete' && x.banking==='complete').length,
-      subAwaiting: st.submissions.filter(x=>!(x.w9==='complete' && x.banking==='complete')).length,
-      hasSubs: (()=>{ const q=st.adminSearch.trim().toLowerCase(); return st.submissions.some(x=>!q || (x.name+' '+x.email+' '+x.city).toLowerCase().includes(q)); })(),
-      noSubs: (()=>{ const q=st.adminSearch.trim().toLowerCase(); return !st.submissions.some(x=>!q || (x.name+' '+x.email+' '+x.city).toLowerCase().includes(q)); })(),
       ...(()=>{
-        const q=st.adminSearch.trim().toLowerCase();
-        const match=(x)=>!q || ((x.name||'')+' '+(x.email||'')+' '+(x.city||'')).toLowerCase().includes(q);
-        const isComplete=(s)=>this.isCompleteRec(s);
-        const missingLabel=(s)=>{ const m=[]; if(!String(s.name||'').trim() || !String(s.email||'').trim()) m.push('Contact info'); if(s.w9!=='complete') m.push('W-9'); if(s.banking!=='complete') m.push('Banking'); return m.length ? ('Needs: '+m.join(' \u00b7 ')) : ''; };
-        const DOC='https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
-        const mapSub=(s)=>{
-          const ini=(s.name||'?').trim().split(/\s+/).map(x=>x[0]||'').slice(0,2).join('').toUpperCase()||'?';
-          const pic=s.photoUrl||'';
+        const el=React.createElement;
+        const ROLES=['Stage Hand','Graphics Operator','Playback Operator','Video Engineer (V1)','Technical Director','Camera Operator','LED Technician','Video Utility / V2','Breakout AV Technician'];
+        const tab=st.adminTab||'crew';
+        const nq=(st.adminNameQ||'').trim().toLowerCase();
+        const cq=(st.adminCityQ||'').trim().toLowerCase();
+        const jq=st.adminJobQ||'';
+        const match=(x)=> (!nq || (((x.name||'')+' '+(x.email||'')).toLowerCase().includes(nq)))
+          && (!cq || String(x.city||'').toLowerCase().includes(cq))
+          && (!jq || (Array.isArray(x.positions) && x.positions.indexOf(jq)>=0));
+        const filtered=st.submissions.filter(match);
+        const gradeInfo=(g)=>{ const n=Number(g); if(g==null||g===''||isNaN(n)) return { str:'—', color:'oklch(0.55 0.012 255)' };
+          return { str:n.toFixed(1), color: n>=9?'oklch(0.86 0.14 155)': n>=7.5?'var(--accent)': n>=6?'oklch(0.86 0.12 80)':'oklch(0.78 0.10 25)' }; };
+        const chip=(txt)=>el('span',{style:{fontFamily:"'Space Mono',monospace",fontSize:10,letterSpacing:'.04em',textTransform:'uppercase',color:'oklch(0.84 0.012 255)',background:'oklch(0.26 0.014 255)',border:'1px solid oklch(0.33 0.014 255)',borderRadius:6,padding:'3px 7px',whiteSpace:'nowrap',flex:'none'}},txt);
+        const posRow=(s,max)=>{ const p=Array.isArray(s.positions)?s.positions:[]; if(!p.length) return el('span',{style:{color:'oklch(0.5 0.012 255)',fontSize:12}},'—');
+          const shown=p.slice(0,max); const extra=p.length-shown.length;
+          return el('span',{style:{display:'flex',gap:5,alignItems:'center',overflow:'hidden'}},shown.map((x,i)=>el('span',{key:i},chip(x))).concat(extra>0?[el('span',{key:'x'},chip('+'+extra))]:[])); };
+        const bySort=(a,b)=>{
+          const ga=Number(a.grade), gb=Number(b.grade);
+          const va=isNaN(ga)?-1:ga, vb=isNaN(gb)?-1:gb;
+          return (vb-va) || (Date.parse(b.createdAt)-Date.parse(a.createdAt));
+        };
+        const mapRow=(s)=>{ const g=gradeInfo(s.grade); const p=Array.isArray(s.positions)?s.positions:[];
           return {
-          id:s.id, name:s.name||'Not provided', email:s.email||'Not provided',
-          city:s.city||'Not provided', cityInline:String(s.city||'').trim(), phone:s.phone||'Not provided',
-          dateStr:this.fmtDate(s.createdAt),
-          initials:ini, photoUrl:pic,
-          avatar: pic
-            ? React.createElement('img',{src:pic,alt:'',style:{width:'100%',height:'100%',objectFit:'cover',borderRadius:'50%',display:'block'}})
-            : React.createElement('span',{style:{fontFamily:"'Space Mono',monospace",fontSize:13,fontWeight:700}}, ini),
-          w9Done:s.w9==='complete', w9Pending:s.w9!=='complete',
-          bankDone:s.banking==='complete', bankPending:s.banking!=='complete',
-          fullyDone: isComplete(s), isIncomplete: !isComplete(s),
-          missingLabel: missingLabel(s), hasMissing: !!missingLabel(s),
-          nudged: !!st.nudged[s.id], notNudged: !st.nudged[s.id], sendNudge:()=>this.sendNudge(s.id),
-          hasAdd: !!s.additional,
-          open: st.openRow===s.id,
-          toggle:()=>this.toggleRow(s.id),
-          address:s.address||'Not provided', pronouns:s.pronouns||'Not provided',
-          referredBy:s.referredBy||'Not provided', linkedin:s.linkedin||'Not provided', hasLinkedin:!!s.linkedin, noLinkedin:!s.linkedin, linkedinUrl:(s.linkedin?(/^https?:/i.test(s.linkedin)?s.linkedin:('https://'+s.linkedin)):''),
-          travel: s.willTravel ? (s.travel ? (s.travel+' mi') : 'Any distance') : 'Not traveling',
-          worked: s.workedBefore?'Yes':'No',
-          ec: (s.ecName||s.ecPhone||s.ecRel) ? [s.ecName, s.ecRel, s.ecPhone].filter(Boolean).join(' \u00b7 ') : 'Not provided',
-          resume:s.resume||'Not provided', hasResume:!!s.resume, noResume:!s.resume, resumeUrl: s.resume?DOC:'',
-          rateSheet:s.rateSheet||'Not provided', hasRate:!!s.rateSheet, noRate:!s.rateSheet, rateUrl: s.rateSheet?DOC:'',
-          photo: s.photo?'Uploaded':'Not provided',
+            id:s.id, isRow:true, isHeading:false, head:'', count:'',
+            name:s.name||'Not provided',
+            city:String(s.city||'').trim()||'—',
+            gradeEl: el('span',{style:{fontFamily:"'Space Mono',monospace",fontWeight:700,fontSize:13,color:g.color}},g.str),
+            rowChips: posRow(s,3),
+            checked: !!st.selectedIds[s.id],
+            toggleSel:()=>this.toggleSel(s.id),
+            openCard:()=>this.openCard(s.id),
+            rowBg: st.card===s.id ? 'color-mix(in oklch, var(--accent) 12%, transparent)' : (st.selectedIds[s.id] ? 'color-mix(in oklch, var(--accent) 6%, transparent)' : 'transparent'),
           };
         };
-        const filtered=st.submissions.filter(match);
-        const subsComplete=filtered.filter(isComplete).map(mapSub);
-        const subsIncomplete=filtered.filter(x=>!isComplete(x)).map(mapSub);
-        return { subsComplete, subsIncomplete, subCompleteCount: subsComplete.length, subIncompleteCount: subsIncomplete.length, noComplete: subsComplete.length===0, hasIncomplete: subsIncomplete.length>0 };
+        const heading=(label,n)=>({ id:'h:'+label, isHeading:true, isRow:false, head:label, count:'· '+n, name:'', city:'', gradeEl:null, rowChips:null, checked:false, toggleSel:()=>{}, openCard:()=>{}, rowBg:'transparent' });
+        const multi=filtered.filter(s=>Array.isArray(s.positions)&&s.positions.length>1).sort(bySort);
+        const displayRows=[];
+        if(multi.length){ displayRows.push(heading('Multi Position',multi.length)); multi.forEach(s=>displayRows.push(mapRow(s))); }
+        ROLES.forEach(role=>{ const items=filtered.filter(s=>Array.isArray(s.positions)&&s.positions.length===1&&s.positions[0]===role).sort(bySort);
+          if(items.length){ displayRows.push(heading(role,items.length)); items.forEach(s=>displayRows.push(mapRow(s))); } });
+        const nopos=filtered.filter(s=>!Array.isArray(s.positions)||!s.positions.length).sort(bySort);
+        if(nopos.length){ displayRows.push(heading('No position on file',nopos.length)); nopos.forEach(s=>displayRows.push(mapRow(s))); }
+        const rowItems=displayRows.filter(r=>r.isRow);
+        const allSelected = rowItems.length>0 && rowItems.every(r=>r.checked);
+        const selIds=Object.keys(st.selectedIds||{}).filter(id=>st.submissions.some(s=>s.id===id));
+        const selNames=selIds.map(id=>{ const s=st.submissions.find(x=>x.id===id); return s ? (s.name||s.email||id) : id; });
+        const colhead={fontFamily:"'Space Mono',monospace",fontSize:10,letterSpacing:'.1em',textTransform:'uppercase',color:'oklch(0.6 0.012 255)'};
+        const DOC='https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+        const cardRec = st.card ? st.submissions.find(s=>s.id===st.card) : null;
+        const jobRec = st.jobView ? st.jobs.find(j=>j.id===st.jobView) : null;
+        let card={ showPersonCard:false, cardHero:null, cardName:'', cardMeta:'', cardGradeEl:null, cardSubGrades:null, cardPositions:null, cardContact:null, cardNote:'', onCardNote:()=>{} };
+        if(cardRec){ const s=cardRec; const g=gradeInfo(s.grade);
+          const avatarStyle={width:84,height:84,borderRadius:'50%',flex:'none',display:'block',border:'2px solid color-mix(in oklch, var(--accent) 40%, oklch(0.32 0.014 255))'};
+          const hero = s.photoUrl
+            ? el('img',{src:s.photoUrl,alt:'',style:{...avatarStyle,objectFit:'cover'}})
+            : el('svg',{viewBox:'0 0 100 100',style:{...avatarStyle,background:'oklch(0.30 0.012 255)'}},
+                el('circle',{cx:50,cy:38,r:17,fill:'oklch(0.55 0.012 255)'}),
+                el('path',{d:'M50 60c-19 0-31 10-34 24a50 50 0 0 0 68 0c-3-14-15-24-34-24z',fill:'oklch(0.55 0.012 255)'}));
+          const gr=s.grades||{};
+          const subTile=(label,v)=>{ const has=(v!=null&&v!==''&&!isNaN(Number(v)));
+            return el('div',{style:{flex:1,background:'oklch(0.165 0.014 255)',border:'1px solid oklch(0.28 0.014 255)',borderRadius:10,padding:'9px 4px',textAlign:'center'}},
+              el('div',{style:{fontFamily:"'Space Mono',monospace",fontSize:15,fontWeight:700,color:has?'#fff':'oklch(0.5 0.012 255)'}},has?Number(v).toFixed(1):'—'),
+              el('div',{style:{fontFamily:"'Space Mono',monospace",fontSize:8.5,letterSpacing:'.06em',textTransform:'uppercase',color:'oklch(0.6 0.012 255)',marginTop:4}},label)); };
+          const fieldRow=(label,value,href)=> el('div',null,
+            el('div',{style:{...colhead,marginBottom:3}},label),
+            href ? el('a',{href:href,target:'_blank',rel:'noopener',style:{fontSize:13.5,color:'var(--accent)',textDecoration:'underline',wordBreak:'break-word'}},value)
+                 : el('div',{style:{fontSize:13.5,color:value==='Not provided'?'oklch(0.55 0.012 255)':'oklch(0.92 0.005 255)',wordBreak:'break-word'}},value||'—'));
+          card={
+            showPersonCard:true,
+            cardHero:hero,
+            cardName:s.name||'Not provided',
+            cardMeta:[s.pronouns,String(s.city||'').trim(),this.fmtDate(s.createdAt)].filter(Boolean).join(' · '),
+            cardGradeEl: el('span',{style:{display:'inline-flex',alignItems:'baseline',gap:6,background:'oklch(0.15 0.012 255 / .88)',border:'1.5px solid '+g.color,borderRadius:10,padding:'6px 11px'}},
+              el('span',{style:{...colhead,color:'oklch(0.75 0.012 255)'}},'Avg grade'),
+              el('span',{style:{fontFamily:"'Space Mono',monospace",fontWeight:700,fontSize:17,color:g.color}},g.str)),
+            cardSubGrades: el('div',{style:{display:'flex',gap:7}},subTile('Skill',gr.skill),subTile('Reliable',gr.reliability),subTile('Attitude',gr.attitude),subTile('Comms',gr.comms)),
+            cardPositions: (Array.isArray(s.positions)&&s.positions.length)
+              ? el('div',{style:{display:'flex',gap:6,flexWrap:'wrap'}},s.positions.map((x,i)=>el('span',{key:i},chip(x))))
+              : el('div',{style:{fontSize:13,color:'oklch(0.55 0.012 255)'}},'No positions on file yet'),
+            cardContact: el('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px 14px'}},
+              fieldRow('Email',s.email||'Not provided', s.email?('mailto:'+s.email):null),
+              fieldRow('Phone',s.phone||'Not provided'),
+              fieldRow('Address',s.address||'Not provided'),
+              fieldRow('Travel radius', s.willTravel ? (s.travel?(s.travel+' mi'):'Any distance') : 'Not traveling'),
+              fieldRow('Emergency contact',(s.ecName||s.ecPhone||s.ecRel)?[s.ecName,s.ecRel,s.ecPhone].filter(Boolean).join(' · '):'Not provided'),
+              fieldRow('Referred by',s.referredBy||'Not provided'),
+              fieldRow('LinkedIn',s.linkedin||'Not provided', s.linkedin?(/^https?:/i.test(s.linkedin)?s.linkedin:('https://'+s.linkedin)):null),
+              fieldRow('Resume',s.resume||'Not provided', s.resume?DOC:null),
+              fieldRow('Rate sheet',s.rateSheet||'Not provided', s.rateSheet?DOC:null),
+              fieldRow('Worked before',s.workedBefore?'Yes':'No')),
+            cardNote: (st.notes&&st.notes[s.id])||'',
+            onCardNote:(e)=>this.setNote(s.id,e.target.value),
+          };
+        }
+        let jobCard={ showJobCard:false, jobCardName:'', jobCardMeta:'', hasJobPm:false, jobCardPm:'', jobCrewEl:null, deleteJob:()=>{}, closeJobCard:()=>{} };
+        if(jobRec){ const j=jobRec;
+          const crew=(j.crewIds||[]).map(id=>st.submissions.find(s=>s.id===id)).filter(Boolean);
+          jobCard={
+            showJobCard:true,
+            jobCardName:j.name,
+            jobCardMeta:[j.city||'Location TBD', this.fmtDate(j.createdAt), crew.length+' crew'].filter(Boolean).join(' · '),
+            hasJobPm: !!(j.pm&&String(j.pm).trim()),
+            jobCardPm: j.pm||'',
+            jobCrewEl: crew.length ? el('div',{style:{display:'flex',flexDirection:'column',gap:7}},crew.map((s,i)=>{ const g=gradeInfo(s.grade);
+              return el('button',{key:i,onClick:()=>this.openCard(s.id),style:{display:'flex',alignItems:'center',gap:10,background:'oklch(0.165 0.014 255)',border:'1px solid oklch(0.28 0.014 255)',borderRadius:10,padding:'10px 12px',cursor:'pointer',textAlign:'left',width:'100%'}},
+                el('span',{style:{flex:1,minWidth:0,fontSize:13.5,fontWeight:600,color:'#fff',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},s.name||s.email||s.id),
+                el('span',{style:{fontFamily:"'Space Mono',monospace",fontSize:11,color:'oklch(0.66 0.012 255)',flex:'none'}},String(s.city||'').trim()),
+                el('span',{style:{fontFamily:"'Space Mono',monospace",fontWeight:700,fontSize:12,color:g.color,flex:'none'}},g.str)); }))
+            : el('div',{style:{fontSize:13,color:'oklch(0.55 0.012 255)'}},'No crew assigned.'),
+            deleteJob:()=>this.deleteJob(j.id),
+            closeJobCard:()=>this.setState({ jobView:null }),
+          };
+        }
+        const jobsRows=st.jobs.map(j=>({ id:j.id, label:j.name, city:j.city||'—', pm:(j.pm&&String(j.pm).trim())||'—', count:String((j.crewIds||[]).length),
+          rowBg: st.jobView===j.id ? 'color-mix(in oklch, var(--accent) 12%, transparent)' : 'transparent',
+          open:()=>this.setState({ jobView:j.id, card:null }) }));
+        const jobSelectEl=el('select',{value:st.jobSel||'',onChange:(e)=>this.setState({ jobSel:e.target.value }),style:{padding:'12px 13px',fontSize:15}},
+          [el('option',{key:'new',value:''},'＋ New project…')].concat(st.jobs.map(j=>el('option',{key:j.id,value:j.id},j.name+(j.city?(' — '+j.city):'')))));
+        const cities=Array.from(new Set(st.submissions.map(s=>String(s.city||'').trim()).filter(Boolean))).sort();
+        const citySelectEl=el('select',{value:st.jobCity||'',onChange:(e)=>this.setState({ jobCity:e.target.value }),style:{padding:'12px 13px',fontSize:15}},
+          [el('option',{key:'none',value:''},'Select city…')].concat(cities.map((c,i)=>el('option',{key:i,value:c},c))));
+        return {
+          setTabCrew:()=>this.setState({ adminTab:'crew' }),
+          setTabJobs:()=>this.setState({ adminTab:'jobs' }),
+          isTabCrew: tab==='crew', isTabJobs: tab==='jobs',
+          crumb: tab==='jobs'?'Jobs':'Crew',
+          jobCount: st.jobs.length,
+          adminNameQ: st.adminNameQ, onNameQ:(e)=>this.setState({ adminNameQ:e.target.value }),
+          adminCityQ: st.adminCityQ, onCityQ:(e)=>this.setState({ adminCityQ:e.target.value }),
+          adminJobQ: st.adminJobQ, onJobQ:(e)=>this.setState({ adminJobQ:e.target.value }),
+          clearSearch:()=>this.setState({ adminNameQ:'', adminCityQ:'', adminJobQ:'' }),
+          crewCount: rowItems.length+' of '+st.submissions.length,
+          displayRows, noRows: rowItems.length===0,
+          allSelected,
+          toggleSelAll:()=>{ const sel={...st.selectedIds}; if(allSelected) rowItems.forEach(r=>{ delete sel[r.id]; }); else rowItems.forEach(r=>{ sel[r.id]=true; }); this.setState({ selectedIds:sel }); },
+          stop:(e)=>e.stopPropagation(),
+          selCount: selIds.length, hasSel: selIds.length>0, selNamesLine: selNames.join(', '),
+          addSelLabel: selIds.length ? ('Add '+selIds.length+' to job') : 'Add to job',
+          addSelOpacity: selIds.length ? '1' : '0.45',
+          clearSel:()=>this.clearSel(),
+          openJobModal:()=>{ if(selIds.length) this.setState({ jobModalOpen:true }); },
+          closeJobModal:()=>this.setState({ jobModalOpen:false }),
+          showJobModal: !!st.jobModalOpen,
+          jobSelectEl, citySelectEl,
+          isNewJob: !st.jobSel,
+          jobModalBtn: st.jobSel ? 'Add crew' : 'Create job',
+          jobName: st.jobName, onJobName:(e)=>this.setState({ jobName:e.target.value }),
+          jobPm: st.jobPm, onJobPm:(e)=>this.setState({ jobPm:e.target.value }),
+          createJob:()=>this.createJob(),
+          jobsRows, noJobs: st.jobs.length===0,
+          hasRightPane: !!cardRec,
+          hasJobPane: !!jobRec,
+          closeCard:()=>this.closeCard(),
+          ...card, ...jobCard,
+        };
       })(),
-
       showExportModal: st.exportOpen,
       openExport:()=>this.openExport(),
       closeExport:()=>this.closeExport(),

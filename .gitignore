@@ -1,0 +1,17 @@
+# This repo is PUBLIC and deploys via GitHub Pages.
+# Nothing containing crew personal data may be committed.
+
+# Imported crew data: names, emails, phone numbers, and do-not-hire notes
+pipeline/out/
+
+# Source workbooks, rolodexes, and individuals' resumes / rate sheets
+Example Documents/
+
+# Internal working notes (name individuals; not for publication)
+HANDOFF.md
+CLIENT_QUESTIONS.md
+PROSPECTS_PATCH.md
+
+__pycache__/
+*.pyc
+.DS_Store

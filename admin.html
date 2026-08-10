@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Crew Admin</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:#0f1218;--font-body:'Geist',system-ui,sans-serif;font-family:var(--font-body);-webkit-font-smoothing:antialiased;color:#e7eaf0;}
+  input,select,textarea{width:100%;font-family:var(--font-body);font-size:14.5px;color:#e7eaf0;background:#10141b;border:1px solid #2a303c;border-radius:10px;padding:11px 13px;outline:none;transition:border-color .15s,box-shadow .15s;}
+  textarea{min-height:80px;resize:vertical;line-height:1.5;}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);}
+  input::placeholder,textarea::placeholder{color:#5d6575;}
+  label{display:block;font-size:12px;font-weight:500;color:#98a1b1;margin-bottom:7px;}
+  button{font-family:var(--font-body);}
+  button[aria-pressed="true"]{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important;}
+  #adm-side button[aria-pressed="true"]{border:1.5px solid rgba(255,255,255,.9)!important;box-shadow:0 0 0 1px rgba(255,255,255,.25);}
+  ::selection{background:var(--accent);color:#fff;}
+  #adm-days{scrollbar-width:thin;scrollbar-color:#3a4252 #171b23;}
+  #adm-days::-webkit-scrollbar{height:9px;}
+  #adm-days::-webkit-scrollbar-track{background:#171b23;border-radius:8px;}
+  #adm-days::-webkit-scrollbar-thumb{background:#2e3542;border-radius:8px;}
+  #adm-days::-webkit-scrollbar-thumb:hover{background:#3a4252;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+  @keyframes pop{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
+  @keyframes pageIn{from{opacity:0;}to{opacity:1;}}
+  @media print{
+    body{background:#fff!important;}
+    #adm-top{display:none!important;}
+  }
+  @media (max-width:980px){
+    #adm-top{flex-direction:column!important;}
+    #adm-side{width:100%!important;}
+    #adm-cols{flex-direction:column!important;}
+    #adm-card{width:100%!important;}
+    #adm-search{grid-template-columns:1fr!important;}
+  }
+</style>
+</helmet>
+
+<div style="--accent:{{ accentColor }};min-height:100vh;position:relative;background:#0f1218;">
+  <main style="position:relative;max-width:min(1560px,97vw);margin:0 auto;padding:26px clamp(14px,2.5vw,36px) 80px;">
+
+    <!-- ===================== LOGIN ===================== -->
+    <sc-if value="{{ showLogin }}" hint-placeholder-val="{{ false }}">
+      <div style="min-height:80vh;display:flex;align-items:center;justify-content:center;">
+        <div style="width:100%;max-width:380px;background:#171b23;border:1px solid #262c37;border-radius:16px;padding:32px;box-shadow:0 8px 30px rgba(0,0,0,.35);animation:pop .25s ease;">
+          <img src="assets/akav-logo.png" alt="AKAV" style="height:36px;width:auto;display:block;margin:0 auto 20px;filter:drop-shadow(1px 1px 0 rgba(0,0,0,.4));">
+          <h1 style="font-weight:700;font-size:22px;margin:0 0 6px;color:#fff;">Crew Admin</h1>
+          <p style="color:#98a1b1;font-size:13.5px;line-height:1.5;margin:0 0 22px;">Sign in to manage crew and jobs. (Demo: admin / 1234)</p>
+          <div style="margin-bottom:13px;"><label for="login-user">Username</label><input id="login-user" type="text" value="{{ loginUser }}" onChange="{{ onLoginUser }}" onKeyDown="{{ onLoginKey }}" placeholder="admin" autoComplete="off"></div>
+          <div style="margin-bottom:18px;"><label for="login-pass">Password</label><input id="login-pass" type="password" value="{{ loginPass }}" onChange="{{ onLoginPass }}" onKeyDown="{{ onLoginKey }}" placeholder="••••"></div>
+          <sc-if value="{{ hasLoginErr }}" hint-placeholder-val="{{ false }}"><div role="alert" style="color:#ff8a80;font-size:13px;margin-bottom:14px;">{{ loginErr }}</div></sc-if>
+          <button onClick="{{ doLogin }}" style="width:100%;background:var(--accent);color:#fff;border:none;border-radius:10px;padding:13px;cursor:pointer;font-size:15px;font-weight:600;" style-hover="filter:brightness(1.08);">Sign in</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ===================== DASHBOARD ===================== -->
+    <sc-if value="{{ showDash }}" hint-placeholder-val="{{ true }}">
+      <div style="animation:pageIn .4s ease;">
+
+        <div id="adm-top" style="display:flex;gap:16px;align-items:stretch;margin-bottom:16px;">
+
+          <div style="flex:1;min-width:0;">
+              <div style="height:100%;background:#171b23;border:1px solid #262c37;border-radius:16px;padding:12px 18px 16px;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(0,0,0,.3);">
+                <div style="text-align:center;margin-bottom:14px;">{{ searchTitleEl }}</div>
+                <sc-if value="{{ hasJob }}" hint-placeholder-val="{{ true }}">
+                  <div style="flex:1;display:flex;flex-direction:column;min-height:74px;margin-bottom:14px;">
+                    <div style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#8b93a3;font-weight:600;margin-bottom:6px;">Job notes</div>
+                    <textarea value="{{ jobNotes }}" onChange="{{ onJobNotes }}" style="flex:1;min-height:64px;resize:vertical;"></textarea>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ noJob }}" hint-placeholder-val="{{ false }}">
+                  <div style="flex:1;"></div>
+                </sc-if>
+                <div id="adm-search" style="display:grid;grid-template-columns:0.7fr 1.1fr 1.1fr auto;gap:10px;align-items:end;">
+                  <div><label for="adm-q-city">City</label><input id="adm-q-city" type="text" value="{{ adminCityQ }}" onChange="{{ onCityQ }}" placeholder="Any city"></div>
+                  <div><label for="adm-q-job">Job / position</label><select id="adm-q-job" value="{{ adminJobQ }}" onChange="{{ onJobQ }}">
+                    <option value="">All positions</option>
+                    <option value="Stage Hand">Stage Hand</option>
+                    <option value="Graphics Operator">Graphics Operator</option>
+                    <option value="Playback Operator">Playback Operator</option>
+                    <option value="Video Engineer (V1)">Video Engineer (V1)</option>
+                    <option value="Technical Director">Technical Director</option>
+                    <option value="Camera Operator">Camera Operator</option>
+                    <option value="LED Technician">LED Technician</option>
+                    <option value="Video Utility / V2">Video Utility / V2</option>
+                    <option value="Breakout AV Technician">Breakout AV Technician</option>
+                  </select></div>
+                  <div><label for="adm-q-name">Name or email</label><input id="adm-q-name" type="text" value="{{ adminNameQ }}" onChange="{{ onNameQ }}" placeholder="Search name, email"></div>
+                  <button onClick="{{ clearSearch }}" style="background:var(--accent);color:#fff;border:none;border-radius:10px;padding:12px 24px;cursor:pointer;font-size:14px;font-weight:600;" style-hover="filter:brightness(1.08);">Clear</button>
+                </div>
+              </div>
+          </div>
+
+          <aside id="adm-side" style="flex:none;width:370px;background:linear-gradient(160deg,#4d5ce8,#3c48c9);border:none;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 28px rgba(60,72,201,.28);">
+            <button onClick="{{ openAddJob }}" style="width:100%;background:#fff;color:#3743b5;border:none;border-radius:10px;padding:11px 12px;cursor:pointer;font-size:14px;font-weight:700;flex:none;" style-hover="filter:brightness(.95);">＋ Add job</button>
+            <div style="font-size:10.5px;color:rgba(255,255,255,.72);text-align:center;margin-top:-6px;flex:none;">All jobs · Main admin only</div>
+            <div style="flex:1;min-height:60px;overflow:auto;display:flex;flex-direction:column;gap:6px;">
+              <sc-for list="{{ jobsNav }}" as="jb" hint-placeholder-count="2">
+                <div style="display:flex;gap:6px;align-items:center;">
+                  <button onClick="{{ jb.open }}" aria-pressed="{{ jb.active }}" style="flex:1;min-width:0;text-align:left;background:rgba(0,0,0,.32);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:9px 11px;cursor:pointer;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ jb.label }}</button>
+                  <button onClick="{{ jb.edit }}" title="Edit job" style="flex:none;width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.25);color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.18);border-radius:7px;cursor:pointer;padding:0;"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg></button>
+                  <sc-if value="{{ manageMode }}" hint-placeholder-val="{{ false }}">
+                    <button onClick="{{ jb.move }}" title="Move to Payroll / Grading" style="flex:none;width:26px;height:26px;background:rgba(0,0,0,.25);color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.25);border-radius:7px;cursor:pointer;font-size:12px;line-height:1;">→</button>
+                  </sc-if>
+                </div>
+              </sc-for>
+              <sc-if value="{{ hasPayroll }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:700;margin-top:8px;">Payroll / Grading</div>
+                <sc-for list="{{ payrollNav }}" as="pj" hint-placeholder-count="1">
+                  <div style="display:flex;gap:6px;align-items:center;">
+                    <button onClick="{{ pj.open }}" aria-pressed="{{ pj.active }}" style="flex:1;min-width:0;text-align:left;background:rgba(0,0,0,.22);color:rgba(255,255,255,.45);border:1px dashed rgba(255,255,255,.16);border-radius:9px;padding:8px 11px;cursor:pointer;font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ pj.label }}</button>
+                    <sc-if value="{{ manageMode }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ pj.restore }}" title="Move back to Active" style="flex:none;width:26px;height:26px;background:rgba(0,0,0,.25);color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.25);border-radius:7px;cursor:pointer;font-size:12px;line-height:1;">↩</button>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </sc-if>
+              <sc-if value="{{ noJobs }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:12px;color:rgba(255,255,255,.7);padding:4px 2px;">No jobs yet.</div>
+              </sc-if>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex:none;flex-wrap:wrap;">
+              <a href="{{ sheetViewUrl }}" target="_blank" rel="noopener" style="color:rgba(255,255,255,.85);font-size:12px;font-weight:500;text-decoration:underline;">Sheet ↗</a>
+              <button onClick="{{ doPrint }}" style="background:transparent;color:rgba(255,255,255,.85);border:none;cursor:pointer;font-size:12px;font-weight:500;text-decoration:underline;padding:0;">Print</button>
+              <button onClick="{{ doExport }}" title="Download this job's crew as a CSV — open it in Google Sheets with File → Import" style="background:transparent;color:rgba(255,255,255,.85);border:none;cursor:pointer;font-size:12px;font-weight:500;text-decoration:underline;padding:0;">{{ exportLabel }}</button>
+              <button onClick="{{ toggleManage }}" style="background:transparent;color:{{ manageColor }};border:none;cursor:pointer;font-size:12px;font-weight:500;text-decoration:underline;padding:0;">Manage jobs</button>
+              <button onClick="{{ openProspects }}" title="New applications waiting to be added to the crew list" style="background:transparent;color:{{ prospectColor }};border:none;cursor:pointer;font-size:12px;font-weight:700;text-decoration:underline;padding:0;">{{ prospectLabel }}</button>
+              <button onClick="{{ openLog }}" style="background:transparent;color:rgba(255,255,255,.85);border:none;cursor:pointer;font-size:12px;font-weight:500;text-decoration:underline;padding:0;">Log</button>
+            </div>
+          </aside>
+        </div>
+
+        <sc-if value="{{ hasDayStrip }}" hint-placeholder-val="{{ false }}">
+          <div id="adm-days" style="display:flex;gap:12px;overflow-x:auto;align-items:stretch;margin-bottom:16px;padding-bottom:8px;">
+            {{ dayStripEl }}
+          </div>
+        </sc-if>
+
+        <div id="adm-cols" style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="flex:1;min-width:0;">
+            <div style="background:#171b23;border:1px solid #262c37;border-radius:14px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.3);">
+              <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid #262c37;">
+                <span style="font-weight:700;font-size:16px;color:#fff;">Crew</span>
+                <span style="font-size:12px;color:#6b7484;">{{ crewCount }}</span>
+              </div>
+              <sc-if value="{{ hasActiveNeeds }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid #262c37;background:#151a22;">
+                  <span style="font-size:12px;color:#8b93a3;font-weight:600;">{{ activeJobName }} needs</span>
+                  {{ activeNeedsEl }}
+                </div>
+              </sc-if>
+              <div style="display:grid;grid-template-columns:46px minmax(130px,1.2fr) minmax(96px,0.85fr) 52px minmax(210px,2fr);gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid #262c37;background:#141821;">
+                <span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8b93a3;font-weight:600;">Add</span>
+                <span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8b93a3;font-weight:600;">Name</span>
+                <span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8b93a3;font-weight:600;">City</span>
+                <span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8b93a3;font-weight:600;">Grade</span>
+                <span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8b93a3;font-weight:600;">Positions</span>
+              </div>
+              <sc-for list="{{ displayRows }}" as="sub" hint-placeholder-count="8">
+                <sc-if value="{{ sub.isHeading }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:baseline;gap:9px;padding:12px 16px 8px;background:#1a1f29;border-bottom:1px solid #262c37;">
+                    <span style="font-size:13px;font-weight:700;color:#c6ccd8;">{{ sub.head }}</span>
+                    <span style="font-size:12px;color:#6b7484;">{{ sub.count }}</span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ sub.isRow }}" hint-placeholder-val="{{ false }}">
+                  <div onClick="{{ sub.openCard }}" style="display:grid;grid-template-columns:46px minmax(130px,1.2fr) minmax(96px,0.85fr) 52px minmax(210px,2fr);gap:12px;align-items:center;padding:9px 16px;border-bottom:1px solid #1f242f;cursor:pointer;background:{{ sub.rowBg }};" style-hover="background:#1d222c;">
+                    <button onClick="{{ sub.toggleJob }}" aria-pressed="{{ sub.inJob }}" disabled="{{ sub.addDisabled }}" title="{{ sub.addTitle }}" style="width:32px;height:28px;background:{{ sub.addBg }};color:{{ sub.addColor }};border:1px solid {{ sub.addBorder }};border-radius:7px;cursor:{{ sub.addCursor }};font-size:15px;font-weight:700;line-height:1;">{{ sub.addLabel }}</button>
+                    <span style="min-width:0;overflow:hidden;">{{ sub.nameEl }}</span>
+                    <span style="font-size:13px;color:#9aa3b2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ sub.city }}</span>
+                    <span>{{ sub.gradeEl }}</span>
+                    <span style="overflow:hidden;">{{ sub.rowChips }}</span>
+                  </div>
+                </sc-if>
+              </sc-for>
+              <sc-if value="{{ noRows }}" hint-placeholder-val="{{ false }}">
+                {{ noRowsEl }}
+              </sc-if>
+            </div>
+            {{ dataNoteEl }}
+          </div>
+
+          <div id="adm-card" style="width:430px;flex:none;">
+            <div style="display:flex;background:#171b23;border:1px solid #262c37;border-radius:12px;padding:4px;gap:4px;margin-bottom:12px;">
+              <button onClick="{{ setTabCard }}" aria-pressed="{{ isTabCard }}" style="flex:1;background:transparent;color:#98a1b1;border:none;border-radius:8px;padding:8px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.04em;">CARD</button>
+              <button onClick="{{ setTabJob }}" aria-pressed="{{ isTabJob }}" style="flex:1;background:transparent;color:#98a1b1;border:none;border-radius:8px;padding:8px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.04em;">JOB</button>
+            </div>
+
+            <sc-if value="{{ isTabCard }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ showPersonCard }}" hint-placeholder-val="{{ false }}">
+              <div style="background:#171b23;border:1px solid #2a303c;border-radius:14px;overflow:hidden;animation:fadeUp .25s ease;box-shadow:0 8px 24px rgba(0,0,0,.35);">
+                <div style="padding:18px 20px 20px;">
+                  {{ cardFlagEl }}
+                  <div style="display:flex;align-items:flex-start;gap:14px;">
+                    {{ cardHero }}
+                    <div style="flex:1;min-width:0;padding-top:2px;">
+                      <div style="font-weight:700;font-size:19px;color:#fff;">{{ cardName }}</div>
+                      <div style="font-size:12px;color:#98a1b1;margin-top:3px;">{{ cardMeta }}</div>
+                      <div style="margin-top:8px;">{{ cardPositions }}</div>
+                    </div>
+                    {{ cardGradeEl }}
+                    <button onClick="{{ closeCard }}" aria-label="Close details" style="width:28px;height:28px;border-radius:8px;background:#222835;border:1px solid #2e3542;color:#c6ccd8;cursor:pointer;font-size:12px;line-height:1;flex:none;">✕</button>
+                  </div>
+                  <div style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#8b93a3;font-weight:600;margin:18px 0 8px;">Jobs worked</div>
+                  {{ cardJobsWorked }}
+                  <div style="border-top:1px solid #262c37;margin:16px 0;"></div>
+                  {{ cardContact }}
+                  <div style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#8b93a3;font-weight:600;margin:14px 0 8px;">Notes</div>
+                  {{ cardSheetNotesEl }}
+                  <textarea value="{{ cardNote }}" onChange="{{ onCardNote }}" placeholder="Private notes on this crew member…" style="min-height:96px;"></textarea>
+                  <div style="font-size:11.5px;color:#5d6575;margin-top:6px;">Saved on this device · Google Sheet sync coming soon</div>
+                  {{ cardNudgeEl }}
+                </div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noCard }}" hint-placeholder-val="{{ true }}">
+              <div style="border:1.5px dashed #262c37;border-radius:14px;min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#4a5261;">
+                <svg viewBox="0 0 100 100" style="width:56px;height:56px;border-radius:50%;background:#151a22;"><circle cx="50" cy="38" r="17" fill="#222834"></circle><path d="M50 60c-19 0-31 10-34 24a50 50 0 0 0 68 0c-3-14-15-24-34-24z" fill="#222834"></path></svg>
+                <span style="font-size:13px;">Click a crew member to view their card</span>
+              </div>
+            </sc-if>
+            </sc-if>
+            <sc-if value="{{ isTabJob }}" hint-placeholder-val="{{ true }}">
+              <div style="background:#171b23;border:1px solid #2a303c;border-radius:14px;overflow:hidden;animation:fadeUp .25s ease;box-shadow:0 8px 24px rgba(0,0,0,.35);">
+                {{ jobPanelEl }}
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </main>
+
+  <!-- ===================== ACTIVITY LOG MODAL ===================== -->
+  <sc-if value="{{ showLog }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:60;background:rgba(8,10,14,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .2s ease;">
+      <div role="dialog" aria-modal="true" style="background:#171b23;border:1px solid #2a303c;border-radius:16px;padding:26px;max-width:520px;width:100%;max-height:85vh;overflow:auto;animation:pop .25s ease;box-shadow:0 16px 48px rgba(0,0,0,.5);">
+        <h3 style="font-weight:700;font-size:19px;color:#fff;margin:0 0 14px;">Activity log</h3>
+        {{ logListEl }}
+        <div style="display:flex;gap:10px;margin-top:18px;">
+          <button onClick="{{ closeLog }}" style="flex:1;background:transparent;color:#c6ccd8;border:1px solid #2e3542;border-radius:10px;padding:11px;cursor:pointer;font-size:14px;font-weight:600;">Close</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== ADD JOB MODAL ===================== -->
+  <sc-if value="{{ showAddJob }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:60;background:rgba(8,10,14,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .2s ease;">
+      <div role="dialog" aria-modal="true" style="background:#171b23;border:1px solid #2a303c;border-radius:16px;padding:28px;max-width:480px;width:100%;max-height:90vh;overflow:auto;animation:pop .25s ease;box-shadow:0 16px 48px rgba(0,0,0,.5);">
+        <h3 style="font-weight:700;font-size:20px;color:#fff;margin:0 0 4px;">{{ ajHeading }}</h3>
+        <p style="color:#98a1b1;font-size:13px;line-height:1.5;margin:0 0 18px;">Main admin only. Crew is added from the Crew table once the job exists.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:13px;">
+          <div style="grid-column:1 / -1;"><label for="aj-name">Job name</label><input id="aj-name" type="text" value="{{ ajName }}" onChange="{{ onAjName }}" placeholder="e.g. Cisco Live 2026"></div>
+          <div style="grid-column:1 / -1;"><label for="aj-city">Location</label><input id="aj-city" type="text" value="{{ ajCity }}" onChange="{{ onAjCity }}" placeholder="e.g. Las Vegas"></div>
+          <div><label for="aj-date">Start date</label><input id="aj-date" type="date" value="{{ ajDate }}" onChange="{{ onAjDate }}"></div>
+          <div><label for="aj-date2">End date</label><input id="aj-date2" type="date" value="{{ ajDate2 }}" onChange="{{ onAjDate2 }}"></div>
+          <div style="grid-column:1 / -1;"><label for="aj-pm">Crew manager</label><input id="aj-pm" type="text" value="{{ ajPm }}" onChange="{{ onAjPm }}" placeholder="e.g. AK"></div>
+        </div>
+        <sc-if value="{{ ajShowDays }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#8b93a3;font-weight:600;margin:16px 0 10px;">Days</div>
+          {{ ajDaysEl }}
+        </sc-if>
+        <div style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#8b93a3;font-weight:600;margin:16px 0 10px;">Required roles (only if no days)</div>
+        {{ reqInputsEl }}
+        <div style="display:flex;gap:10px;margin-top:22px;">
+          <button onClick="{{ closeAddJob }}" style="flex:none;background:transparent;color:#c6ccd8;border:1px solid #2e3542;border-radius:10px;padding:12px 18px;cursor:pointer;font-size:14px;font-weight:600;">Cancel</button>
+          <button onClick="{{ createJobNew }}" style="flex:1;background:var(--accent);color:#fff;font-weight:600;font-size:14px;border:none;border-radius:10px;padding:12px;cursor:pointer;" style-hover="filter:brightness(1.08);">{{ ajSubmit }}</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== DAY EDIT MODAL ===================== -->
+  <sc-if value="{{ showDayEdit }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:80;background:rgba(8,10,14,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .15s ease;">
+      <div role="dialog" aria-modal="true" style="background:#171b23;border:1px solid #2a303c;border-radius:16px;padding:24px;max-width:460px;width:100%;max-height:88vh;overflow:auto;animation:pop .2s ease;box-shadow:0 16px 48px rgba(0,0,0,.5);">
+        {{ dayEditEl }}
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== PROSPECTIVE HIRES MODAL ===================== -->
+  <sc-if value="{{ showProspects }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:78;background:rgba(8,10,14,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .2s ease;">
+      <div role="dialog" aria-modal="true" style="background:#171b23;border:1px solid #2a303c;border-radius:16px;padding:24px;max-width:520px;width:100%;max-height:88vh;overflow:auto;animation:pop .2s ease;box-shadow:0 16px 48px rgba(0,0,0,.5);">
+        {{ prospectEl }}
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== NUDGE ALL MODAL ===================== -->
+  <sc-if value="{{ showNudgeAll }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:75;background:rgba(8,10,14,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .2s ease;">
+      <div role="dialog" aria-modal="true" style="background:#171b23;border:1px solid #2a303c;border-radius:16px;padding:24px;max-width:460px;width:100%;max-height:88vh;overflow:auto;animation:pop .2s ease;box-shadow:0 16px 48px rgba(0,0,0,.5);">
+        {{ nudgeAllEl }}
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===================== DAY PICK MODAL ===================== -->
+  <sc-if value="{{ showDayPick }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:70;background:rgba(8,10,14,.6);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .15s ease;">
+      <div role="dialog" aria-modal="true" style="background:#171b23;border:1px solid #2a303c;border-radius:16px;padding:22px;max-width:340px;width:100%;max-height:85vh;overflow:auto;animation:pop .2s ease;box-shadow:0 16px 48px rgba(0,0,0,.5);">
+        {{ dayPickEl }}
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900},&quot;accentColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#5b6cff&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;sheetEndpoint&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://script.google.com/macros/s/AKfycbyzco-WM03sFZ34l56BQ6Q96u0HlflYSDn0yYHO7nuiCod5ii7HLcsqCFAAw8e5cFpk/exec&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;sheetViewUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://docs.google.com/spreadsheets/d/1-yvBtc9m8Q3j2ssat9Ys0EnWFFS_YLqKmZBstgoPyYM/edit&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+/* ══════════════════════════════════════════════════════════════════════
+   LIVE DATA CONFIG
+   ----------------------------------------------------------------------
+   NO TOKEN LIVES IN THIS FILE — never paste one here. Open the page as
+
+       admin.html#t=YOUR_IMPORT_TOKEN
+
+   and it is stashed in sessionStorage, then stripped from the address bar
+   straight away so it isn't sitting on screen while you present. It lasts
+   until the tab closes; reopen with the same link to come back. With no
+   token the page runs on demo crew, so anyone who finds the URL sees
+   nothing real.
+
+   This is a stopgap, NOT auth — whoever holds the link holds full read
+   access to every crew member's contact details. Real fix: deploy the
+   Apps Script as "Anyone with a Google account" and allowlist emails.
+   See HANDOFF.md.
+   ══════════════════════════════════════════════════════════════════════ */
+const TOKEN_KEY = 'akav_token';
+const DEMO_ARCHIVE_KEY = 'akav_demo_archived_v1';
+/* Only still here so purgeDemo() can delete the flag from older browsers. */
+
+/* Review gate: people already on the roster the first time we see it are
+   grandfathered in. Anything that shows up later is a NEW intake and waits
+   in Prospective hires until it's approved. Keyed by email (falling back to
+   name) rather than sheet row, so re-sorting the Sheet can't reset it. */
+const KNOWN_KEY = 'akav_known_v1';
+const DECLINED_KEY = 'akav_declined_v1';
+const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyzco-WM03sFZ34l56BQ6Q96u0HlflYSDn0yYHO7nuiCod5ii7HLcsqCFAAw8e5cFpk/exec';
+const ONBOARDING_URL = 'https://puffer3.github.io/AKAV/';
+const PEOPLE_CACHE_KEY = 'akav_people';
+
+/* Per-show column groups on the Submissions tab: "<Show Label> — Grade" etc. */
+const SHOW_COL_RE = /^(.+?)\s+[—–-]\s+(Position\(s\)|Days|Rate|Grade)$/;
+
+/* Sheet position names are freeform ("GAV", "Led Assist", "Cam op / records").
+   These map them onto the portal's 9 canonical roles so search/grouping/needs
+   counting work. PROVISIONAL — the client still owes us the official job list
+   (CLIENT_QUESTIONS #6). Anything unmatched is kept verbatim, never dropped. */
+const POS_ALIASES = [
+  [/\b(v2|video utility|vid\.? ?util)/i, 'Video Utility / V2'],
+  [/\b(v1|video engineer)\b/i,           'Video Engineer (V1)'],
+  [/\b(td|technical director)\b/i,       'Technical Director'],
+  [/\bled\b/i,                           'LED Technician'],
+  [/\b(graphics|gfx|graphic op)/i,       'Graphics Operator'],
+  [/\b(playback|pbo)\b/i,                'Playback Operator'],
+  [/\b(cam|camera)\b/i,                  'Camera Operator'],
+  [/\b(stage ?hand|stagehand|labor|hand)\b/i, 'Stage Hand'],
+  [/\b(breakout|gav|general av)\b/i,     'Breakout AV Technician'],
+];
+
+/* The rolodex "LA Short list" sheet — 58 people. This membership was NOT
+   uploaded to the Sheet (pipeline's upload_contacts only sends name/email/
+   phone/city/notes/grade), so it's seeded here by name until the pipeline
+   carries sheet membership properly. 57 of 58 match the live roster;
+   "One name" doesn't and is left for manual starring.
+   Applied ONCE (localStorage flag) so later stars/unstars stick. */
+const SHORTLIST_SEED_KEY = 'akav_shortlist_seed_v1';
+const SHORTLIST_SEED = [];
+const normName = (s)=>String(s||'').trim().toLowerCase().replace(/\s+/g,' ').replace(/[^a-z0-9 ]/g,'');
+
+/* Red flags carried in the free-text Notes column. Exact meanings are still
+   unconfirmed (CLIENT_QUESTIONS #4), so the badge asks rather than asserts. */
+const FLAG_PATTERNS = [
+  [/\bDNH\b/i,                          'DNH'],
+  [/marked\s+DARK\s+RED/i,              'DARK RED'],
+  [/marked\s+RED/i,                     'RED'],
+  [/no\s*[-/]?\s*call\s*[-/]?\s*no\s*[-/]?\s*show/i, 'NO CALL / NO SHOW'],
+];
+
+class Component extends DCLogic {
+  state = {
+    authed:true,
+    loginUser:'',
+    loginPass:'',
+    loginErr:'',
+    submissions:[],
+    notes:{},
+    jobs:[],
+    card:null,
+    paneTab:'job',
+    activeJobId:null,
+    activeDayId:'all',
+    dayPick:null,
+    adminNameQ:'',
+    adminCityQ:'',
+    adminJobQ:'',
+    addJobOpen:false,
+    ajName:'',
+    ajCity:'',
+    ajDate:'',
+    ajDate2:'',
+    ajPm:'',
+    ajReq:{},
+    ajDays:[],
+    ajEditId:null,
+    dayEdit:null,
+    syncMsg:'',
+    dataMode:'demo',
+    dataLoading:false,
+    dataErr:'',
+    dataCount:0,
+    dataAt:'',
+    manageJobs:false,
+    nudgeOpen:false,
+    nudged:{},
+    shortlist:{},
+    known:null,
+    declined:{},
+    prospectOpen:false,
+    showDeclined:false,
+    logOpen:false,
+    log:[],
+    logExpanded:{},
+  };
+
+  componentDidMount(){
+    this.tok=this.readToken();
+    /* Demo crew and demo jobs are gone for good. This also scrubs any that
+       are still sitting in a browser from before they were removed. */
+    this.purgeDemo();
+    let stored=[];
+    try{ stored=JSON.parse(localStorage.getItem('akav_submissions')||'[]'); }catch(e){ stored=[]; }
+    if(!Array.isArray(stored)) stored=[];
+    const subs=stored.filter(x=>x && x.id && !/^s\d+$/.test(x.id))
+      .sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt));
+    try{ localStorage.setItem('akav_submissions', JSON.stringify(subs)); }catch(e){}
+    let notes={}; try{ notes=JSON.parse(localStorage.getItem('akav_notes')||'{}'); }catch(e){ notes={}; }
+    if(!notes || typeof notes!=='object' || Array.isArray(notes)) notes={};
+    let jobs=[]; try{ jobs=JSON.parse(localStorage.getItem('akav_jobs')||'[]'); }catch(e){ jobs=[]; }
+    if(!Array.isArray(jobs)) jobs=[];
+    let log=[]; try{ log=JSON.parse(localStorage.getItem('akav_log')||'[]'); }catch(e){ log=[]; }
+    if(!Array.isArray(log)) log=[];
+    let nudged={}; try{ nudged=JSON.parse(localStorage.getItem('akav_nudged')||'{}'); }catch(e){ nudged={}; }
+    if(!nudged || typeof nudged!=='object' || Array.isArray(nudged)) nudged={};
+    let short={}; try{ short=JSON.parse(localStorage.getItem('akav_shortlist')||'{}'); }catch(e){ short={}; }
+    if(!short || typeof short!=='object' || Array.isArray(short)) short={};
+    this.setState({ submissions:subs, notes, jobs, log, nudged, shortlist:short,
+      activeJobId: jobs.length?jobs[0].id:null });
+    let cached=null; try{ cached=JSON.parse(localStorage.getItem(PEOPLE_CACHE_KEY)||'null'); }catch(e){ cached=null; }
+    if(this.tok && cached && Array.isArray(cached.people) && cached.people.length){
+      this.setState({ submissions:cached.people, dataMode:'live', dataCount:cached.people.length, dataAt:cached.t||'' });
+    }
+    this.loadPeople();
+  }
+
+  /* Strip every trace of the old demo data out of this browser: the 17
+     seeded crew (ids s1-s17), the two seeded jobs (jdemo*), the archive
+     they were parked in, and any stars/nudges/notes hanging off them. */
+  purgeDemo(){
+    const isDemoPerson=(id)=>/^s\d+$/.test(String(id||''));
+    const isDemoJob=(id)=>/^jdemo/.test(String(id||''));
+    const readJSON=(k,fallback)=>{ try{ const v=JSON.parse(localStorage.getItem(k)||'null'); return v==null?fallback:v; }catch(e){ return fallback; } };
+    const writeJSON=(k,v)=>{ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} };
+    try{ localStorage.removeItem('akav_jobs_archive'); }catch(e){}
+    try{ localStorage.removeItem(DEMO_ARCHIVE_KEY); }catch(e){}
+    const jobs=readJSON('akav_jobs',[]);
+    if(Array.isArray(jobs)){
+      const kept=jobs.filter(j=>j && !isDemoJob(j.id)).map(j=>{
+        const strip=(ids)=>(ids||[]).filter(id=>!isDemoPerson(id));
+        const days=Array.isArray(j.days) ? j.days.map(d=>({...d, crewIds:strip(d.crewIds)})) : j.days;
+        return {...j, days, crewIds:strip(j.crewIds)};
+      });
+      if(kept.length!==jobs.length || JSON.stringify(kept)!==JSON.stringify(jobs)) writeJSON('akav_jobs',kept);
+    }
+    const subs=readJSON('akav_submissions',[]);
+    if(Array.isArray(subs)){
+      const kept=subs.filter(x=>x && !isDemoPerson(x.id));
+      if(kept.length!==subs.length) writeJSON('akav_submissions',kept);
+    }
+    ['akav_shortlist','akav_notes'].forEach(k=>{
+      const m=readJSON(k,{});
+      if(!m || typeof m!=='object' || Array.isArray(m)) return;
+      const out={}; let changed=false;
+      Object.keys(m).forEach(id=>{ if(isDemoPerson(id)) changed=true; else out[id]=m[id]; });
+      if(changed) writeJSON(k,out);
+    });
+    const nudged=readJSON('akav_nudged',{});
+    if(nudged && typeof nudged==='object' && !Array.isArray(nudged)){
+      const out={}; let changed=false;
+      Object.keys(nudged).forEach(k=>{
+        const parts=String(k).split(':');
+        if(isDemoJob(parts[0]) || isDemoPerson(parts[2])) changed=true; else out[k]=nudged[k];
+      });
+      if(changed) writeJSON('akav_nudged',out);
+    }
+  }
+
+  /* ── Live crew from the Sheet ─────────────────────────────────────── */
+
+  /* #t=… → sessionStorage, then wipe it out of the address bar. */
+  readToken(){
+    let t='';
+    try{
+      const m=/[#&](?:t|token)=([^&]+)/.exec(String(location.hash||''));
+      if(m && m[1]){
+        t=decodeURIComponent(m[1]);
+        try{ sessionStorage.setItem(TOKEN_KEY,t); }catch(e){}
+        try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){}
+      } else {
+        try{ t=sessionStorage.getItem(TOKEN_KEY)||''; }catch(e){}
+      }
+    }catch(e){ t=''; }
+    return t;
+  }
+  token(){ return this.tok||''; }
+  forgetToken(){
+    try{ sessionStorage.removeItem(TOKEN_KEY); }catch(e){}
+    try{ localStorage.removeItem(PEOPLE_CACHE_KEY); }catch(e){}
+    this.tok='';
+    /* Don't reseed demo crew here: the review gate has already been
+       baselined against the live roster, so 17 demo people would show up
+       as unreviewed prospects and the crew table would read 0 of 0. */
+    this.setState({ submissions:[], dataMode:'demo', dataErr:'', dataCount:0, dataAt:'' });
+    this.addLog('Forgot the API token and cleared the cached roster');
+  }
+
+  peopleUrl(){
+    const base=String((this.props&&this.props.sheetEndpoint)||API_ENDPOINT||'').trim();
+    if(!base || !this.token()) return '';
+    return base+'?action=people&token='+encodeURIComponent(this.token());
+  }
+
+  loadPeople(){
+    const url=this.peopleUrl();
+    if(!url){ this.setState({ dataMode:'demo', dataLoading:false, dataErr:'' }); return; }
+    this.setState({ dataLoading:true, dataErr:'' });
+    fetch(url).then(r=>r.json()).then(d=>{
+      if(!d || !d.ok) throw new Error((d&&d.error)||'request refused');
+      const people=this.mapPeople(d);
+      if(!people.length) throw new Error('no people returned');
+      const t=new Date().toISOString();
+      try{ localStorage.setItem(PEOPLE_CACHE_KEY, JSON.stringify({ t, people })); }catch(e){}
+      this.setState({ submissions:people, dataMode:'live', dataLoading:false, dataErr:'', dataCount:people.length, dataAt:t });
+      this.seedShortlist(people);
+      this.syncKnown(people);
+    }).catch(e=>{
+      this.setState({ dataLoading:false, dataErr:String((e&&e.message)||e) });
+    });
+  }
+
+  prospectKey(p){
+    return String((p&&p.email)||'').trim().toLowerCase() || normName(p&&p.name) || String((p&&p.id)||'');
+  }
+
+  /* First live roster we ever see becomes the baseline — everyone on it is
+     already "known". After that, an unseen key is a new intake to review. */
+  syncKnown(people){
+    let known=null, declined={};
+    try{ known=JSON.parse(localStorage.getItem(KNOWN_KEY)||'null'); }catch(e){ known=null; }
+    try{ declined=JSON.parse(localStorage.getItem(DECLINED_KEY)||'{}'); }catch(e){ declined={}; }
+    if(!declined || typeof declined!=='object' || Array.isArray(declined)) declined={};
+    if(!known || typeof known!=='object' || Array.isArray(known)){
+      known={};
+      (people||[]).forEach(p=>{ known[this.prospectKey(p)]=1; });
+      try{ localStorage.setItem(KNOWN_KEY, JSON.stringify(known)); }catch(e){}
+      this.addLog('Baselined '+Object.keys(known).length+' crew as reviewed — new intakes will queue for review');
+    }
+    this.setState({ known, declined });
+  }
+
+  saveKnown(known){ try{ localStorage.setItem(KNOWN_KEY, JSON.stringify(known)); }catch(e){} }
+  saveDeclined(d){ try{ localStorage.setItem(DECLINED_KEY, JSON.stringify(d)); }catch(e){} }
+
+  approveProspect(p){
+    const k=this.prospectKey(p);
+    const known={...(this.state.known||{}), [k]:1};
+    const declined={...(this.state.declined||{})}; delete declined[k];
+    this.saveKnown(known); this.saveDeclined(declined);
+    this.setState({ known, declined });
+    this.addLog('Approved '+((p&&p.name)||k)+' onto the crew list');
+  }
+
+  declineProspect(p){
+    const k=this.prospectKey(p);
+    const declined={...(this.state.declined||{}), [k]:{ at:new Date().toISOString(), name:(p&&p.name)||'' }};
+    this.saveDeclined(declined); this.setState({ declined });
+    this.addLog('Held back '+((p&&p.name)||k)+' from the crew list');
+  }
+
+  restoreDeclined(k){
+    const declined={...(this.state.declined||{})}; delete declined[k];
+    this.saveDeclined(declined); this.setState({ declined });
+  }
+
+  approveAll(list){
+    const known={...(this.state.known||{})};
+    (list||[]).forEach(p=>{ known[this.prospectKey(p)]=1; });
+    this.saveKnown(known); this.setState({ known });
+    this.addLog('Approved '+((list||[]).length)+' new crew onto the list');
+  }
+
+  /* One-time: star everyone who was on the rolodex short list. */
+  seedShortlist(people){
+    let done=false; try{ done=!!localStorage.getItem(SHORTLIST_SEED_KEY); }catch(e){}
+    if(done) return;
+    const want={}; SHORTLIST_SEED.forEach(n=>{ want[n]=1; });
+    let saved={}; try{ saved=JSON.parse(localStorage.getItem('akav_shortlist')||'{}'); }catch(e){ saved={}; }
+    if(!saved || typeof saved!=='object' || Array.isArray(saved)) saved={};
+    const m={...saved, ...(this.state.shortlist||{})};
+    let n=0;
+    (people||[]).forEach(p=>{ if(want[normName(p.name)] && !m[p.id]){ m[p.id]=true; n++; } });
+    try{ localStorage.setItem('akav_shortlist', JSON.stringify(m)); localStorage.setItem(SHORTLIST_SEED_KEY,'1'); }catch(e){}
+    this.setState({ shortlist:m });
+    if(n) this.addLog('Shortlisted '+n+' crew from the rolodex "LA Short list"');
+  }
+
+  /* Header text → { "<Show Label>": { Grade:"<header>", Days:"…", … } } */
+  showCols(headers){
+    const map={};
+    (headers||[]).forEach(h=>{
+      const raw=String(h||'').trim();
+      if(!raw || raw.toLowerCase()==='rolly grade') return;
+      const m=SHOW_COL_RE.exec(raw);
+      if(!m) return;
+      const label=m[1].trim();
+      if(!label) return;
+      (map[label]=map[label]||{})[m[2]]=raw;
+    });
+    return map;
+  }
+
+  normPositions(raws){
+    const out=[];
+    (raws||[]).forEach(r=>{
+      String(r||'').split(/[,;]|\s\+\s|\band\b/i).forEach(tok=>{
+        const t=String(tok||'').trim().replace(/\s+/g,' ');
+        if(!t || t.length>60) return;
+        const hit=POS_ALIASES.find(a=>a[0].test(t));
+        const v=hit?hit[1]:t;
+        if(out.indexOf(v)<0) out.push(v);
+      });
+    });
+    return out.slice(0,8);
+  }
+
+  mapPerson(p, cols, labels){
+    const g=(k)=> k ? String(p[k]==null?'':p[k]).trim() : '';
+    const jobsWorked=[], rawPos=[];
+    labels.forEach(label=>{
+      const c=cols[label];
+      const pos=g(c['Position(s)']), dys=g(c['Days']), rate=g(c['Rate']), grade=g(c['Grade']);
+      if(!pos && !dys && !rate && !grade) return;
+      if(pos) rawPos.push(pos);
+      const bits=[];
+      if(pos) bits.push(pos);
+      if(dys) bits.push(/^\d+$/.test(dys) ? (dys+' day'+(dys==='1'?'':'s')) : dys);
+      jobsWorked.push({ job:label, location:'', grade, sub:bits.join(' · '), positions:pos, days:dys, rate });
+    });
+    const email=g('Email'), photo=g('Photo'), created=g('Date Created');
+    let createdAt=''; if(created){ const ts=Date.parse(created); if(!isNaN(ts)) createdAt=new Date(ts).toISOString(); }
+    const yes=(v)=>/^(y|yes|true|1|complete)/i.test(String(v||'').trim());
+    return {
+      id:'r'+(p._row || email || Math.random().toString(36).slice(2)),
+      _row:p._row||null, live:true,
+      name:g('Name'), email, phone:g('Phone'), city:g('City'),
+      address:g('Address'), pronouns:g('Pronouns'),
+      referredBy:g('Referred By'), linkedin:g('LinkedIn'),
+      ecName:g('Emergency Contact'), ecPhone:g('Emergency Phone'), ecRel:g('Relation'),
+      w9:g('W-9'), banking:g('Banking'), resume:g('Resume'), rateSheet:g('Rate Sheet'),
+      willTravel:yes(g('Will Travel')), travel:g('Travel Radius'), workedBefore:yes(g('Worked Before')),
+      photo:!!photo, photoUrl:/^https?:\/\//i.test(photo)?photo:'',
+      sheetNotes:g('Notes'), rollyGrade:g('Rolly Grade'),
+      positions:this.normPositions(rawPos), rawPositions:rawPos,
+      jobsWorked,
+      createdAt,
+    };
+  }
+
+  mapPeople(d){
+    const cols=this.showCols((d&&d.headers)||[]);
+    const labels=Object.keys(cols);
+    return ((d&&d.people)||[]).map(p=>this.mapPerson(p,cols,labels)).filter(x=>x.name||x.email);
+  }
+
+  currentUser(){ return 'admin'; }
+
+  addLog(msg){
+    const entry={ id:'L'+Date.now()+Math.floor(Math.random()*10000), t:new Date().toISOString(), user:this.currentUser(), msg };
+    this.setState(s=>{ const log=[entry].concat(s.log||[]).slice(0,200);
+      try{ localStorage.setItem('akav_log', JSON.stringify(log)); }catch(e){}
+      return { log }; });
+  }
+
+  logStaff(jobName, personName, wasRemoved){
+    this.setState(s=>{
+      const user=this.currentUser();
+      const log=(s.log||[]).slice();
+      let e=log[0];
+      if(e && e.kind==='staff' && e.job===jobName && e.user===user){
+        e={ ...e, added:(e.added||[]).slice(), removed:(e.removed||[]).slice() };
+        log[0]=e;
+      } else {
+        e={ id:'L'+Date.now()+Math.floor(Math.random()*10000), t:new Date().toISOString(), user, kind:'staff', job:jobName, added:[], removed:[] };
+        log.unshift(e);
+      }
+      e.t=new Date().toISOString();
+      if(wasRemoved){
+        const i=e.added.indexOf(personName);
+        if(i>=0) e.added.splice(i,1); else if(e.removed.indexOf(personName)<0) e.removed.push(personName);
+      } else {
+        const i=e.removed.indexOf(personName);
+        if(i>=0) e.removed.splice(i,1); else if(e.added.indexOf(personName)<0) e.added.push(personName);
+      }
+      if(!e.added.length && !e.removed.length) log.shift();
+      const trimmed=log.slice(0,200);
+      try{ localStorage.setItem('akav_log', JSON.stringify(trimmed)); }catch(err){}
+      return { log:trimmed };
+    });
+  }
+  fmtLogTime(iso){ try{ return new Date(iso).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}); }catch(e){ return ''; } }
+
+  saveJobs(jobs){ try{ localStorage.setItem('akav_jobs', JSON.stringify(jobs)); }catch(e){} }
+
+  setJobNotes(jobId, val){
+    const jobs=(this.state.jobs||[]).map(j=> j.id===jobId ? {...j, notes:val} : j);
+    this.saveJobs(jobs); this.setState({ jobs });
+  }
+
+  /* Overall letter grade: average of show grades, else the Rolly grade. */
+  gradeLetter(s){
+    const R={A:4,B:3,C:2,D:1}, G={4:'A',3:'B',2:'C',1:'D'};
+    const L=(v)=>String(v==null?'':v).trim().toUpperCase().charAt(0);
+    const jw=Array.isArray(s&&s.jobsWorked)?s.jobsWorked:[];
+    const ranks=jw.map(w=>R[L(w.grade)]).filter(Boolean);
+    if(!ranks.length){ const rg=R[L(s&&s.rollyGrade)]; return rg?G[rg]:''; }
+    return G[Math.min(4,Math.max(1,Math.round(ranks.reduce((a,b)=>a+b,0)/ranks.length)))];
+  }
+
+  flagsOf(s){
+    const n=String((s&&s.sheetNotes)||''); if(!n) return [];
+    return FLAG_PATTERNS.filter(f=>f[0].test(n)).map(f=>f[1]);
+  }
+
+  /* One row per person per day — a call sheet. Opens straight into Sheets
+     (File → Import, or drop it on Drive) or Excel/Numbers. */
+  exportCsv(){
+    const st=this.state;
+    const j=(st.jobs||[]).find(x=>x.id===st.activeJobId)||(st.jobs||[])[0];
+    const flash=(m)=>{ this.setState({ syncMsg:m }); setTimeout(()=>this.setState({syncMsg:''}),2500); };
+    if(!j){ flash('No job selected'); return; }
+    const subs=st.submissions||[];
+    const q=(v)=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+    const rows=[['Job','Location','Date','Phase','Role','Name','City','Phone','Email','Grade','Shortlisted','Flags','Notes']];
+    const conts=(Array.isArray(j.days)&&j.days.length) ? j.days
+      : [{ date:j.date||'', phase:'', required:j.required||{}, crewIds:j.crewIds||[], roleOf:j.roleOf||{} }];
+    let n=0;
+    conts.forEach(d=>{
+      const asg=this.assignOf(d);
+      ((d.crewIds)||[]).forEach(id=>{
+        const p=subs.find(s=>s.id===id); if(!p) return;
+        n++;
+        rows.push([j.name||'', j.city||'', d.date||'', d.phase||'', asg[id]||'',
+          p.name||'', p.city||'', p.phone||'', p.email||'',
+          this.gradeLetter(p)||'–', (st.shortlist&&st.shortlist[id])?'yes':'',
+          this.flagsOf(p).join(' / '), p.sheetNotes||'']);
+      });
+    });
+    if(!n){ flash('Nobody staffed yet'); return; }
+    if(j.notes) rows.push([], ['Job notes', j.notes]);
+    const csv=rows.map(r=>r.map(q).join(',')).join('\r\n');
+    const name='AKAV_'+String(j.name||'job').replace(/[^A-Za-z0-9]+/g,'_')+'_'+(j.date||'')+'.csv';
+    try{
+      const blob=new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8;'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url; a.download=name; document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      setTimeout(()=>{ try{ URL.revokeObjectURL(url); }catch(e){} },1000);
+    }catch(e){
+      try{ window.open('data:text/csv;charset=utf-8,'+encodeURIComponent(csv)); }catch(e2){}
+    }
+    this.addLog('Exported '+n+' crew rows for '+(j.name||'job')+' to CSV');
+    flash('Exported '+n+' rows');
+  }
+
+
+  fmtDate(iso){ try{ const t=Date.parse(iso); if(!iso||isNaN(t)) return '';
+    return new Date(t).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }catch(e){ return ''; } }
+  fmtRange(a,b){
+    try{
+      if(!a) return '';
+      const o={month:'short',day:'numeric'};
+      const d1=new Date(a+'T12:00:00'), d2=b?new Date(b+'T12:00:00'):null;
+      if(!d2||a===b) return d1.toLocaleDateString('en-US',{...o,year:'numeric'});
+      return d1.toLocaleDateString('en-US',o)+' – '+d2.toLocaleDateString('en-US',{...o,year:'numeric'});
+    }catch(e){ return a||''; }
+  }
+
+  doLogin(){
+    const { loginUser, loginPass } = this.state;
+    if(loginUser.trim()==='admin' && loginPass==='1234'){ this.setState({ authed:true, loginErr:'', loginPass:'' }); }
+    else { this.setState({ loginErr:'Wrong username or password. Try admin / 1234.' }); }
+  }
+  logout(){ this.setState({ authed:false, loginUser:'', loginPass:'', loginErr:'', card:null }); }
+
+  openCard(id){ this.setState({ card:id, paneTab:'card' }); }
+  closeCard(){ this.setState({ card:null }); }
+  setNote(id,val){ this.setState(s=>{ const n={...s.notes,[id]:val}; try{ localStorage.setItem('akav_notes', JSON.stringify(n)); }catch(e){} return { notes:n }; }); }
+  markNudged(k){ this.setState(s=>{ const m={...(s.nudged||{}), [k]:new Date().toISOString()};
+    try{ localStorage.setItem('akav_nudged', JSON.stringify(m)); }catch(e){}
+    return { nudged:m }; }); }
+  toggleShortlist(id){ this.setState(s=>{ const m={...(s.shortlist||{})}; if(m[id]) delete m[id]; else m[id]=true; try{ localStorage.setItem('akav_shortlist', JSON.stringify(m)); }catch(e){} return { shortlist:m }; }); }
+
+  /* ── Which role each person is filling ──────────────────────────────
+     `roleOf` (on a day, or on a day-less job) is the explicit assignment.
+     Anyone without one is auto-placed into the first required role their
+     positions cover, so old data and quick adds keep working. */
+
+  /* id → person, rebuilt only when the roster array itself changes.
+     assignOf runs ~32x per render off the day strip alone; a linear
+     find() over 505 people in there made typing in the search box lag. */
+  peopleIndex(){
+    const subs=this.state.submissions||[];
+    if(this._pidxSrc!==subs){
+      this._pidx=new Map();
+      subs.forEach(p=>{ if(p&&p.id) this._pidx.set(p.id,p); });
+      this._pidxSrc=subs;
+    }
+    return this._pidx;
+  }
+
+  assignOf(cont){
+    const req=(cont&&cont.required)||{};
+    const ids=(cont&&cont.crewIds)||[];
+    const ro=(cont&&cont.roleOf)||{};
+    const idx=this.peopleIndex();
+    const out={};
+    ids.forEach(id=>{ if(ro[id]) out[id]=ro[id]; });
+    Object.keys(req).forEach(role=>{
+      ids.forEach(id=>{ if(out[id]) return;
+        const p=idx.get(id);
+        if(p && Array.isArray(p.positions) && p.positions.indexOf(role)>=0) out[id]=role; });
+    });
+    return out;
+  }
+
+  roleHave(cont, role){ const a=this.assignOf(cont); return Object.keys(a).filter(k=>a[k]===role).length; }
+
+  /* Their own positions first, then any other role this day still lists. */
+  roleOptions(cont, person){
+    const out=[];
+    (Array.isArray(person&&person.positions)?person.positions:[]).forEach(r=>{ if(out.indexOf(r)<0) out.push(r); });
+    Object.keys((cont&&cont.required)||{}).forEach(r=>{ if(out.indexOf(r)<0) out.push(r); });
+    return out;
+  }
+
+  /* Default = the role they can do that this day still needs. */
+  defaultRole(cont, person){
+    const req=(cont&&cont.required)||{};
+    const pos=Array.isArray(person&&person.positions)?person.positions:[];
+    const short=pos.filter(r=>req[r]!=null && this.roleHave(cont,r)<(Number(req[r])||0));
+    if(short.length) return short[0];
+    const listed=pos.filter(r=>req[r]!=null);
+    return listed[0] || pos[0] || '';
+  }
+
+  setMemberRole(jobId, dayId, personId, role){
+    const jobs=(this.state.jobs||[]).map(j=>{
+      if(j.id!==jobId) return j;
+      if(dayId){
+        if(!Array.isArray(j.days)) return j;
+        return {...j, days:j.days.map(d=> d.id!==dayId ? d : {...d, roleOf:{...(d.roleOf||{}), [personId]:role}})};
+      }
+      return {...j, roleOf:{...(j.roleOf||{}), [personId]:role}};
+    });
+    this.saveJobs(jobs); this.setState({ jobs });
+  }
+
+  toggleJobMember(jobId, personId, role){
+    let removed=false;
+    const jobs=(this.state.jobs||[]).map(j=>{
+      if(j.id!==jobId) return j;
+      const ids=(j.crewIds||[]).slice();
+      const ro={...(j.roleOf||{})};
+      const i=ids.indexOf(personId);
+      if(i>=0){ ids.splice(i,1); delete ro[personId]; removed=true; }
+      else { ids.push(personId);
+        const r=role||this.defaultRole(j,(this.state.submissions||[]).find(s=>s.id===personId));
+        if(r) ro[personId]=r; }
+      return {...j, crewIds:ids, roleOf:ro};
+    });
+    this.saveJobs(jobs);
+    this.setState({ jobs });
+    const p=this.state.submissions.find(s=>s.id===personId);
+    const jb=this.state.jobs.find(j=>j.id===jobId);
+    this.logStaff((jb&&jb.name)||jobId, (p&&p.name)||personId, removed);
+  }
+
+  dayUnion(days){ const u=[]; (days||[]).forEach(d=>(d.crewIds||[]).forEach(id=>{ if(u.indexOf(id)<0) u.push(id); })); return u; }
+  fmtDay(dateStr){ try{ const d=new Date(dateStr+'T12:00:00'); return d.toLocaleDateString('en-US',{weekday:'short'})+' '+(d.getMonth()+1)+'/'+d.getDate(); }catch(e){ return dateStr||''; } }
+
+  toggleDayMember(jobId, dayId, personId, role){
+    const before=(this.state.jobs||[]).find(j=>j.id===jobId);
+    const wasOn=!!(before && (before.crewIds||[]).indexOf(personId)>=0);
+    const person=(this.state.submissions||[]).find(s=>s.id===personId);
+    const jobs=(this.state.jobs||[]).map(j=>{
+      if(j.id!==jobId||!Array.isArray(j.days)) return j;
+      const days=j.days.map(d=>{
+        if(d.id!==dayId) return d;
+        const ids=(d.crewIds||[]).slice();
+        const ro={...(d.roleOf||{})};
+        const i=ids.indexOf(personId);
+        if(i>=0){ ids.splice(i,1); delete ro[personId]; }
+        else { ids.push(personId);
+          const r=role||this.defaultRole(d,person);
+          if(r) ro[personId]=r; }
+        return {...d, crewIds:ids, roleOf:ro};
+      });
+      return {...j, days, crewIds:this.dayUnion(days)};
+    });
+    const after=jobs.find(j=>j.id===jobId);
+    const nowOn=!!(after && (after.crewIds||[]).indexOf(personId)>=0);
+    this.saveJobs(jobs);
+    this.setState({ jobs });
+    if(wasOn!==nowOn){
+      const p=(this.state.submissions||[]).find(s=>s.id===personId);
+      this.logStaff((after&&after.name)||jobId, (p&&p.name)||personId, wasOn&&!nowOn);
+    }
+  }
+
+  applyDayPick(sel, role){
+    const pick=this.state.dayPick; if(!pick) return;
+    const before=(this.state.jobs||[]).find(j=>j.id===pick.jobId);
+    const wasOn=!!(before && (before.crewIds||[]).indexOf(pick.personId)>=0);
+    const person=(this.state.submissions||[]).find(s=>s.id===pick.personId);
+    const jobs=(this.state.jobs||[]).map(j=>{
+      if(j.id!==pick.jobId||!Array.isArray(j.days)) return j;
+      const days=j.days.map(d=>{
+        const want=!!sel[d.id];
+        const ids=(d.crewIds||[]).slice();
+        const ro={...(d.roleOf||{})};
+        const i=ids.indexOf(pick.personId);
+        if(want && i<0){ ids.push(pick.personId);
+          const r=role||this.defaultRole(d,person);
+          if(r) ro[pick.personId]=r; }
+        else if(!want && i>=0){ ids.splice(i,1); delete ro[pick.personId]; }
+        else { if(want && role && ro[pick.personId]!==role){ ro[pick.personId]=role; return {...d, roleOf:ro}; } return d; }
+        return {...d, crewIds:ids, roleOf:ro};
+      });
+      return {...j, days, crewIds:this.dayUnion(days)};
+    });
+    const after=jobs.find(j=>j.id===pick.jobId);
+    const nowOn=!!(after && (after.crewIds||[]).indexOf(pick.personId)>=0);
+    this.saveJobs(jobs);
+    this.setState({ jobs, dayPick:null });
+    if(wasOn!==nowOn){
+      const p=(this.state.submissions||[]).find(s=>s.id===pick.personId);
+      this.logStaff((after&&after.name)||pick.jobId, (p&&p.name)||pick.personId, wasOn&&!nowOn);
+    }
+  }
+
+  sortDays(days){ const PO={SETUP:0,OPS:1,TEARDOWN:2}; days.sort((a,b)=> (a.date<b.date?-1:a.date>b.date?1:0) || ((PO[a.phase]||0)-(PO[b.phase]||0))); return days; }
+
+  openEditJob(j){
+    this.setState({ addJobOpen:true, ajEditId:j.id, ajName:j.name||'', ajCity:j.city||'', ajDate:j.date||'', ajDate2:j.dateEnd||'', ajPm:j.pm||'', ajReq:{...(j.required||{})}, ajDays:[] });
+  }
+
+  createJobNew(){
+    const name=(this.state.ajName||'').trim(); if(!name) return;
+    const req={}; const r=this.state.ajReq||{};
+    Object.keys(r).forEach(k=>{ const n=parseInt(r[k],10); if(n>0) req[k]=n; });
+    if(this.state.ajEditId){
+      const jobs=(this.state.jobs||[]).map(j=> j.id===this.state.ajEditId ? {...j, name, city:(this.state.ajCity||'').trim(), date:this.state.ajDate||'', dateEnd:this.state.ajDate2||'', pm:(this.state.ajPm||'').trim(), required:req} : j);
+      this.saveJobs(jobs);
+      this.setState({ jobs, addJobOpen:false, ajEditId:null, ajName:'', ajCity:'', ajDate:'', ajDate2:'', ajPm:'', ajReq:{}, ajDays:[] });
+      this.addLog('Edited job '+name);
+      return;
+    }
+    const days=this.sortDays((this.state.ajDays||[]).map((d,i)=>({ id:'d'+Date.now()+'_'+i, date:d.date, phase:d.phase, required:d.required||{}, crewIds:[] })));
+    const job={ id:'j'+Date.now(), name, city:(this.state.ajCity||'').trim(), date:this.state.ajDate||'', dateEnd:this.state.ajDate2||'', pm:(this.state.ajPm||'').trim(), required:req, days, crewIds:[], createdAt:new Date().toISOString() };
+    const jobs=[job].concat(this.state.jobs||[]);
+    this.saveJobs(jobs);
+    this.setState({ jobs, addJobOpen:false, ajName:'', ajCity:'', ajDate:'', ajDate2:'', ajPm:'', ajReq:{}, ajDays:[], activeJobId:job.id, paneTab:'job', activeDayId:'all' });
+    this.addLog('Created job '+job.name);
+  }
+
+  saveDayEdit(){
+    const de=this.state.dayEdit; if(!de||!de.date) return;
+    const req={}; Object.keys(de.req||{}).forEach(k=>{ const n=parseInt(de.req[k],10); if(n>0) req[k]=n; });
+    if(de.mode==='aj'){
+      const list=(this.state.ajDays||[]).slice();
+      if(de.dayId!=null){ const i=list.findIndex(x=>x.tid===de.dayId); if(i>=0) list[i]={...list[i], date:de.date, phase:de.phase, required:req}; }
+      else list.push({ tid:'t'+Date.now(), date:de.date, phase:de.phase, required:req });
+      this.sortDays(list);
+      this.setState({ ajDays:list, dayEdit:null });
+      return;
+    }
+    const jobs=(this.state.jobs||[]).map(j=>{
+      if(j.id!==de.jobId) return j;
+      let days=Array.isArray(j.days)?j.days.slice():[];
+      if(de.dayId){ days=days.map(d=> d.id===de.dayId ? {...d, date:de.date, phase:de.phase, required:req} : d); }
+      else days.push({ id:'d'+Date.now(), date:de.date, phase:de.phase, required:req, crewIds:[] });
+      this.sortDays(days);
+      return {...j, days, crewIds:this.dayUnion(days)};
+    });
+    this.saveJobs(jobs);
+    this.setState({ jobs, dayEdit:null });
+    const jb=jobs.find(j=>j.id===de.jobId);
+    this.addLog((de.dayId?'Edited a day on ':'Added a day to ')+((jb&&jb.name)||de.jobId));
+  }
+  setJobStage(id, stage){
+    const jobs=(this.state.jobs||[]).map(j=> j.id===id ? {...j, stage} : j);
+    this.saveJobs(jobs);
+    this.setState({ jobs });
+    const jb=jobs.find(j=>j.id===id);
+    this.addLog(stage==='payroll' ? ('Moved job '+((jb&&jb.name)||id)+' to Payroll / Grading') : ('Restored job '+((jb&&jb.name)||id)+' to Active'));
+  }
+
+  syncDemo(){
+    const url=(this.props.sheetEndpoint||'').trim();
+    if(!url) return;
+    const recs=this.state.submissions.slice();
+    if(!recs.length){ this.setState({ syncMsg:'No records' }); return; }
+    this.setState({ syncMsg:'Pushing '+recs.length+'…' });
+    let done=0;
+    const post=(i)=>{
+      if(i>=recs.length){ this.setState({ syncMsg:'Pushed '+done+' ✓' }); return; }
+      try{ fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(recs[i])}).then(function(){},function(){}); }catch(e){}
+      done++;
+      setTimeout(function(){ post(i+1); },300);
+    };
+    post(0);
+  }
+
+  renderVals(){
+    const st=this.state;
+    const el=React.createElement;
+    const ROLES=['Stage Hand','Graphics Operator','Playback Operator','Video Engineer (V1)','Technical Director','Camera Operator','LED Technician','Video Utility / V2','Breakout AV Technician'];
+    const tab=st.paneTab||'card';
+    const nq=(st.adminNameQ||'').trim().toLowerCase();
+    const cq=(st.adminCityQ||'').trim().toLowerCase();
+    const jq=st.adminJobQ||'';
+    const cityMatch=(city,q)=>{ if(!q) return true; const c=String(city||'').toLowerCase().trim(); if(!c) return false;
+      if(c.startsWith(q)) return true;
+      const words=c.split(/\s+/);
+      if(words.some(w=>w.startsWith(q))) return true;
+      return q.length>1 && words.map(w=>w.charAt(0)).join('').startsWith(q);
+    };
+    const match=(x)=> (!nq || (((x.name||'')+' '+(x.email||'')).toLowerCase().includes(nq)))
+      && cityMatch(x.city,cq)
+      && (!jq || (Array.isArray(x.positions) && x.positions.indexOf(jq)>=0));
+    /* Split the roster: approved crew vs new intakes awaiting review. */
+    const knownMap=st.known;
+    const declinedMap=st.declined||{};
+    const pKey=(x)=>this.prospectKey(x);
+    const isNew=(x)=> !!knownMap && !knownMap[pKey(x)] && !declinedMap[pKey(x)];
+    const isDeclined=(x)=> !!declinedMap[pKey(x)];
+    const prospects=(st.submissions||[]).filter(isNew);
+    const declinedPeople=(st.submissions||[]).filter(isDeclined);
+    const roster=(st.submissions||[]).filter(x=>!isNew(x)&&!isDeclined(x));
+    const filtered=roster.filter(match);
+    const GRADE_COLORS={A:'#5ad48f',B:'#8b96ff',C:'#e8bd63',D:'#ff8a80'};
+    const GRADE_RANK={A:4,B:3,C:2,D:1};
+    const RANK_GRADE={4:'A',3:'B',2:'C',1:'D'};
+    const letterOf=(g)=>String(g==null?'':g).trim().toUpperCase().charAt(0);
+    const gradeInfo=(g)=>{ const L=letterOf(g);
+      if(!GRADE_COLORS[L]) return { str:'–', color:'#6b7484', rank:-1 };
+      return { str:L, color:GRADE_COLORS[L], rank:GRADE_RANK[L] }; };
+    const gradeOf=(s)=>this.gradeLetter(s);
+    const flagsOf=(s)=>this.flagsOf(s);
+    const chip=(txt)=>el('span',{style:{fontSize:11,color:'#c7cdd9',background:'#222834',border:'1px solid #2e3542',borderRadius:6,padding:'3px 8px',whiteSpace:'nowrap',flex:'none'}},txt);
+    const posRow=(s,max)=>{ const p=Array.isArray(s.positions)?s.positions:[]; if(!p.length) return el('span',{style:{color:'#5d6575',fontSize:12}},'—');
+      const shown=p.slice(0,max); const extra=p.length-shown.length;
+      return el('span',{style:{display:'flex',gap:5,alignItems:'center',overflow:'hidden'}},shown.map((x,i)=>el('span',{key:i},chip(x))).concat(extra>0?[el('span',{key:'x'},chip('+'+extra))]:[])); };
+    const needChipsFor=(j)=>{
+      const req=(j&&j.required)||{};
+      return Object.keys(req).map((role,i)=>{ const need=Number(req[role])||0;
+        const have=this.roleHave(j,role);
+        return el('span',{key:i,onClick:()=>searchRole(role,j&&j.city),title:'Find '+role+((j&&j.city)?(' in '+j.city):'')+' — click to search',style:{display:'inline-flex',alignItems:'baseline',gap:5,fontSize:11.5,color:'#c7cdd9',background:'#222834',border:'1px solid #2e3542',borderRadius:6,padding:'3px 8px',whiteSpace:'nowrap',cursor:'zoom-in'}},
+          role, el('span',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontWeight:700,color: have>=need?'#5ad48f':'#e8bd63'}}, have+'/'+need)); });
+    };
+    const isShort=(id)=> !!(st.shortlist && st.shortlist[id]);
+    const bySort=(a,b)=>{
+      const sa=isShort(a.id)?1:0, sb=isShort(b.id)?1:0;
+      if(sb-sa) return sb-sa;
+      const ra=gradeInfo(gradeOf(a)).rank, rb=gradeInfo(gradeOf(b)).rank;
+      const ts=(x)=>{ const t=Date.parse(x&&x.createdAt); return isNaN(t)?0:t; };
+      return (rb-ra) || (ts(b)-ts(a)) || String(a.name||'').localeCompare(String(b.name||''));
+    };
+    const activeJob = st.jobs.find(j=>j.id===st.activeJobId) || st.jobs[0] || null;
+    const inActive=(id)=> !!(activeJob && (activeJob.crewIds||[]).indexOf(id)>=0);
+    const days=(activeJob&&Array.isArray(activeJob.days)&&activeJob.days.length)?activeJob.days:null;
+    const activeDay= days ? (days.find(d=>d.id===st.activeDayId)||null) : null;
+    const PHASE_COLORS={SETUP:'#e8bd63',OPS:'#5ad48f',TEARDOWN:'#ff8a80'};
+    const phaseColor=(p)=>PHASE_COLORS[String(p||'').toUpperCase()]||'#8b96ff';
+    const pencil=(size)=>el('svg',{viewBox:'0 0 24 24',width:size||12,height:size||12,fill:'none',stroke:'currentColor',strokeWidth:2,strokeLinecap:'round',strokeLinejoin:'round',style:{display:'block'}},
+      el('path',{d:'M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z'}),
+      el('path',{d:'m15 5 4 4'}));
+    const onDay=(d,id)=> (d.crewIds||[]).indexOf(id)>=0;
+    const roleHave=(cont,role)=>this.roleHave(cont,role);
+    /* A pseudo-container covering every role the whole job asks for. */
+    const unionCont=(ds)=>({ required:(ds||[]).reduce((a,d)=>{ Object.keys(d.required||{}).forEach(r=>{ a[r]=(a[r]||0)+(Number(d.required[r])||0); }); return a; },{}), crewIds:[], roleOf:{} });
+    /* Click a role count anywhere → search that city for that role. */
+    const searchRole=(role,city)=>this.setState({ adminJobQ:role, adminCityQ:String(city||''), adminNameQ:'' });
+    const bookings={};
+    st.jobs.forEach(jb=>{
+      if(Array.isArray(jb.days)&&jb.days.length){
+        jb.days.forEach(d=>(d.crewIds||[]).forEach(id=>{ (bookings[id]=bookings[id]||[]).push({jobId:jb.id,jobName:jb.name,date:d.date,phase:d.phase}); }));
+      } else {
+        (jb.crewIds||[]).forEach(id=>{ (bookings[id]=bookings[id]||[]).push({jobId:jb.id,jobName:jb.name,date:jb.date||'',dateEnd:jb.dateEnd||jb.date||'',range:true}); });
+      }
+    });
+    const dateInRange=(dt,a,b)=> !!(a&&dt) && dt>=a && dt<=(b||a);
+    const bookedOn=(personId,dt,excludeJobId)=> (bookings[personId]||[]).filter(b=> b.jobId!==excludeJobId && (b.range ? dateInRange(dt,b.date,b.dateEnd) : b.date===dt));
+    const conflictsOf=(personId)=>{
+      if(!activeJob) return [];
+      const list=(bookings[personId]||[]).filter(b=>b.jobId!==activeJob.id);
+      if(days){
+        const dates=activeDay?[activeDay.date]:days.map(d=>d.date);
+        return list.filter(b=> b.range ? dates.some(dt=>dateInRange(dt,b.date,b.dateEnd)) : dates.indexOf(b.date)>=0);
+      }
+      const a1=activeJob.date||'', a2=activeJob.dateEnd||a1;
+      if(!a1) return [];
+      return list.filter(b=> b.range ? (b.date<=a2 && (b.dateEnd||b.date)>=a1) : dateInRange(b.date,a1,a2));
+    };
+    const shortDate=(dt)=>{ const p=String(dt||'').split('-'); return p.length===3 ? (Number(p[1])+'/'+Number(p[2])) : (dt||''); };
+    const conflictBadge=(personId)=>{ const cf=conflictsOf(personId); if(!cf.length) return null;
+      const byJob={}; cf.forEach(c=>{ (byJob[c.jobName]=byJob[c.jobName]||[]).push(shortDate(c.date)); });
+      const names=Object.keys(byJob);
+      const title='Also booked: '+names.map(n=>n+' ('+byJob[n].filter(Boolean).join(', ')+')').join('; ');
+      return el('span',{title,style:{display:'inline-block',fontSize:10,fontWeight:700,color:'#ff8a80',background:'rgba(255,138,128,.12)',border:'1px solid rgba(255,138,128,.4)',borderRadius:5,padding:'2px 6px',marginLeft:7,whiteSpace:'nowrap',maxWidth:140,overflow:'hidden',textOverflow:'ellipsis',flex:'none'}},'⚠ '+names.join(', '));
+    };
+    const mapRow=(s)=>{ const g=gradeInfo(gradeOf(s));
+      let pressed, addLabel, addTitle, toggleJob;
+      if(days && activeDay){
+        const onD=onDay(activeDay,s.id);
+        pressed=onD;
+        addLabel=onD?'✓':'+';
+        addTitle=(onD?'Remove from ':'Add to ')+this.fmtDay(activeDay.date)+' '+activeDay.phase;
+        toggleJob=(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.toggleDayMember(activeJob.id, activeDay.id, s.id); };
+      } else if(days){
+        const n=days.filter(d=>onDay(d,s.id)).length;
+        pressed=n>0;
+        addLabel= n===0 ? '+' : (n===days.length ? '✓' : String(n));
+        addTitle='Pick days on '+activeJob.name;
+        toggleJob=(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); const sel={};
+          const alreadyOn=days.some(d=>onDay(d,s.id));
+          days.forEach(d=>{
+            if(alreadyOn){ sel[d.id]=onDay(d,s.id); return; }
+            const req=d.required||{};
+            sel[d.id]=Array.isArray(s.positions)&&Object.keys(req).some(role=>s.positions.indexOf(role)>=0 && roleHave(d,role)<(Number(req[role])||0));
+          });
+          const already=days.filter(d=>onDay(d,s.id)).map(d=>(d.roleOf||{})[s.id]).filter(Boolean)[0]||'';
+          this.setState({ dayPick:{ jobId:activeJob.id, personId:s.id, sel, role: already||this.defaultRole(unionCont(days), s) } }); };
+      } else {
+        const isIn=inActive(s.id);
+        pressed=isIn;
+        addLabel= isIn?'✓':'+';
+        addTitle= activeJob ? (isIn?('Remove from '+activeJob.name):('Add to '+activeJob.name)) : 'No job selected';
+        toggleJob=(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); if(activeJob) this.toggleJobMember(activeJob.id, s.id); };
+      }
+      const cf=conflictsOf(s.id);
+      const blocked=cf.length>0 && !pressed;
+      const cfNames=cf.map(b=>b.jobName).filter((n,i,a)=>a.indexOf(n)===i).join(', ');
+      const flags=flagsOf(s);
+      return {
+        id:s.id, isRow:true, isHeading:false, head:'', count:'',
+        name: s.name||'Not provided',
+        nameColor: blocked ? '#5d6575' : '#e7eaf0',
+        nameEl: el('span',{style:{display:'flex',alignItems:'center',gap:6,minWidth:0}},
+          el('span',{style:{fontSize:14,fontWeight:600,color: blocked?'#5d6575':'#e7eaf0',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}, s.name||'Not provided'),
+          flags.length ? el('span',{title:'Flagged in the Sheet notes ('+flags.join(' · ')+') — meaning not confirmed by the client yet.\n\n'+String(s.sheetNotes||'').slice(0,400),
+            style:{flex:'none',fontSize:9.5,fontWeight:800,letterSpacing:'.05em',color:'#ff8a80',background:'rgba(255,138,128,.12)',border:'1px solid rgba(255,138,128,.45)',borderRadius:5,padding:'2px 5px',lineHeight:1.3,whiteSpace:'nowrap'}},
+            '⚑ '+(flags.indexOf('DNH')>=0 ? 'DNH?' : flags[0])) : null),
+        city:String(s.city||'').trim()||'—',
+        gradeEl: el('span',{style:{display:'inline-flex',alignItems:'center',gap:4}},
+          el('span',{title: isShort(s.id)?'Shortlisted':undefined,style:{width:10,flex:'none',textAlign:'center',color:'#5ad48f',fontSize:11,lineHeight:1}}, isShort(s.id)?'★':''),
+          el('span',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontWeight:700,fontSize:14,color:g.color}},g.str)),
+        rowChips: posRow(s,3),
+        inJob:pressed,
+        addLabel,
+        addTitle: blocked ? ('Booked on '+cfNames+' — can\'t add') : addTitle,
+        addDisabled: blocked,
+        addBg: blocked ? '#1c1f26' : '#222834',
+        addColor: blocked ? '#8a5a57' : '#c6ccd8',
+        addBorder: blocked ? '#3a2f31' : '#2e3542',
+        addCursor: blocked ? 'not-allowed' : 'pointer',
+        toggleJob: blocked ? ((e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); }) : toggleJob,
+        openCard:()=>this.openCard(s.id),
+        rowBg: st.card===s.id ? 'rgba(91,108,255,.12)' : (isShort(s.id) ? 'rgba(90,212,143,.06)' : (pressed ? 'rgba(91,108,255,.05)' : 'transparent')),
+      };
+    };
+    const heading=(label,n)=>({ id:'h:'+label, isHeading:true, isRow:false, head:label, count:'· '+n, name:'', city:'', gradeEl:null, rowChips:null, inJob:false, addLabel:'', addTitle:'', toggleJob:()=>{}, openCard:()=>{}, rowBg:'transparent' });
+    const multi=filtered.filter(s=>Array.isArray(s.positions)&&s.positions.length>1).sort(bySort);
+    const displayRows=[];
+    if(multi.length){ displayRows.push(heading('Multi Position',multi.length)); multi.forEach(s=>displayRows.push(mapRow(s))); }
+    ROLES.forEach(role=>{ const items=filtered.filter(s=>Array.isArray(s.positions)&&s.positions.length===1&&s.positions[0]===role).sort(bySort);
+      if(items.length){ displayRows.push(heading(role,items.length)); items.forEach(s=>displayRows.push(mapRow(s))); } });
+    const seenRow={}; displayRows.forEach(r=>{ if(r.isRow) seenRow[r.id]=1; });
+    const other=filtered.filter(s=>Array.isArray(s.positions)&&s.positions.length&&!seenRow[s.id]).sort(bySort);
+    if(other.length){ displayRows.push(heading('Other positions',other.length)); other.forEach(s=>displayRows.push(mapRow(s))); }
+    const nopos=filtered.filter(s=>!Array.isArray(s.positions)||!s.positions.length).sort(bySort);
+    if(nopos.length){ displayRows.push(heading('No position on file',nopos.length)); nopos.forEach(s=>displayRows.push(mapRow(s))); }
+    const rowItems=displayRows.filter(r=>r.isRow);
+    const labelStyle={fontSize:11,letterSpacing:'.05em',textTransform:'uppercase',color:'#8b93a3',fontWeight:600};
+    const DOC='https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+    /* Nudge text — Messages opens prefilled; people update their own record by
+       resubmitting the onboarding form (the backend upserts by email/phone). */
+    const nudgeFor=(s)=>{
+      const digits=String(s.phone||'').replace(/[^\d]/g,'');
+      const tel= !digits ? '' : (digits.length===10 ? ('+1'+digits) : (digits.charAt(0)==='1'&&digits.length===11 ? ('+'+digits) : ('+'+digits)));
+      const first=(String(s.name||'').trim().split(/\s+/)[0])||'there';
+      const j=activeJob;
+      let when='', role='';
+      if(j){
+        if(days){
+          const ds=days.map(d=>d.date).filter(Boolean).sort();
+          when= activeDay ? (this.fmtDay(activeDay.date)+' · '+activeDay.phase) : this.fmtRange(ds[0], ds[ds.length-1]);
+          const req= activeDay ? (activeDay.required||{}) : days.reduce((a,d)=>{ Object.keys(d.required||{}).forEach(r=>{a[r]=1;}); return a; },{});
+          role=(s.positions||[]).find(p=>req[p])||'';
+        } else {
+          when=this.fmtRange(j.date,j.dateEnd);
+          role=(s.positions||[]).find(p=>(j.required||{})[p])||'';
+        }
+      }
+      const body=[
+        'Hi '+first+' — this is AKAV.',
+        j ? ('Checking your availability for '+j.name+(j.city?(' · '+j.city):'')+(when?('\n'+when):'')+(role?('\nRole: '+role):''))
+          : 'Checking your availability for an upcoming job.',
+        'Reply YES to confirm or NO if you can\'t make it. Day rate to follow.',
+        'If anything on your file has changed (phone, address, emergency contact), resubmit here and it updates your record — no duplicate: '+ONBOARDING_URL,
+      ].join('\n\n');
+      return { tel, body, href: tel ? ('sms:'+tel+'&body='+encodeURIComponent(body)) : '' };
+    };
+    const cardRec = st.card ? st.submissions.find(s=>s.id===st.card) : null;
+    let card={ showPersonCard:false, cardHero:null, cardName:'', cardMeta:'', cardGradeEl:null, cardPositions:null, cardJobsWorked:null, cardContact:null, cardNote:'', onCardNote:()=>{}, cardFlagEl:null, cardNudgeEl:null, cardSheetNotesEl:null };
+    if(cardRec){ const s=cardRec; const g=gradeInfo(gradeOf(s));
+      const avatarStyle={width:76,height:76,borderRadius:'50%',flex:'none',display:'block',border:'2px solid #2e3542'};
+      const hero = s.photoUrl
+        ? el('img',{src:s.photoUrl,alt:'',style:{...avatarStyle,objectFit:'cover'}})
+        : el('svg',{viewBox:'0 0 100 100',style:{...avatarStyle,background:'#222834'}},
+            el('circle',{cx:50,cy:38,r:17,fill:'#4a5261'}),
+            el('path',{d:'M50 60c-19 0-31 10-34 24a50 50 0 0 0 68 0c-3-14-15-24-34-24z',fill:'#4a5261'}));
+      const jw=Array.isArray(s.jobsWorked)?s.jobsWorked:[];
+      const fieldRow=(label,value,href)=> el('div',null,
+        el('div',{style:{...labelStyle,fontSize:10.5,marginBottom:3}},label),
+        href ? el('a',{href:href,target:'_blank',rel:'noopener',style:{fontSize:13.5,color:'#8b96ff',textDecoration:'underline',wordBreak:'break-word'}},value)
+             : el('div',{style:{fontSize:13.5,color:value==='Not provided'?'#5d6575':'#e7eaf0',wordBreak:'break-word'}},value||'—'));
+      card={
+        showPersonCard:true,
+        cardHero:hero,
+        cardName:s.name||'Not provided',
+        cardMeta:[s.pronouns,String(s.city||'').trim()].filter(Boolean).join(' · '),
+        cardGradeEl: el('div',{style:{textAlign:'center',flex:'none',padding:'2px 6px'}},
+          el('div',{style:{fontSize:9.5,letterSpacing:'.06em',textTransform:'uppercase',color:'#8b93a3',fontWeight:600}},'Grade'),
+          el('div',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontWeight:700,fontSize:27,color:g.color,lineHeight:1.15}},g.str),
+          el('button',{onClick:()=>this.toggleShortlist(s.id),title: isShort(s.id)?'Remove from shortlist':'Add to shortlist',style:{marginTop:3,background:'transparent',border:'none',cursor:'pointer',fontSize:17,lineHeight:1,color: isShort(s.id)?'#5ad48f':'#4a5261',padding:2}}, isShort(s.id)?'★':'☆')),
+        cardPositions: (Array.isArray(s.positions)&&s.positions.length)
+          ? el('div',{style:{display:'flex',gap:6,flexWrap:'wrap'}},s.positions.map((x,i)=>el('span',{key:i},chip(x))))
+          : el('div',{style:{fontSize:12.5,color:'#5d6575'}},'No positions on file yet'),
+        cardJobsWorked: (jw.length || s.rollyGrade)
+          ? el('div',{style:{display:'flex',flexDirection:'column',gap:7}},
+              jw.map((w,i)=>{ const gi=gradeInfo(w.grade);
+                return el('div',{key:i,style:{display:'flex',alignItems:'center',gap:10,background:'#10141b',border:'1px solid #262c37',borderRadius:10,padding:'9px 12px'}},
+                  el('span',{style:{flex:1,minWidth:0}},
+                    el('span',{style:{display:'block',fontSize:13.5,fontWeight:600,color:'#e7eaf0'}},w.job),
+                    el('span',{style:{display:'block',fontSize:11.5,color:'#8b93a3',marginTop:2}}, w.sub || (w.location?('('+w.location+')'):''))),
+                  el('span',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontWeight:700,fontSize:15,color:gi.color}},gi.str)); })
+              .concat(s.rollyGrade ? [(()=>{ const gi=gradeInfo(s.rollyGrade);
+                return el('div',{key:'general',style:{display:'flex',alignItems:'center',gap:10,background:'#141821',border:'1px solid #2e3542',borderRadius:10,padding:'9px 12px',marginTop:3}},
+                  el('span',{style:{flex:1,minWidth:0}},
+                    el('span',{style:{display:'block',fontSize:13.5,fontWeight:600,color:'#e7eaf0'}},'General Grade'),
+                    el('span',{style:{display:'block',fontSize:11.5,color:'#8b93a3',marginTop:2}},'Lead feedback · all shows')),
+                  el('span',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontWeight:700,fontSize:15,color:gi.color}},gi.str)); })()] : []))
+          : el('div',{style:{display:'inline-block',fontSize:12.5,fontWeight:700,letterSpacing:'.04em',color:'#e8bd63',background:'rgba(232,189,99,.1)',border:'1px solid rgba(232,189,99,.35)',borderRadius:7,padding:'5px 11px'}},'(NEW HIRE)'),
+        cardContact: el('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px 14px'}},
+          fieldRow('Email',s.email||'Not provided', s.email?('mailto:'+s.email):null),
+          fieldRow('Phone',s.phone||'Not provided'),
+          fieldRow('Address',s.address||'Not provided'),
+          fieldRow('Travel', s.willTravel ? (s.travel?(s.travel+' mi radius'):'Any distance') : 'Local resident'),
+          fieldRow('Emergency contact',(s.ecName||s.ecPhone||s.ecRel)?[s.ecName,s.ecRel,s.ecPhone].filter(Boolean).join(' · '):'Not provided'),
+          fieldRow('Referred by',s.referredBy||'Not provided'),
+          fieldRow('LinkedIn',s.linkedin||'Not provided', s.linkedin?(/^https?:/i.test(s.linkedin)?s.linkedin:('https://'+s.linkedin)):null),
+          fieldRow('Resume',s.resume||'Not provided', s.resume?DOC:null),
+          fieldRow('Rate sheet',s.rateSheet||'Not provided', s.rateSheet?DOC:null),
+          fieldRow('Worked before',(jw.length||s.workedBefore)?'Yes':'No')),
+        cardFlagEl: (()=>{ const fl=flagsOf(s); if(!fl.length) return null;
+          return el('div',{style:{marginBottom:14,background:'rgba(255,138,128,.1)',border:'1px solid rgba(255,138,128,.45)',borderRadius:10,padding:'9px 12px'}},
+            el('div',{style:{fontSize:11.5,fontWeight:800,letterSpacing:'.05em',color:'#ff8a80'}},'⚑ FLAGGED IN SHEET NOTES — '+fl.join(' · ')),
+            el('div',{style:{fontSize:11.5,color:'#98a1b1',marginTop:4,lineHeight:1.45}},'What these markings officially mean is still an open question with the client (CLIENT_QUESTIONS #4). Read the note below before acting on it.')); })(),
+        cardSheetNotesEl: s.sheetNotes
+          ? el('div',{style:{background:'#10141b',border:'1px solid #262c37',borderRadius:10,padding:'10px 12px',marginBottom:10}},
+              el('div',{style:{fontSize:10,letterSpacing:'.06em',textTransform:'uppercase',color:'#8b93a3',fontWeight:700,marginBottom:4}},'From the Sheet · read-only'),
+              el('div',{style:{fontSize:12.5,color:'#c6ccd8',whiteSpace:'pre-wrap',lineHeight:1.5}},s.sheetNotes))
+          : null,
+        cardNudgeEl: (()=>{ const n=nudgeFor(s);
+          if(!n.tel) return el('div',{style:{marginTop:14,fontSize:12.5,color:'#5d6575',border:'1px dashed #262c37',borderRadius:10,padding:'10px 12px',textAlign:'center'}},'No phone number on file — can\'t nudge.');
+          return el('div',{style:{marginTop:14}},
+            el('a',{href:n.href,style:{display:'block',textAlign:'center',background:'#bfa257',color:'#231d0b',border:'1px solid #a98d47',borderRadius:10,padding:'11px',fontSize:13.5,fontWeight:700,textDecoration:'none'}},'Nudge by text'),
+            el('div',{style:{fontSize:11,color:'#5d6575',marginTop:7,whiteSpace:'pre-wrap',lineHeight:1.45,background:'#10141b',border:'1px solid #1f242f',borderRadius:8,padding:'8px 10px'}},n.body)); })(),
+        cardNote: (st.notes&&st.notes[s.id])||'',
+        onCardNote:(e)=>this.setNote(s.id,e.target.value),
+      };
+    }
+    let jobPanelEl=null;
+    if(activeJob){ const j=activeJob;
+      const secHead=(label,right,color,onSearch)=>el('div',{onClick:onSearch||undefined,title: onSearch?('Find '+label+(j.city?(' in '+j.city):'')+' — click to search'):undefined,style:{display:'flex',alignItems:'baseline',gap:9,padding:'11px 18px 7px',background:'#1a1f29',borderBottom:'1px solid #262c37',cursor: onSearch?'zoom-in':'default'}},
+        el('span',{style:{fontSize:13,fontWeight:700,color:'#c6ccd8'}},label),
+        el('span',{style:{flex:1}}),
+        el('span',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontWeight:700,fontSize:12.5,color:color||'#98a1b1'}},right));
+      const crewRowFor=(removeFn,removeTitle,dateFor,cont,setRole)=>(s)=>{ const g=gradeInfo(gradeOf(s));
+        const cf= dateFor ? bookedOn(s.id,dateFor,j.id) : conflictsOf(s.id);
+        const cur= cont ? (this.assignOf(cont)[s.id]||'') : '';
+        const opts= cont ? this.roleOptions(cont,s) : [];
+        return el('div',{key:s.id,onClick:()=>this.openCard(s.id),style:{display:'flex',alignItems:'center',gap:10,padding:'8px 18px',borderBottom:'1px solid #1f242f',cursor:'pointer',background: st.card===s.id?'rgba(91,108,255,.12)':'transparent'}},
+          el('span',{style:{fontSize:13.5,fontWeight:600,color:'#e7eaf0',flex:1,minWidth:0,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},s.name||s.email||s.id,
+            cf.length ? el('span',{title:'Also booked: '+cf.map(b=>b.jobName+(b.date?(' '+shortDate(b.date)):'')).join(', '),style:{color:'#ff8a80',marginLeft:6,fontSize:12,fontWeight:700}},'⚠') : null),
+          (setRole && opts.length>1)
+            ? el('select',{value:cur,title:'Working as',onClick:(e)=>e.stopPropagation(),onChange:(e)=>{ e.stopPropagation(); setRole(s.id, e.target.value); },
+                style:{flex:'none',maxWidth:112,fontSize:11,padding:'3px 5px',background:'#10141b',color:'#9aa3b2',border:'1px solid #2a303c',borderRadius:6}},
+                opts.map(r=>el('option',{key:r,value:r},r)))
+            : el('span',{style:{fontSize:12.5,color:'#9aa3b2',flex:'none',maxWidth:100,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},String(s.city||'').trim()),
+          el('span',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontWeight:700,fontSize:13.5,color:g.color,flex:'none',width:22,textAlign:'center'}},g.str),
+          el('button',{onClick:(e)=>{e.stopPropagation();removeFn(s);},title:removeTitle,style:{width:26,height:26,borderRadius:7,background:'#222834',border:'1px solid #2e3542',color:'#ff8a80',cursor:'pointer',fontSize:15,lineHeight:1,flex:'none',fontWeight:700}},'−')); };
+      const roleSections=(cont,crew,rowRender)=>{
+        const req=(cont&&cont.required)||{};
+        const a=this.assignOf(cont);
+        const secs=Object.keys(req).map(role=>{
+          const members=crew.filter(c=>a[c.id]===role);
+          return { role, need:Number(req[role])||0, have:members.length, members };
+        });
+        const others=crew.filter(c=>!a[c.id]||!req[a[c.id]]);
+        return secs.map((sec,si)=> el('div',{key:si},
+          secHead(sec.role, sec.have+' / '+sec.need, sec.have>=sec.need?'#5ad48f':'#e8bd63', ()=>searchRole(sec.role,j.city)),
+          sec.members.length ? sec.members.map(rowRender) : el('div',{style:{padding:'9px 18px',fontSize:12.5,color:'#5d6575',borderBottom:'1px solid #1f242f'}},'No one yet — hit "+" on the crew table.'))).concat(
+          others.length ? [el('div',{key:'oth'}, secHead('Other',String(others.length)), others.map(rowRender))] : []);
+      };
+      const header=el('div',{style:{padding:'16px 18px 13px',borderBottom:'1px solid #262c37'}},
+        el('div',{style:{fontWeight:700,fontSize:21,color:'#fff',letterSpacing:'-.01em'}},j.name),
+        (j.stage==='payroll') ? el('div',{style:{display:'inline-block',fontSize:10,fontWeight:700,letterSpacing:'.1em',color:'#e8bd63',background:'rgba(232,189,99,.1)',border:'1px solid rgba(232,189,99,.35)',borderRadius:5,padding:'2px 7px',marginTop:4}},'PAYROLL / GRADING') : null,
+        el('div',{style:{fontSize:15,fontWeight:600,color:'#b9c0cd',marginTop:2}},j.city||'Location TBD'),
+        el('div',{style:{fontSize:12.5,color:'#98a1b1',marginTop:5}},[this.fmtRange(j.date,j.dateEnd), j.pm?('PM · '+j.pm):null, (j.crewIds||[]).length+' crew'].filter(Boolean).join('  ·  ')),
+        (((activeDay||j).crewIds||[]).length)
+          ? el('button',{onClick:()=>this.setState({nudgeOpen:true}),style:{marginTop:10,width:'100%',background:'#bfa257',color:'#231d0b',border:'1px solid #a98d47',borderRadius:9,padding:'8px',cursor:'pointer',fontSize:12.5,fontWeight:700}},
+              'Nudge all'+(activeDay?(' · '+this.fmtDay(activeDay.date)):'')+' ('+((activeDay||j).crewIds||[]).length+')')
+          : null);
+      if(days){
+        let body;
+        if(activeDay){ const d=activeDay;
+          const crew=(d.crewIds||[]).map(id=>st.submissions.find(s=>s.id===id)).filter(Boolean);
+          body=el('div',null,
+            el('div',{style:{textAlign:'center',padding:'12px 16px 10px',borderBottom:'1px solid #262c37',background:'#10141b'}},
+              el('div',{style:{fontWeight:700,fontSize:16,letterSpacing:'.06em',color:'#e7eaf0'}},this.fmtDay(d.date)),
+              el('div',{style:{fontSize:10.5,fontWeight:700,letterSpacing:'.2em',color:phaseColor(d.phase),marginTop:2}},d.phase)),
+            roleSections(d, crew, crewRowFor((s)=>this.toggleDayMember(j.id,d.id,s.id),'Remove from this day',d.date,d,(pid,r)=>this.setMemberRole(j.id,d.id,pid,r))));
+        } else {
+          body=el('div',null,
+            days.map(d=>{
+              const crew=(d.crewIds||[]).map(id=>st.submissions.find(s=>s.id===id)).filter(Boolean);
+              return el('div',{key:d.id},
+                el('div',{onClick:()=>this.setState({activeDayId:d.id}),style:{display:'flex',alignItems:'baseline',gap:8,padding:'11px 18px 7px',background:'#141821',borderBottom:'1px solid #262c37',cursor:'pointer'}},
+                  el('span',{style:{fontSize:13.5,fontWeight:700,letterSpacing:'.06em',color:'#e7eaf0'}},this.fmtDay(d.date)),
+                  el('span',{style:{fontSize:9.5,fontWeight:700,letterSpacing:'.16em',color:phaseColor(d.phase)}},d.phase),
+                  el('span',{style:{flex:1}}),
+                  el('span',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontSize:11.5,color:'#6b7484'}},crew.length+' crew')),
+                crew.length ? crew.map(crewRowFor((s)=>this.toggleDayMember(j.id,d.id,s.id),'Remove from this day',d.date,d,(pid,r)=>this.setMemberRole(j.id,d.id,pid,r)))
+                            : el('div',{style:{padding:'9px 18px',fontSize:12.5,color:'#5d6575',borderBottom:'1px solid #1f242f'}},'No one yet.'));
+            }));
+        }
+        jobPanelEl=el('div',null,header,body);
+      } else {
+        const crew=(j.crewIds||[]).map(id=>st.submissions.find(s=>s.id===id)).filter(Boolean);
+        jobPanelEl=el('div',null,header,
+          el('div',null, roleSections(j, crew, crewRowFor((s)=>this.toggleJobMember(j.id,s.id),'Remove from job',null,j,(pid,r)=>this.setMemberRole(j.id,null,pid,r)))));
+      }
+    } else {
+      jobPanelEl=el('div',{style:{padding:'28px 18px',textAlign:'center',fontSize:13,color:'#6b7484'}},'No jobs yet — use "＋ Add job".');
+    }
+    const navFor=(j)=>({ id:j.id, label:j.name+(j.city?(' — '+j.city):''), active: !!(activeJob&&activeJob.id===j.id),
+      open:()=>this.setState({ activeJobId:j.id, paneTab:'job', activeDayId:'all' }),
+      edit:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.openEditJob(j); },
+      move:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.setJobStage(j.id,'payroll'); },
+      restore:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.setJobStage(j.id,'active'); } });
+    const jobsNav=st.jobs.filter(j=>(j.stage||'active')!=='payroll').map(navFor);
+    const payrollNav=st.jobs.filter(j=>(j.stage||'active')==='payroll').map(navFor);
+    let activeNeeds=[];
+    if(activeJob){
+      if(days){
+        const chipEl=(role,have,need,i)=>el('span',{key:i,style:{display:'inline-flex',alignItems:'baseline',gap:5,fontSize:11.5,color:'#c7cdd9',background:'#222834',border:'1px solid #2e3542',borderRadius:6,padding:'3px 8px',whiteSpace:'nowrap'}},
+          role, el('span',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontWeight:700,color: have>=need?'#5ad48f':'#e8bd63'}}, have+'/'+need));
+        if(activeDay){ const req=activeDay.required||{};
+          activeNeeds=Object.keys(req).map((role,i)=>chipEl(role,roleHave(activeDay,role),Number(req[role])||0,i));
+        } else {
+          const agg={};
+          days.forEach(d=>{ const req=d.required||{}; Object.keys(req).forEach(role=>{ const a=agg[role]||(agg[role]={need:0,have:0}); a.need+=Number(req[role])||0; a.have+=roleHave(d,role); }); });
+          activeNeeds=Object.keys(agg).map((role,i)=>chipEl(role,agg[role].have,agg[role].need,i));
+        }
+      } else activeNeeds=needChipsFor(activeJob);
+    }
+    let dayStripEl=null;
+    if(activeJob){
+      const tileRow=(role,have,need,i)=>{ const full=need>0&&have>=need;
+        return el('div',{key:i,onClick:()=>searchRole(role,activeJob.city),title:'Find '+role+(activeJob.city?(' in '+activeJob.city):'')+' — click to search',style:{display:'flex',alignItems:'center',gap:10,padding:'7px 14px',borderTop:'1px solid #2a303c',background: full?'#00470f':'transparent',cursor:'zoom-in'}},
+          el('span',{style:{flex:1,fontSize:12.5,fontWeight:700,color:'#c6ccd8',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},role),
+          el('span',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontWeight:700,fontSize:12,color: full?'#5ad48f':'#e8bd63',flex:'none'}},have+' / '+need)); };
+      const tileShell=(key,active,onClick,headTop,headSub,subColor,rows,foot,onEdit)=>el('div',{key,onClick,role:'button',style:{flex:'none',width:236,position:'relative',background:'#10141b',border:'1px solid '+(active?'#5b6cff':'#242a35'),boxShadow: active?'0 0 0 3px rgba(91,108,255,.22)':'none',borderRadius:13,overflow:'hidden',cursor:'pointer',display:'flex',flexDirection:'column',opacity: active?1:.78,filter: active?'none':'saturate(.75)',transition:'opacity .15s'}},
+        onEdit ? el('button',{onClick:(e)=>{e.stopPropagation();onEdit();},title:'Edit day',style:{position:'absolute',top:7,right:7,width:22,height:22,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(34,40,52,.92)',border:'1px solid #2e3542',borderRadius:6,color:'#8b93a3',cursor:'pointer',padding:0}},pencil(11)) : null,
+        el('div',{style:{textAlign:'center',padding:'10px 12px 8px'}},
+          el('div',{style:{fontWeight:700,fontSize:15.5,letterSpacing:'.06em',color:'#e7eaf0'}},headTop),
+          el('div',{style:{fontSize:10,fontWeight:700,letterSpacing:'.2em',color:subColor,marginTop:2}},headSub)),
+        el('div',null,rows),
+        el('div',{style:{marginTop:'auto',padding:'6px 14px',borderTop:'1px solid #2a303c',fontSize:10.5,color:'#6b7484',textAlign:'center'}},foot));
+      let tiles=[];
+      if(days){
+        const aggT={};
+        days.forEach(d=>{ const req=d.required||{}; Object.keys(req).forEach(role=>{ const a=aggT[role]||(aggT[role]={need:0,have:0}); a.need+=Number(req[role])||0; a.have+=roleHave(d,role); }); });
+        tiles=[ tileShell('all', !activeDay, ()=>this.setState({activeDayId:'all',paneTab:'job'}), 'ALL', days.length+' DAYS', '#8b96ff',
+            Object.keys(aggT).map((role,i)=>tileRow(role,aggT[role].have,aggT[role].need,i)),
+            (activeJob.crewIds||[]).length+' crew total') ]
+          .concat(days.map(d=>{ const req=d.required||{};
+            return tileShell(d.id, !!(activeDay&&activeDay.id===d.id), ()=>this.setState({activeDayId:d.id,paneTab:'job'}), this.fmtDay(d.date), d.phase, phaseColor(d.phase),
+              Object.keys(req).map((role,i)=>tileRow(role,roleHave(d,role),Number(req[role])||0,i)),
+              (d.crewIds||[]).length+' crew',
+              ()=>this.setState({ dayEdit:{ mode:'job', jobId:activeJob.id, dayId:d.id, date:d.date, phase:d.phase, req:{...(d.required||{})} } })); }));
+      }
+      tiles.push(el('div',{key:'addday',onClick:()=>this.setState({ dayEdit:{ mode:'job', jobId:activeJob.id, dayId:null, date:activeJob.date||'', phase:'SETUP', req:{} } }),role:'button',style:{flex:'none',width:120,minHeight:110,border:'1.5px dashed #2a303c',borderRadius:13,display:'flex',alignItems:'center',justifyContent:'center',color:'#5d6575',fontSize:12.5,fontWeight:700,cursor:'pointer'}},'＋ Add day'));
+      dayStripEl=tiles;
+    }
+    let dayEditEl=null;
+    const de=st.dayEdit;
+    if(de){
+      const upd=(patch)=>this.setState(s2=>({ dayEdit:{...s2.dayEdit, ...patch} }));
+      dayEditEl=el('div',null,
+        el('div',{style:{fontWeight:700,fontSize:18,color:'#fff',marginBottom:14}}, de.dayId?'Edit day':'Add day'),
+        el('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}},
+          el('div',null,
+            el('label',{style:{display:'block',fontSize:12,fontWeight:500,color:'#98a1b1',marginBottom:7}},'Date'),
+            el('input',{type:'date',value:de.date||'',onChange:(e)=>upd({date:e.target.value})})),
+          el('div',null,
+            el('label',{style:{display:'block',fontSize:12,fontWeight:500,color:'#98a1b1',marginBottom:7}},'Phase'),
+            el('select',{value:de.phase||'SETUP',onChange:(e)=>upd({phase:e.target.value})},
+              ['SETUP','OPS','TEARDOWN'].map(p=>el('option',{key:p,value:p},p))))),
+        el('div',{style:{fontSize:11,letterSpacing:'.05em',textTransform:'uppercase',color:'#8b93a3',fontWeight:600,margin:'0 0 10px'}},'Roles needed this day'),
+        el('div',{style:{display:'grid',gridTemplateColumns:'1fr 74px 1fr 74px',gap:'8px 10px',alignItems:'center'}},
+          ROLES.map((r,i)=>[
+            el('span',{key:'l'+i,style:{fontSize:12.5,color:'#c6ccd8'}},r),
+            el('input',{key:'i'+i,type:'number',min:0,value: de.req&&de.req[r]!=null?String(de.req[r]):'',placeholder:'0',onChange:(e)=>{ const v=e.target.value; this.setState(s2=>({ dayEdit:{...s2.dayEdit, req:{...s2.dayEdit.req,[r]:v}} })); },style:{padding:'7px 9px',fontSize:13}}),
+          ]).reduce((a,b)=>a.concat(b),[])),
+        el('div',{style:{display:'flex',gap:10,marginTop:20}},
+          el('button',{onClick:()=>this.setState({dayEdit:null}),style:{flex:'none',background:'transparent',color:'#c6ccd8',border:'1px solid #2e3542',borderRadius:10,padding:'11px 16px',cursor:'pointer',fontSize:13.5,fontWeight:600}},'Cancel'),
+          el('button',{onClick:()=>this.saveDayEdit(),style:{flex:1,background:'#5b6cff',color:'#fff',border:'none',borderRadius:10,padding:'11px',cursor:'pointer',fontSize:14,fontWeight:700,opacity: de.date?1:.5}}, de.dayId?'Save day':'Add day')));
+    }
+    const ajDaysEl=el('div',null,
+      (st.ajDays||[]).length
+        ? el('div',{style:{display:'flex',flexDirection:'column',gap:6,marginBottom:10}},(st.ajDays||[]).map(d=>{
+            const roles=Object.keys(d.required||{});
+            const summary=roles.length ? roles.map(r=>r+' '+d.required[r]).join(' · ') : 'No roles yet';
+            return el('div',{key:d.tid,style:{display:'flex',alignItems:'center',gap:10,background:'#10141b',border:'1px solid #2a303c',borderRadius:10,padding:'9px 12px'}},
+              el('span',{style:{fontWeight:700,fontSize:13,letterSpacing:'.05em',color:'#e7eaf0',flex:'none'}},this.fmtDay(d.date)),
+              el('span',{style:{fontSize:9.5,fontWeight:700,letterSpacing:'.14em',color:phaseColor(d.phase),flex:'none'}},d.phase),
+              el('span',{style:{flex:1,fontSize:11.5,color:'#8b93a3',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},summary),
+              el('button',{onClick:()=>this.setState({ dayEdit:{ mode:'aj', dayId:d.tid, date:d.date, phase:d.phase, req:{...(d.required||{})} } }),title:'Edit day',style:{flex:'none',width:24,height:24,display:'flex',alignItems:'center',justifyContent:'center',background:'#222834',border:'1px solid #2e3542',borderRadius:6,color:'#8b93a3',cursor:'pointer',padding:0}},pencil(11)));
+          }))
+        : el('div',{style:{fontSize:12,color:'#5d6575',marginBottom:10}},'No days yet — add each show day with its roles.'),
+      el('button',{onClick:()=>this.setState({ dayEdit:{ mode:'aj', dayId:null, date:st.ajDate||'', phase:'SETUP', req:{} } }),style:{background:'#222834',color:'#c6ccd8',border:'1px dashed #2e3542',borderRadius:9,padding:'8px 14px',cursor:'pointer',fontSize:12.5,fontWeight:700}},'＋ Add day'));
+    /* Nudge all — one prefilled text per person, worked down as a list.
+       Deliberately NOT a group message: crew shouldn't see each other's
+       numbers, and each text carries that person's own role. */
+    let nudgeAllEl=null;
+    if(st.nudgeOpen && activeJob){
+      const cont=activeDay||activeJob;
+      const crew=((cont.crewIds)||[]).map(id=>st.submissions.find(s=>s.id===id)).filter(Boolean);
+      const asg=this.assignOf(cont);
+      const kOf=(p)=>activeJob.id+':'+(activeDay?activeDay.id:'all')+':'+p.id;
+      const sent=crew.filter(p=>(st.nudged||{})[kOf(p)]).length;
+      const noPhone=crew.filter(p=>!nudgeFor(p).tel).length;
+      nudgeAllEl=el('div',null,
+        el('div',{style:{fontWeight:700,fontSize:18,color:'#fff'}},'Nudge all'),
+        el('div',{style:{fontSize:12.5,color:'#98a1b1',marginTop:3,marginBottom:4}},
+          activeJob.name+(activeJob.city?(' · '+activeJob.city):'')+(activeDay?(' · '+this.fmtDay(activeDay.date)+' '+activeDay.phase):' · all days')),
+        el('div',{style:{fontSize:11.5,color:'#6b7484',marginBottom:14}},
+          sent+' of '+crew.length+' texted'+(noPhone?(' · '+noPhone+' with no phone on file'):'')+' — each opens Messages separately, no group thread.'),
+        el('div',{style:{display:'flex',flexDirection:'column',gap:6,maxHeight:'52vh',overflow:'auto'}},
+          crew.map(p=>{ const n=nudgeFor(p); const k=kOf(p); const done=!!(st.nudged||{})[k];
+            return el('div',{key:p.id,style:{display:'flex',alignItems:'center',gap:10,background:'#10141b',border:'1px solid '+(done?'#2f4a35':'#262c37'),borderRadius:10,padding:'8px 11px'}},
+              el('span',{style:{flex:1,minWidth:0}},
+                el('span',{style:{display:'block',fontSize:13.5,fontWeight:600,color:'#e7eaf0',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}},p.name||p.email||p.id),
+                el('span',{style:{display:'block',fontSize:11,color:'#8b93a3',marginTop:2}},[asg[p.id]||'—', String(p.phone||'').trim()||'no phone'].join(' · '))),
+              done ? el('span',{title:'Texted '+this.fmtLogTime((st.nudged||{})[k]),style:{fontSize:11,fontWeight:700,color:'#5ad48f',flex:'none'}},'✓ sent') : null,
+              n.tel
+                ? el('a',{href:n.href,onClick:()=>this.markNudged(k),style:{flex:'none',background: done?'#222834':'#bfa257',color: done?'#c6ccd8':'#231d0b',border:'1px solid '+(done?'#2e3542':'#a98d47'),borderRadius:8,padding:'6px 12px',fontSize:12,fontWeight:700,textDecoration:'none'}}, done?'Again':'Text')
+                : el('span',{style:{flex:'none',fontSize:11.5,color:'#5d6575'}},'No phone')); })),
+        el('button',{onClick:()=>this.setState({nudgeOpen:false}),style:{width:'100%',marginTop:16,background:'transparent',color:'#c6ccd8',border:'1px solid #2e3542',borderRadius:10,padding:'11px',cursor:'pointer',fontSize:14,fontWeight:600}},'Done'));
+    }
+    /* Prospective hires — a new email is never added to the crew list
+       without a look first. Resubmits by an existing person aren't here:
+       the backend upserts them onto their own row. */
+    let prospectEl=null;
+    if(st.prospectOpen){
+      const line=(label,val)=> val ? el('div',{key:label,style:{fontSize:12,color:'#98a1b1',marginTop:2}},label+': '+val) : null;
+      const card=(p,actions)=>el('div',{key:pKey(p),style:{background:'#10141b',border:'1px solid #262c37',borderRadius:11,padding:'12px 14px',display:'flex',gap:12,alignItems:'flex-start'}},
+        el('div',{style:{flex:1,minWidth:0}},
+          el('div',{style:{fontSize:14.5,fontWeight:700,color:'#e7eaf0'}},p.name||'(no name)'),
+          line('Email',p.email), line('Phone',p.phone), line('City',p.city),
+          line('Positions',(Array.isArray(p.positions)?p.positions:[]).join(', ')),
+          line('Submitted',this.fmtDate(p.createdAt)),
+          p.sheetNotes ? el('div',{style:{fontSize:11.5,color:'#8b93a3',marginTop:5,whiteSpace:'pre-wrap'}},p.sheetNotes) : null),
+        el('div',{style:{display:'flex',flexDirection:'column',gap:6,flex:'none'}},actions));
+      const btn=(label,fn,kind)=>el('button',{key:label,onClick:fn,style:{background: kind==='go'?'#1d3d28':'transparent',color: kind==='go'?'#8fe3b0':'#c6ccd8',border:'1px solid '+(kind==='go'?'#2f6b45':'#2e3542'),borderRadius:8,padding:'7px 13px',cursor:'pointer',fontSize:12,fontWeight:700,whiteSpace:'nowrap'}},label);
+      prospectEl=el('div',null,
+        el('div',{style:{fontWeight:700,fontSize:18,color:'#fff'}},'Prospective hires'),
+        el('div',{style:{fontSize:12.5,color:'#98a1b1',marginTop:3,marginBottom:14}},
+          prospects.length ? (prospects.length+' new '+(prospects.length===1?'application':'applications')+' — approve to add to the crew list.')
+                           : 'Nothing waiting. New applications from an unrecognised email land here; existing crew who resubmit just update their own record.'),
+        prospects.length ? el('div',{style:{display:'flex',flexDirection:'column',gap:8,maxHeight:'50vh',overflow:'auto'}},
+          prospects.map(p=>card(p,[btn('Approve',()=>this.approveProspect(p),'go'), btn('Hold',()=>this.declineProspect(p))]))) : null,
+        prospects.length>1 ? el('button',{onClick:()=>this.approveAll(prospects),style:{marginTop:12,width:'100%',background:'#1d3d28',color:'#8fe3b0',border:'1px solid #2f6b45',borderRadius:10,padding:'10px',cursor:'pointer',fontSize:13,fontWeight:700}},'Approve all '+prospects.length) : null,
+        declinedPeople.length ? el('div',{style:{marginTop:16,borderTop:'1px solid #262c37',paddingTop:12}},
+          el('button',{onClick:()=>this.setState(s2=>({showDeclined:!s2.showDeclined})),style:{background:'transparent',border:'none',color:'#8b96ff',cursor:'pointer',fontSize:12,fontWeight:600,textDecoration:'underline',padding:0}},
+            (st.showDeclined?'Hide':'Show')+' held back ('+declinedPeople.length+')'),
+          st.showDeclined ? el('div',{style:{display:'flex',flexDirection:'column',gap:8,marginTop:10,maxHeight:'30vh',overflow:'auto'}},
+            declinedPeople.map(p=>card(p,[btn('Restore',()=>this.restoreDeclined(pKey(p)))]))) : null) : null,
+        el('button',{onClick:()=>this.setState({prospectOpen:false}),style:{width:'100%',marginTop:16,background:'transparent',color:'#c6ccd8',border:'1px solid #2e3542',borderRadius:10,padding:'11px',cursor:'pointer',fontSize:14,fontWeight:600}},'Done'));
+    }
+    let dayPickEl=null;
+    const pick=st.dayPick;
+    const pickJob=pick?st.jobs.find(jj=>jj.id===pick.jobId):null;
+    const pickPerson=pick?st.submissions.find(s=>s.id===pick.personId):null;
+    if(pick && pickJob && Array.isArray(pickJob.days) && pickPerson){
+      const sel=pick.sel||{};
+      const nSel=Object.keys(sel).filter(k=>sel[k]).length;
+      const pickOpts=this.roleOptions(unionCont(pickJob.days), pickPerson);
+      dayPickEl=el('div',null,
+        el('div',{style:{fontWeight:700,fontSize:16,color:'#fff',marginBottom:2}},'Add '+(pickPerson.name||'')+' to…'),
+        el('div',{style:{fontSize:12,color:'#98a1b1',marginBottom:12}},pickJob.name),
+        pickOpts.length ? el('div',{style:{marginBottom:13}},
+          el('label',{style:{display:'block',fontSize:11,letterSpacing:'.05em',textTransform:'uppercase',color:'#8b93a3',fontWeight:600,marginBottom:6}},'Working as'),
+          el('select',{value: pick.role||pickOpts[0], onChange:(e)=>{ const v=e.target.value; this.setState(s2=>({ dayPick:{...s2.dayPick, role:v} })); }},
+            pickOpts.map(r=>el('option',{key:r,value:r},r)))) : null,
+        el('div',{style:{display:'flex',flexDirection:'column',gap:6}},
+          pickJob.days.map(d=>{ const on=!!sel[d.id];
+            const bk=bookedOn(pick.personId,d.date,pickJob.id);
+            return el('button',{key:d.id,onClick:()=>this.setState(s2=>({ dayPick:{...s2.dayPick, sel:{...s2.dayPick.sel,[d.id]:!on}} })),style:{display:'flex',alignItems:'center',gap:10,background: on?'rgba(91,108,255,.14)':'#10141b',border:'1px solid '+(on?'#5b6cff':'#2a303c'),borderRadius:10,padding:'10px 12px',cursor:'pointer',textAlign:'left',width:'100%'}},
+              el('span',{style:{width:18,height:18,borderRadius:5,flex:'none',display:'inline-flex',alignItems:'center',justifyContent:'center',background:on?'#5b6cff':'#222834',border:'1px solid '+(on?'#5b6cff':'#2e3542'),color:'#fff',fontSize:11,fontWeight:700}},on?'✓':''),
+              el('span',{style:{flex:1,fontSize:13.5,fontWeight:600,letterSpacing:'.06em',color:'#e7eaf0'}},this.fmtDay(d.date)),
+              bk.length ? el('span',{title:'Also booked: '+bk.map(b=>b.jobName).join(', '),style:{fontSize:9,fontWeight:700,letterSpacing:'.06em',color:'#ff8a80',background:'rgba(255,138,128,.12)',border:'1px solid rgba(255,138,128,.4)',borderRadius:4,padding:'2px 5px',flex:'none'}},'BOOKED') : null,
+              el('span',{style:{fontSize:10,fontWeight:700,letterSpacing:'.14em',color:phaseColor(d.phase),flex:'none'}},d.phase)); })),
+        el('div',{style:{display:'flex',gap:8,marginTop:14}},
+          el('button',{onClick:()=>this.setState({dayPick:null}),style:{flex:'none',background:'transparent',color:'#c6ccd8',border:'1px solid #2e3542',borderRadius:10,padding:'10px 14px',cursor:'pointer',fontSize:13,fontWeight:600}},'Cancel'),
+          el('button',{onClick:()=>this.applyDayPick(sel,pick.role),style:{flex:1,background:'#5b6cff',color:'#fff',border:'none',borderRadius:10,padding:'10px',cursor:'pointer',fontSize:13.5,fontWeight:700}}, nSel ? ('Set '+nSel+' day'+(nSel>1?'s':'')) : 'Remove from all days')));
+    }
+    const reqInputsEl=el('div',{style:{display:'grid',gridTemplateColumns:'1fr 74px 1fr 74px',gap:'8px 10px',alignItems:'center'}},
+      ROLES.map((r,i)=>[
+        el('span',{key:'l'+i,style:{fontSize:12.5,color:'#c6ccd8'}},r),
+        el('input',{key:'i'+i,type:'number',min:0,value:(st.ajReq&&st.ajReq[r])||'',placeholder:'0',onChange:(e)=>{ const v=e.target.value; this.setState(s2=>({ ajReq:{...s2.ajReq,[r]:v} })); },style:{padding:'7px 9px',fontSize:13}}),
+      ]).reduce((a,b)=>a.concat(b),[]));
+    return {
+      accentColor: this.props.accentColor || '#5b6cff',
+      sheetViewUrl: this.props.sheetViewUrl || 'https://docs.google.com/spreadsheets/d/1-yvBtc9m8Q3j2ssat9Ys0EnWFFS_YLqKmZBstgoPyYM/edit',
+      showLogin: !st.authed,
+      showDash: !!st.authed,
+      loginUser: st.loginUser,
+      loginPass: st.loginPass,
+      onLoginUser:(e)=>this.setState({ loginUser:e.target.value, loginErr:'' }),
+      onLoginPass:(e)=>this.setState({ loginPass:e.target.value, loginErr:'' }),
+      onLoginKey:(e)=>{ if(e.key==='Enter') this.doLogin(); },
+      doLogin:()=>this.doLogin(),
+      loginErr: st.loginErr, hasLoginErr: !!st.loginErr,
+      logout:()=>this.logout(),
+      syncDemo:()=>this.syncDemo(),
+      syncLabel: st.syncMsg || 'Sync data',
+      doPrint:()=>{ try{ window.print(); }catch(e){} },
+      doExport:()=>this.exportCsv(),
+      exportLabel: st.syncMsg || 'Export',
+      toggleManage:()=>this.setState(s=>({ manageJobs:!s.manageJobs })),
+      manageMode: !!st.manageJobs,
+      manageColor: st.manageJobs ? '#ffd76b' : 'rgba(255,255,255,.85)',
+      openLog:()=>this.setState({ logOpen:true }),
+      closeLog:()=>this.setState({ logOpen:false }),
+      showLog: !!st.logOpen,
+      logListEl: (st.log&&st.log.length)
+        ? el('div',{style:{display:'flex',flexDirection:'column',gap:8,maxHeight:'55vh',overflow:'auto'}},st.log.map((L,i)=>{
+            const key=L.id||('i'+i);
+            const time=el('span',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontSize:10.5,color:'#6b7484',flex:'none'}},this.fmtLogTime(L.t));
+            const who=el('span',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontSize:10.5,color:'#8b96ff',flex:'none'}},L.user||'admin');
+            if(L.kind==='staff'){
+              const nA=(L.added||[]).length, nR=(L.removed||[]).length;
+              const parts=[];
+              if(nA) parts.push('Added '+nA+' crew member'+(nA>1?'s':''));
+              if(nR) parts.push((parts.length?'removed ':'Removed ')+nR+' crew member'+(nR>1?'s':''));
+              const open=!!st.logExpanded[key];
+              return el('div',{key,style:{borderBottom:'1px solid #1f242f',paddingBottom:7}},
+                el('button',{onClick:()=>this.setState(s2=>({ logExpanded:{...s2.logExpanded,[key]:!s2.logExpanded[key]} })),style:{display:'flex',gap:10,alignItems:'baseline',width:'100%',textAlign:'left',background:'transparent',border:'none',cursor:'pointer',padding:0,fontFamily:'inherit'}},
+                  time, who,
+                  el('span',{style:{fontSize:13,color:'#c6ccd8',flex:1,minWidth:0}},parts.join(' and ')+' — '+L.job),
+                  el('span',{style:{fontSize:10,color:'#6b7484',flex:'none'}},open?'▾':'▸')),
+                open ? el('div',{style:{marginTop:6,marginLeft:78,display:'flex',flexDirection:'column',gap:3}},
+                  (L.added||[]).map((n,k)=>el('div',{key:'a'+k,style:{fontSize:12.5,color:'#5ad48f'}},'+ '+n)).concat(
+                  (L.removed||[]).map((n,k)=>el('div',{key:'r'+k,style:{fontSize:12.5,color:'#ff8a80'}},'− '+n)))) : null);
+            }
+            return el('div',{key,style:{display:'flex',gap:10,alignItems:'baseline',borderBottom:'1px solid #1f242f',paddingBottom:7}},
+              time, who,
+              el('span',{style:{fontSize:13,color:'#c6ccd8'}},L.msg));
+          }))
+        : el('div',{style:{fontSize:13,color:'#5d6575'}},'Nothing yet — staffing changes will show up here.'),
+      setTabCard:()=>this.setState({ paneTab:'card' }),
+      setTabJob:()=>this.setState({ paneTab:'job' }),
+      isTabCard: tab==='card', isTabJob: tab==='job',
+      adminNameQ: st.adminNameQ, onNameQ:(e)=>this.setState({ adminNameQ:e.target.value }),
+      adminCityQ: st.adminCityQ, onCityQ:(e)=>this.setState({ adminCityQ:e.target.value }),
+      adminJobQ: st.adminJobQ, onJobQ:(e)=>this.setState({ adminJobQ:e.target.value }),
+      clearSearch:()=>this.setState({ adminNameQ:'', adminCityQ:'', adminJobQ:'' }),
+      crewCount: rowItems.length+' of '+roster.length,
+      displayRows, noRows: rowItems.length===0,
+      noRowsEl: (()=>{
+        const role=jq||'this position';
+        const where=(st.adminCityQ||'').trim();
+        if(where) return el('div',{style:{padding:'30px 20px',textAlign:'center'}},
+          el('div',{style:{fontSize:14,color:'#c6ccd8',fontWeight:600}},'No local residents work '+(jq?('as '+jq):'this position')+' in '+where+'.'),
+          el('button',{onClick:()=>this.setState({ adminCityQ:'' }),style:{marginTop:10,background:'transparent',border:'none',color:'#8b96ff',cursor:'pointer',fontSize:13.5,fontWeight:700,textDecoration:'underline',padding:0}},'Search nationally'+(jq?(' for '+jq):'')));
+        if(jq) return el('div',{style:{padding:'30px 20px',textAlign:'center'}},
+          el('div',{style:{fontSize:14,color:'#c6ccd8',fontWeight:600}},'Nobody on file works as '+role+'.'),
+          el('div',{style:{fontSize:11.5,color:'#5d6575',marginTop:7}},'Nothing in the roster is tagged with this position yet.'));
+        return el('div',{style:{padding:'34px 20px',textAlign:'center',color:'#6b7484',fontSize:14}},'No crew match this search.');
+      })(),
+      dataNoteEl: (()=>{
+        const dot=(c)=>el('span',{key:'d',style:{width:7,height:7,borderRadius:'50%',background:c,flex:'none'}});
+        const txt=(s,c)=>el('span',{key:'t',style:{color:c||'#5d6575'}},s);
+        const link=(k,label,fn)=>el('button',{key:k,onClick:fn,style:{background:'transparent',border:'none',color:'#8b96ff',cursor:'pointer',fontSize:12,fontWeight:600,textDecoration:'underline',padding:0}},label);
+        const btn= this.token() ? link('b', st.dataLoading?'Refreshing…':'Refresh', ()=>this.loadPeople()) : null;
+        const forget= this.token() ? link('f','Forget token',()=>this.forgetToken()) : null;
+        const wrap=(kids)=>el('div',{style:{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap',fontSize:12,color:'#5d6575',marginTop:8,lineHeight:1.5}},kids);
+        if(st.dataErr) return wrap([dot('#ff8a80'), txt('Live crew failed to load — showing '+(st.dataMode==='live'?'the last cached copy':'demo crew')+'. ('+st.dataErr+')','#ff8a80'), btn, forget]);
+        if(st.dataLoading && st.dataMode!=='live') return wrap([dot('#e8bd63'), txt('Loading crew from the Sheet…')]);
+        if(st.dataMode==='live') return wrap([dot('#5ad48f'), txt('Live · '+st.dataCount+' crew from the Sheet'+(st.dataAt?(' · updated '+this.fmtLogTime(st.dataAt)):'')), btn, forget]);
+        return wrap([dot('#e8bd63'), txt('No roster loaded — open this page with #t=YOUR_TOKEN on the end of the URL.')]);
+      })(),
+      jobPanelEl,
+      jobsNav, noJobs: st.jobs.length===0,
+      payrollNav, hasPayroll: payrollNav.length>0,
+      activeJobName: activeJob ? (activeJob.name+(activeDay?(' · '+this.fmtDay(activeDay.date)+' '+activeDay.phase):'')) : '',
+      searchTitleEl: activeJob
+        ? el('span',{style:{display:'inline-block',maxWidth:'100%'}},
+            el('span',{style:{display:'inline-flex',alignItems:'baseline',gap:10,minWidth:0,maxWidth:'100%',justifyContent:'center'}},
+              el('span',{style:{fontWeight:700,fontSize:26,color:'#e0b84f',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},activeJob.name),
+              activeJob.city ? el('span',{style:{fontSize:13.5,color:'#98a1b1',flex:'none'}},activeJob.city) : null,
+              activeDay ? el('span',{style:{fontSize:11,fontWeight:700,letterSpacing:'.1em',color:phaseColor(activeDay.phase),flex:'none'}},this.fmtDay(activeDay.date)+' '+activeDay.phase) : null),
+            activeJob.pm ? el('span',{style:{display:'block',fontSize:12.5,fontWeight:600,color:'#98a1b1',marginTop:2}},'Crew Manager: '+activeJob.pm) : null)
+        : el('span',{style:{fontWeight:600,fontSize:14,color:'#c6ccd8'}},'Crew search'),
+      showDayPick: !!dayPickEl,
+      dayPickEl,
+      showNudgeAll: !!nudgeAllEl,
+      nudgeAllEl,
+      showProspects: !!prospectEl,
+      prospectEl,
+      openProspects:()=>this.setState({ prospectOpen:true }),
+      prospectLabel: prospects.length ? ('Prospects · '+prospects.length) : 'Prospects',
+      prospectColor: prospects.length ? '#ffe08a' : 'rgba(255,255,255,.85)',
+      hasDayStrip: !!dayStripEl,
+      dayStripEl,
+      hasJob: !!activeJob, noJob: !activeJob,
+      jobNotes: (activeJob&&activeJob.notes)||'',
+      onJobNotes:(e)=>{ if(activeJob) this.setJobNotes(activeJob.id, e.target.value); },
+      hasActiveNeeds: activeNeeds.length>0,
+      activeNeedsEl: el('span',{style:{display:'inline-flex',gap:6,flexWrap:'wrap'}},activeNeeds),
+      openAddJob:()=>this.setState({ addJobOpen:true, ajEditId:null, ajName:'', ajCity:'', ajDate:'', ajDate2:'', ajPm:'', ajReq:{}, ajDays:[] }),
+      closeAddJob:()=>this.setState({ addJobOpen:false, ajEditId:null }),
+      showAddJob: !!st.addJobOpen,
+      ajHeading: st.ajEditId ? 'Edit job' : 'Add job',
+      ajSubmit: st.ajEditId ? 'Save changes' : 'Create job',
+      ajShowDays: !st.ajEditId,
+      ajDaysEl,
+      showDayEdit: !!dayEditEl,
+      dayEditEl,
+      ajName: st.ajName, onAjName:(e)=>this.setState({ ajName:e.target.value }),
+      ajCity: st.ajCity, onAjCity:(e)=>this.setState({ ajCity:e.target.value }),
+      ajDate: st.ajDate, onAjDate:(e)=>this.setState({ ajDate:e.target.value }),
+      ajDate2: st.ajDate2, onAjDate2:(e)=>this.setState({ ajDate2:e.target.value }),
+      ajPm: st.ajPm, onAjPm:(e)=>this.setState({ ajPm:e.target.value }),
+      reqInputsEl,
+      createJobNew:()=>this.createJobNew(),
+      noCard: !cardRec,
+      closeCard:()=>this.closeCard(),
+      ...card,
+    };
+  }
+}
+</script>
+</body>
+</html>
