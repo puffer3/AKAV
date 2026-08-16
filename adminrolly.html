@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Crew Admin</title>
+<title>Crew Rolodex</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -74,15 +74,6 @@
           <div style="flex:1;min-width:0;">
               <div style="height:100%;background:#171b23;border:1px solid #262c37;border-radius:16px;padding:12px 18px 16px;display:flex;flex-direction:column;box-shadow:0 1px 2px rgba(0,0,0,.3);">
                 <div style="text-align:center;margin-bottom:14px;">{{ searchTitleEl }}</div>
-                <sc-if value="{{ hasJob }}" hint-placeholder-val="{{ true }}">
-                  <div style="flex:1;display:flex;flex-direction:column;min-height:74px;margin-bottom:14px;">
-                    <div style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#8b93a3;font-weight:600;margin-bottom:6px;">Job notes</div>
-                    <textarea value="{{ jobNotes }}" onChange="{{ onJobNotes }}" style="flex:1;min-height:64px;resize:vertical;"></textarea>
-                  </div>
-                </sc-if>
-                <sc-if value="{{ noJob }}" hint-placeholder-val="{{ false }}">
-                  <div style="flex:1;"></div>
-                </sc-if>
                 <div id="adm-search" style="display:grid;grid-template-columns:0.7fr 1.1fr 1.1fr auto;gap:10px;align-items:end;">
                   <div><label for="adm-q-city">City</label><input id="adm-q-city" type="text" value="{{ adminCityQ }}" onChange="{{ onCityQ }}" placeholder="Any city"></div>
                   <div><label for="adm-q-job">Job / position</label><select id="adm-q-job" value="{{ adminJobQ }}" onChange="{{ onJobQ }}">
@@ -103,50 +94,7 @@
               </div>
           </div>
 
-          <aside id="adm-side" style="flex:none;width:370px;background:linear-gradient(160deg,#4d5ce8,#3c48c9);border:none;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 28px rgba(60,72,201,.28);">
-            <button onClick="{{ openAddJob }}" style="width:100%;background:#fff;color:#3743b5;border:none;border-radius:10px;padding:11px 12px;cursor:pointer;font-size:14px;font-weight:700;flex:none;" style-hover="filter:brightness(.95);">＋ Add job</button>
-            <div style="font-size:10.5px;color:rgba(255,255,255,.72);text-align:center;margin-top:-6px;flex:none;">All jobs · Main admin only</div>
-            <div style="flex:1;min-height:60px;overflow:auto;display:flex;flex-direction:column;gap:6px;">
-              <sc-for list="{{ jobsNav }}" as="jb" hint-placeholder-count="2">
-                <div style="display:flex;gap:6px;align-items:center;">
-                  <button onClick="{{ jb.open }}" aria-pressed="{{ jb.active }}" style="flex:1;min-width:0;text-align:left;background:rgba(0,0,0,.32);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:9px 11px;cursor:pointer;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ jb.label }}</button>
-                  <button onClick="{{ jb.edit }}" title="Edit job" style="flex:none;width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.25);color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.18);border-radius:7px;cursor:pointer;padding:0;"><svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"></path><path d="m15 5 4 4"></path></svg></button>
-                  <sc-if value="{{ manageMode }}" hint-placeholder-val="{{ false }}">
-                    <button onClick="{{ jb.move }}" title="Move to Payroll / Grading" style="flex:none;width:26px;height:26px;background:rgba(0,0,0,.25);color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.25);border-radius:7px;cursor:pointer;font-size:12px;line-height:1;">→</button>
-                  </sc-if>
-                </div>
-              </sc-for>
-              <sc-if value="{{ hasPayroll }}" hint-placeholder-val="{{ false }}">
-                <div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.55);font-weight:700;margin-top:8px;">Payroll / Grading</div>
-                <sc-for list="{{ payrollNav }}" as="pj" hint-placeholder-count="1">
-                  <div style="display:flex;gap:6px;align-items:center;">
-                    <button onClick="{{ pj.open }}" aria-pressed="{{ pj.active }}" style="flex:1;min-width:0;text-align:left;background:rgba(0,0,0,.22);color:rgba(255,255,255,.45);border:1px dashed rgba(255,255,255,.16);border-radius:9px;padding:8px 11px;cursor:pointer;font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ pj.label }}</button>
-                    <sc-if value="{{ manageMode }}" hint-placeholder-val="{{ false }}">
-                      <button onClick="{{ pj.restore }}" title="Move back to Active" style="flex:none;width:26px;height:26px;background:rgba(0,0,0,.25);color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.25);border-radius:7px;cursor:pointer;font-size:12px;line-height:1;">↩</button>
-                    </sc-if>
-                  </div>
-                </sc-for>
-              </sc-if>
-              <sc-if value="{{ noJobs }}" hint-placeholder-val="{{ false }}">
-                <div style="font-size:12px;color:rgba(255,255,255,.7);padding:4px 2px;">No jobs yet.</div>
-              </sc-if>
-            </div>
-            <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;flex:none;flex-wrap:wrap;">
-              <a href="{{ sheetViewUrl }}" target="_blank" rel="noopener" style="color:rgba(255,255,255,.85);font-size:12px;font-weight:500;text-decoration:underline;">Sheet ↗</a>
-              <button onClick="{{ doPrint }}" style="background:transparent;color:rgba(255,255,255,.85);border:none;cursor:pointer;font-size:12px;font-weight:500;text-decoration:underline;padding:0;">Print</button>
-              <button onClick="{{ doExport }}" title="Download this job's crew as a CSV — open it in Google Sheets with File → Import" style="background:transparent;color:rgba(255,255,255,.85);border:none;cursor:pointer;font-size:12px;font-weight:500;text-decoration:underline;padding:0;">{{ exportLabel }}</button>
-              <button onClick="{{ toggleManage }}" style="background:transparent;color:{{ manageColor }};border:none;cursor:pointer;font-size:12px;font-weight:500;text-decoration:underline;padding:0;">Manage jobs</button>
-              <button onClick="{{ openProspects }}" title="New applications waiting to be added to the crew list" style="background:transparent;color:{{ prospectColor }};border:none;cursor:pointer;font-size:12px;font-weight:700;text-decoration:underline;padding:0;">{{ prospectLabel }}</button>
-              <button onClick="{{ openLog }}" style="background:transparent;color:rgba(255,255,255,.85);border:none;cursor:pointer;font-size:12px;font-weight:500;text-decoration:underline;padding:0;">Log</button>
-            </div>
-          </aside>
         </div>
-
-        <sc-if value="{{ hasDayStrip }}" hint-placeholder-val="{{ false }}">
-          <div id="adm-days" style="display:flex;gap:12px;overflow-x:auto;align-items:stretch;margin-bottom:16px;padding-bottom:8px;">
-            {{ dayStripEl }}
-          </div>
-        </sc-if>
 
         <div id="adm-cols" style="display:flex;gap:16px;align-items:flex-start;">
           <div style="flex:1;min-width:0;">
@@ -155,14 +103,7 @@
                 <span style="font-weight:700;font-size:16px;color:#fff;">Crew</span>
                 <span style="font-size:12px;color:#6b7484;">{{ crewCount }}</span>
               </div>
-              <sc-if value="{{ hasActiveNeeds }}" hint-placeholder-val="{{ false }}">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid #262c37;background:#151a22;">
-                  <span style="font-size:12px;color:#8b93a3;font-weight:600;">{{ activeJobName }} needs</span>
-                  {{ activeNeedsEl }}
-                </div>
-              </sc-if>
-              <div style="display:grid;grid-template-columns:46px minmax(130px,1.2fr) minmax(96px,0.85fr) 52px minmax(210px,2fr);gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid #262c37;background:#141821;">
-                <span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8b93a3;font-weight:600;">Add</span>
+              <div style="display:grid;grid-template-columns:minmax(130px,1.2fr) minmax(96px,0.85fr) 52px minmax(210px,2fr);gap:12px;align-items:center;padding:10px 16px;border-bottom:1px solid #262c37;background:#141821;">
                 <span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8b93a3;font-weight:600;">Name</span>
                 <span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8b93a3;font-weight:600;">City</span>
                 <span style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#8b93a3;font-weight:600;">Grade</span>
@@ -176,8 +117,7 @@
                   </div>
                 </sc-if>
                 <sc-if value="{{ sub.isRow }}" hint-placeholder-val="{{ false }}">
-                  <div onClick="{{ sub.openCard }}" style="display:grid;grid-template-columns:46px minmax(130px,1.2fr) minmax(96px,0.85fr) 52px minmax(210px,2fr);gap:12px;align-items:center;padding:9px 16px;border-bottom:1px solid #1f242f;cursor:pointer;background:{{ sub.rowBg }};" style-hover="background:#1d222c;">
-                    <button onClick="{{ sub.toggleJob }}" aria-pressed="{{ sub.inJob }}" disabled="{{ sub.addDisabled }}" title="{{ sub.addTitle }}" style="width:32px;height:28px;background:{{ sub.addBg }};color:{{ sub.addColor }};border:1px solid {{ sub.addBorder }};border-radius:7px;cursor:{{ sub.addCursor }};font-size:15px;font-weight:700;line-height:1;">{{ sub.addLabel }}</button>
+                  <div onClick="{{ sub.openCard }}" style="display:grid;grid-template-columns:minmax(130px,1.2fr) minmax(96px,0.85fr) 52px minmax(210px,2fr);gap:12px;align-items:center;padding:9px 16px;border-bottom:1px solid #1f242f;cursor:pointer;background:{{ sub.rowBg }};" style-hover="background:#1d222c;">
                     <span style="min-width:0;overflow:hidden;">{{ sub.nameEl }}</span>
                     <span style="font-size:13px;color:#9aa3b2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ sub.city }}</span>
                     <span>{{ sub.gradeEl }}</span>
@@ -193,12 +133,6 @@
           </div>
 
           <div id="adm-card" style="width:430px;flex:none;">
-            <div style="display:flex;background:#171b23;border:1px solid #262c37;border-radius:12px;padding:4px;gap:4px;margin-bottom:12px;">
-              <button onClick="{{ setTabCard }}" aria-pressed="{{ isTabCard }}" style="flex:1;background:transparent;color:#98a1b1;border:none;border-radius:8px;padding:8px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.04em;">CARD</button>
-              <button onClick="{{ setTabJob }}" aria-pressed="{{ isTabJob }}" style="flex:1;background:transparent;color:#98a1b1;border:none;border-radius:8px;padding:8px;cursor:pointer;font-size:13px;font-weight:700;letter-spacing:.04em;">JOB</button>
-            </div>
-
-            <sc-if value="{{ isTabCard }}" hint-placeholder-val="{{ false }}">
             <sc-if value="{{ showPersonCard }}" hint-placeholder-val="{{ false }}">
               <div style="background:#171b23;border:1px solid #2a303c;border-radius:14px;overflow:hidden;animation:fadeUp .25s ease;box-shadow:0 8px 24px rgba(0,0,0,.35);">
                 <div style="padding:18px 20px 20px;">
@@ -231,93 +165,17 @@
                 <span style="font-size:13px;">Click a crew member to view their card</span>
               </div>
             </sc-if>
-            </sc-if>
-            <sc-if value="{{ isTabJob }}" hint-placeholder-val="{{ true }}">
-              <div style="background:#171b23;border:1px solid #2a303c;border-radius:14px;overflow:hidden;animation:fadeUp .25s ease;box-shadow:0 8px 24px rgba(0,0,0,.35);">
-                {{ jobPanelEl }}
-              </div>
-            </sc-if>
           </div>
         </div>
       </div>
     </sc-if>
   </main>
 
-  <!-- ===================== ACTIVITY LOG MODAL ===================== -->
-  <sc-if value="{{ showLog }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;inset:0;z-index:60;background:rgba(8,10,14,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .2s ease;">
-      <div role="dialog" aria-modal="true" style="background:#171b23;border:1px solid #2a303c;border-radius:16px;padding:26px;max-width:520px;width:100%;max-height:85vh;overflow:auto;animation:pop .25s ease;box-shadow:0 16px 48px rgba(0,0,0,.5);">
-        <h3 style="font-weight:700;font-size:19px;color:#fff;margin:0 0 14px;">Activity log</h3>
-        {{ logListEl }}
-        <div style="display:flex;gap:10px;margin-top:18px;">
-          <button onClick="{{ closeLog }}" style="flex:1;background:transparent;color:#c6ccd8;border:1px solid #2e3542;border-radius:10px;padding:11px;cursor:pointer;font-size:14px;font-weight:600;">Close</button>
-        </div>
-      </div>
-    </div>
-  </sc-if>
 
-  <!-- ===================== ADD JOB MODAL ===================== -->
-  <sc-if value="{{ showAddJob }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;inset:0;z-index:60;background:rgba(8,10,14,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .2s ease;">
-      <div role="dialog" aria-modal="true" style="background:#171b23;border:1px solid #2a303c;border-radius:16px;padding:28px;max-width:480px;width:100%;max-height:90vh;overflow:auto;animation:pop .25s ease;box-shadow:0 16px 48px rgba(0,0,0,.5);">
-        <h3 style="font-weight:700;font-size:20px;color:#fff;margin:0 0 4px;">{{ ajHeading }}</h3>
-        <p style="color:#98a1b1;font-size:13px;line-height:1.5;margin:0 0 18px;">Main admin only. Crew is added from the Crew table once the job exists.</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:13px;">
-          <div style="grid-column:1 / -1;"><label for="aj-name">Job name</label><input id="aj-name" type="text" value="{{ ajName }}" onChange="{{ onAjName }}" placeholder="e.g. Cisco Live 2026"></div>
-          <div style="grid-column:1 / -1;"><label for="aj-city">Location</label><input id="aj-city" type="text" value="{{ ajCity }}" onChange="{{ onAjCity }}" placeholder="e.g. Las Vegas"></div>
-          <div><label for="aj-date">Start date</label><input id="aj-date" type="date" value="{{ ajDate }}" onChange="{{ onAjDate }}"></div>
-          <div><label for="aj-date2">End date</label><input id="aj-date2" type="date" value="{{ ajDate2 }}" onChange="{{ onAjDate2 }}"></div>
-          <div style="grid-column:1 / -1;"><label for="aj-pm">Crew manager</label><input id="aj-pm" type="text" value="{{ ajPm }}" onChange="{{ onAjPm }}" placeholder="e.g. AK"></div>
-        </div>
-        <sc-if value="{{ ajShowDays }}" hint-placeholder-val="{{ true }}">
-          <div style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#8b93a3;font-weight:600;margin:16px 0 10px;">Days</div>
-          {{ ajDaysEl }}
-        </sc-if>
-        <div style="font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:#8b93a3;font-weight:600;margin:16px 0 10px;">Required roles (only if no days)</div>
-        {{ reqInputsEl }}
-        <div style="display:flex;gap:10px;margin-top:22px;">
-          <button onClick="{{ closeAddJob }}" style="flex:none;background:transparent;color:#c6ccd8;border:1px solid #2e3542;border-radius:10px;padding:12px 18px;cursor:pointer;font-size:14px;font-weight:600;">Cancel</button>
-          <button onClick="{{ createJobNew }}" style="flex:1;background:var(--accent);color:#fff;font-weight:600;font-size:14px;border:none;border-radius:10px;padding:12px;cursor:pointer;" style-hover="filter:brightness(1.08);">{{ ajSubmit }}</button>
-        </div>
-      </div>
-    </div>
-  </sc-if>
 
-  <!-- ===================== DAY EDIT MODAL ===================== -->
-  <sc-if value="{{ showDayEdit }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;inset:0;z-index:80;background:rgba(8,10,14,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .15s ease;">
-      <div role="dialog" aria-modal="true" style="background:#171b23;border:1px solid #2a303c;border-radius:16px;padding:24px;max-width:460px;width:100%;max-height:88vh;overflow:auto;animation:pop .2s ease;box-shadow:0 16px 48px rgba(0,0,0,.5);">
-        {{ dayEditEl }}
-      </div>
-    </div>
-  </sc-if>
 
-  <!-- ===================== PROSPECTIVE HIRES MODAL ===================== -->
-  <sc-if value="{{ showProspects }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;inset:0;z-index:78;background:rgba(8,10,14,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .2s ease;">
-      <div role="dialog" aria-modal="true" style="background:#171b23;border:1px solid #2a303c;border-radius:16px;padding:24px;max-width:520px;width:100%;max-height:88vh;overflow:auto;animation:pop .2s ease;box-shadow:0 16px 48px rgba(0,0,0,.5);">
-        {{ prospectEl }}
-      </div>
-    </div>
-  </sc-if>
 
-  <!-- ===================== NUDGE ALL MODAL ===================== -->
-  <sc-if value="{{ showNudgeAll }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;inset:0;z-index:75;background:rgba(8,10,14,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .2s ease;">
-      <div role="dialog" aria-modal="true" style="background:#171b23;border:1px solid #2a303c;border-radius:16px;padding:24px;max-width:460px;width:100%;max-height:88vh;overflow:auto;animation:pop .2s ease;box-shadow:0 16px 48px rgba(0,0,0,.5);">
-        {{ nudgeAllEl }}
-      </div>
-    </div>
-  </sc-if>
 
-  <!-- ===================== DAY PICK MODAL ===================== -->
-  <sc-if value="{{ showDayPick }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;inset:0;z-index:70;background:rgba(8,10,14,.6);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeUp .15s ease;">
-      <div role="dialog" aria-modal="true" style="background:#171b23;border:1px solid #2a303c;border-radius:16px;padding:22px;max-width:340px;width:100%;max-height:85vh;overflow:auto;animation:pop .2s ease;box-shadow:0 16px 48px rgba(0,0,0,.5);">
-        {{ dayPickEl }}
-      </div>
-    </div>
-  </sc-if>
 
 </div>
 </x-dc>
@@ -327,7 +185,7 @@
    ----------------------------------------------------------------------
    NO TOKEN LIVES IN THIS FILE — never paste one here. Open the page as
 
-       admin.html#t=YOUR_IMPORT_TOKEN
+       adminrolly.html#t=YOUR_IMPORT_TOKEN
 
    and it is stashed in sessionStorage, then stripped from the address bar
    straight away so it isn't sitting on screen while you present. It lasts
@@ -402,7 +260,7 @@ class Component extends DCLogic {
     notes:{},
     jobs:[],
     card:null,
-    paneTab:'job',
+    paneTab:'card',
     activeJobId:null,
     activeDayId:'all',
     dayPick:null,
@@ -451,8 +309,9 @@ class Component extends DCLogic {
     try{ localStorage.setItem('akav_submissions', JSON.stringify(subs)); }catch(e){}
     let notes={}; try{ notes=JSON.parse(localStorage.getItem('akav_notes')||'{}'); }catch(e){ notes={}; }
     if(!notes || typeof notes!=='object' || Array.isArray(notes)) notes={};
-    let jobs=[]; try{ jobs=JSON.parse(localStorage.getItem('akav_jobs')||'[]'); }catch(e){ jobs=[]; }
-    if(!Array.isArray(jobs)) jobs=[];
+    /* Rolodex view — jobs are deliberately never loaded here. Staffing
+       lives in admin.html; this page is search + person cards only. */
+    const jobs=[];
     let log=[]; try{ log=JSON.parse(localStorage.getItem('akav_log')||'[]'); }catch(e){ log=[]; }
     if(!Array.isArray(log)) log=[];
     let nudged={}; try{ nudged=JSON.parse(localStorage.getItem('akav_nudged')||'{}'); }catch(e){ nudged={}; }
@@ -1675,7 +1534,7 @@ class Component extends DCLogic {
               activeJob.city ? el('span',{style:{fontSize:13.5,color:'#98a1b1',flex:'none'}},activeJob.city) : null,
               activeDay ? el('span',{style:{fontSize:11,fontWeight:700,letterSpacing:'.1em',color:phaseColor(activeDay.phase),flex:'none'}},this.fmtDay(activeDay.date)+' '+activeDay.phase) : null),
             activeJob.pm ? el('span',{style:{display:'block',fontSize:12.5,fontWeight:600,color:'#98a1b1',marginTop:2}},'Crew Manager: '+activeJob.pm) : null)
-        : el('span',{style:{fontWeight:600,fontSize:14,color:'#c6ccd8'}},'Crew search'),
+        : el('span',{style:{fontWeight:600,fontSize:14,color:'#c6ccd8'}},'Crew rolodex'),
       showDayPick: !!dayPickEl,
       dayPickEl,
       showNudgeAll: !!nudgeAllEl,
