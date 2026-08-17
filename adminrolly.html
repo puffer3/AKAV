@@ -377,7 +377,15 @@ class Component extends DCLogic {
       if(m && m[1]){
         t=decodeURIComponent(m[1]);
         try{ sessionStorage.setItem(TOKEN_KEY,t); }catch(e){}
-        try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){}
+        /* Scrub the token from BOTH the hash and the query string. Keeping
+           location.search as-is left ?token=... sitting in the address bar
+           and browser history after a query-style link. */
+        try{
+          const q=String(location.search||'')
+            .replace(/([?&])(?:t|token)=[^&]*/g,'$1')
+            .replace(/[?&]+$/,'').replace(/([?&])&+/g,'$1');
+          history.replaceState(null,'',location.pathname+(q==='?'?'':q));
+        }catch(e){}
       } else {
         try{ t=sessionStorage.getItem(TOKEN_KEY)||''; }catch(e){}
       }
