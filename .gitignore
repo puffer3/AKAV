@@ -7,6 +7,10 @@ pipeline/out/
 # Source workbooks, rolodexes, and individuals' resumes / rate sheets
 Example Documents/
 
+# Raw client-supplied source material: rolodexes, full contact export,
+# signed SOWs/contracts, vendor list. Never publishable.
+Source Files/
+
 # Internal working notes (name individuals; not for publication)
 HANDOFF.md
 CLIENT_QUESTIONS.md
