@@ -231,13 +231,10 @@ const POS_ALIASES = [
   [/\b(breakout|gav|general av)\b/i,     'Breakout AV Technician'],
 ];
 
-/* The rolodex "LA Short list" sheet — 58 people. This membership was NOT
-   uploaded to the Sheet (pipeline's upload_contacts only sends name/email/
-   phone/city/notes/grade), so it's seeded here by name until the pipeline
-   carries sheet membership properly. 57 of 58 match the live roster;
-   "One name" doesn't and is left for manual starring.
-   Applied ONCE (localStorage flag) so later stars/unstars stick. */
-const SHORTLIST_SEED_KEY = 'akav_shortlist_seed_v1';
+/* Shortlist seeding is RETIRED. Membership used to be hardcoded here by name
+   because the pipeline didn't upload sheet membership; the import pipeline now
+   carries a real Shortlisted flag (805 people across 25 shortlist tabs), and
+   crew names do not belong in a public repo. */
 const SHORTLIST_SEED = [];
 const normName = (s)=>String(s||'').trim().toLowerCase().replace(/\s+/g,' ').replace(/[^a-z0-9 ]/g,'');
 
@@ -559,6 +556,10 @@ class Component extends DCLogic {
       photo:!!photo, photoUrl:/^https?:\/\//i.test(photo)?photo:'',
       sheetNotes:g('Notes'), rollyGrade:g('Rolly Grade'),
       positions:this.normPositions(rawPos), rawPositions:rawPos,
+      /* Self-reported skills the person has never actually been booked into.
+         Searchable like positions, but rendered as ghost chips so they never
+         read as proven. Empty until the Claimed Skills column exists. */
+      claimedSkills:this.normPositions([g('Claimed Skills')]),
       jobsWorked,
       createdAt,
     };
@@ -934,9 +935,19 @@ class Component extends DCLogic {
       if(words.some(w=>w.startsWith(q))) return true;
       return q.length>1 && words.map(w=>w.charAt(0)).join('').startsWith(q);
     };
-    const match=(x)=> (!nq || (((x.name||'')+' '+(x.email||'')).toLowerCase().includes(nq)))
-      && cityMatch(x.city,cq)
-      && (!jq || (Array.isArray(x.positions) && x.positions.indexOf(jq)>=0));
+    /* A job search matches a WORKED position or a CLAIMED one — someone who
+       says they can run a teleprompter is worth surfacing when nobody has
+       actually done it for AKAV. Which kind matched is kept on `_claimedOnly`
+       so the sort can rank proven crew above claims. */
+    const hasWorked=(x,role)=> Array.isArray(x.positions) && x.positions.indexOf(role)>=0;
+    const hasClaimed=(x,role)=> Array.isArray(x.claimedSkills) && x.claimedSkills.indexOf(role)>=0;
+    const match=(x)=>{
+      const ok = (!nq || (((x.name||'')+' '+(x.email||'')).toLowerCase().includes(nq)))
+        && cityMatch(x.city,cq)
+        && (!jq || hasWorked(x,jq) || hasClaimed(x,jq));
+      x._claimedOnly = !!(ok && jq && !hasWorked(x,jq) && hasClaimed(x,jq));
+      return ok;
+    };
     /* Split the roster: approved crew vs new intakes awaiting review. */
     const knownMap=st.known;
     const declinedMap=st.declined||{};
@@ -956,10 +967,36 @@ class Component extends DCLogic {
       return { str:L, color:GRADE_COLORS[L], rank:GRADE_RANK[L] }; };
     const gradeOf=(s)=>this.gradeLetter(s);
     const flagsOf=(s)=>this.flagsOf(s);
-    const chip=(txt)=>el('span',{style:{fontSize:11,color:'#c7cdd9',background:'#222834',border:'1px solid #2e3542',borderRadius:6,padding:'3px 8px',whiteSpace:'nowrap',flex:'none'}},txt);
-    const posRow=(s,max)=>{ const p=Array.isArray(s.positions)?s.positions:[]; if(!p.length) return el('span',{style:{color:'#5d6575',fontSize:12}},'—');
-      const shown=p.slice(0,max); const extra=p.length-shown.length;
-      return el('span',{style:{display:'flex',gap:5,alignItems:'center',overflow:'hidden'}},shown.map((x,i)=>el('span',{key:i},chip(x))).concat(extra>0?[el('span',{key:'x'},chip('+'+extra))]:[])); };
+    /* Two kinds of position on a row, and they must not look alike:
+       WORKED   — booked on a contract or job sheet. Solid chip.
+       CLAIMED  — the person says they can do it, never verified. Ghost chip:
+                  transparent, dashed, muted.
+       Deliberately NOT colour-coded. Amber already means grade C, understaffed,
+       SETUP and (NEW HIRE) in this view, and a bright chip would pull the eye
+       toward the unproven skill when you're scanning for the best match. */
+    /* Claimed chips are marked by FORM, not by hue or an added glyph: a dotted
+       underline, the long-standing convention for an uncertain term. Costs no
+       width in a dense row, and unlike a '?' suffix it can't be mistaken for a
+       help affordance the user is meant to click. Amber is unavailable anyway —
+       it already means grade C, understaffed, SETUP and (NEW HIRE) here. */
+    const chip=(txt,claimed)=>el('span',{title: claimed?'Claimed — never worked this role for AKAV':undefined,
+      style:{fontSize:11,color: claimed?'#79828f':'#c7cdd9',background: claimed?'transparent':'#222834',
+      border:'1px solid '+(claimed?'#39414f':'#2e3542'),borderRadius:6,padding:'3px 8px',
+      whiteSpace:'nowrap',flex:'none',
+      textDecoration: claimed?'underline dotted #5c6675':'none',
+      textUnderlineOffset: claimed?'3px':undefined}}, txt);
+    const posRow=(s,max)=>{ const p=Array.isArray(s.positions)?s.positions:[];
+      const cl=(Array.isArray(s.claimedSkills)?s.claimedSkills:[]).filter(x=>p.indexOf(x)<0);
+      if(!p.length && !cl.length) return el('span',{style:{color:'#5d6575',fontSize:12}},'—');
+      /* Worked first, so truncation drops unverified claims before real ones. */
+      const shown=p.slice(0,max);
+      const room=Math.max(0,max-shown.length);
+      const shownCl=cl.slice(0,room);
+      const extra=(p.length-shown.length)+(cl.length-shownCl.length);
+      return el('span',{style:{display:'flex',gap:5,alignItems:'center',overflow:'hidden'}},
+        shown.map((x,i)=>el('span',{key:'w'+i},chip(x,false)))
+        .concat(shownCl.map((x,i)=>el('span',{key:'c'+i},chip(x,true))))
+        .concat(extra>0?[el('span',{key:'x'},chip('+'+extra,false))]:[])); };
     const needChipsFor=(j)=>{
       const req=(j&&j.required)||{};
       return Object.keys(req).map((role,i)=>{ const need=Number(req[role])||0;
@@ -969,6 +1006,10 @@ class Component extends DCLogic {
     };
     const isShort=(id)=> !!(st.shortlist && st.shortlist[id]);
     const bySort=(a,b)=>{
+      /* Anyone who has actually WORKED the searched role outranks anyone who
+         merely claims it, whatever their grade or shortlist status. */
+      const ca=a._claimedOnly?1:0, cb=b._claimedOnly?1:0;
+      if(ca-cb) return ca-cb;
       const sa=isShort(a.id)?1:0, sb=isShort(b.id)?1:0;
       if(sb-sa) return sb-sa;
       const ra=gradeInfo(gradeOf(a)).rank, rb=gradeInfo(gradeOf(b)).rank;
@@ -1079,16 +1120,25 @@ class Component extends DCLogic {
       };
     };
     const heading=(label,n)=>({ id:'h:'+label, isHeading:true, isRow:false, head:label, count:'· '+n, name:'', city:'', gradeEl:null, rowChips:null, inJob:false, addLabel:'', addTitle:'', toggleJob:()=>{}, openCard:()=>{}, rowBg:'transparent' });
-    const multi=filtered.filter(s=>Array.isArray(s.positions)&&s.positions.length>1).sort(bySort);
+    /* When a role is being searched, people who merely CLAIM it are held back
+       into their own trailing section. Bucketing them by their worked
+       positions put them under a different role heading — and since those
+       headings sort by the ROLES list, a claimant could appear ABOVE the crew
+       who have actually done the job. */
+    const claimedOnly = jq ? filtered.filter(s=>s._claimedOnly).sort(bySort) : [];
+    const proven = jq ? filtered.filter(s=>!s._claimedOnly) : filtered;
+    const multi=proven.filter(s=>Array.isArray(s.positions)&&s.positions.length>1).sort(bySort);
     const displayRows=[];
     if(multi.length){ displayRows.push(heading('Multi Position',multi.length)); multi.forEach(s=>displayRows.push(mapRow(s))); }
-    ROLES.forEach(role=>{ const items=filtered.filter(s=>Array.isArray(s.positions)&&s.positions.length===1&&s.positions[0]===role).sort(bySort);
+    ROLES.forEach(role=>{ const items=proven.filter(s=>Array.isArray(s.positions)&&s.positions.length===1&&s.positions[0]===role).sort(bySort);
       if(items.length){ displayRows.push(heading(role,items.length)); items.forEach(s=>displayRows.push(mapRow(s))); } });
     const seenRow={}; displayRows.forEach(r=>{ if(r.isRow) seenRow[r.id]=1; });
-    const other=filtered.filter(s=>Array.isArray(s.positions)&&s.positions.length&&!seenRow[s.id]).sort(bySort);
+    const other=proven.filter(s=>Array.isArray(s.positions)&&s.positions.length&&!seenRow[s.id]).sort(bySort);
     if(other.length){ displayRows.push(heading('Other positions',other.length)); other.forEach(s=>displayRows.push(mapRow(s))); }
-    const nopos=filtered.filter(s=>!Array.isArray(s.positions)||!s.positions.length).sort(bySort);
+    const nopos=proven.filter(s=>!Array.isArray(s.positions)||!s.positions.length).sort(bySort);
     if(nopos.length){ displayRows.push(heading('No position on file',nopos.length)); nopos.forEach(s=>displayRows.push(mapRow(s))); }
+    if(claimedOnly.length){ displayRows.push(heading('Claims '+jq+' — unverified',claimedOnly.length));
+      claimedOnly.forEach(s=>displayRows.push(mapRow(s))); }
     const rowItems=displayRows.filter(r=>r.isRow);
     const labelStyle={fontSize:11,letterSpacing:'.05em',textTransform:'uppercase',color:'#8b93a3',fontWeight:600};
     const DOC='https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
@@ -1143,9 +1193,19 @@ class Component extends DCLogic {
           el('div',{style:{fontSize:9.5,letterSpacing:'.06em',textTransform:'uppercase',color:'#8b93a3',fontWeight:600}},'Grade'),
           el('div',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontWeight:700,fontSize:27,color:g.color,lineHeight:1.15}},g.str),
           el('button',{onClick:()=>this.toggleShortlist(s.id),title: isShort(s.id)?'Remove from shortlist':'Add to shortlist',style:{marginTop:3,background:'transparent',border:'none',cursor:'pointer',fontSize:17,lineHeight:1,color: isShort(s.id)?'#5ad48f':'#4a5261',padding:2}}, isShort(s.id)?'★':'☆')),
-        cardPositions: (Array.isArray(s.positions)&&s.positions.length)
-          ? el('div',{style:{display:'flex',gap:6,flexWrap:'wrap'}},s.positions.map((x,i)=>el('span',{key:i},chip(x))))
-          : el('div',{style:{fontSize:12.5,color:'#5d6575'}},'No positions on file yet'),
+        /* Claimed skills appear here too, as the same dotted chips used in the
+           results list. Without them, opening the card of someone the search
+           surfaced BY a claim showed 'No positions on file yet' — leaving no
+           way to see why the row matched. */
+        cardPositions: (()=>{
+          const worked=Array.isArray(s.positions)?s.positions:[];
+          const claimed=(Array.isArray(s.claimedSkills)?s.claimedSkills:[]).filter(x=>worked.indexOf(x)<0);
+          if(!worked.length && !claimed.length)
+            return el('div',{style:{fontSize:12.5,color:'#5d6575'}},'No positions on file yet');
+          return el('div',{style:{display:'flex',gap:6,flexWrap:'wrap'}},
+            worked.map((x,i)=>el('span',{key:'w'+i},chip(x,false)))
+            .concat(claimed.map((x,i)=>el('span',{key:'c'+i},chip(x,true)))));
+        })(),
         cardJobsWorked: (jw.length || s.rollyGrade)
           ? el('div',{style:{display:'flex',flexDirection:'column',gap:7}},
               jw.map((w,i)=>{ const gi=gradeInfo(w.grade);
