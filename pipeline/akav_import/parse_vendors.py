@@ -109,6 +109,11 @@ def split_address(raw):
             break
         if bare in STREET_SUFFIX or bare in UNIT_WORD:
             break
+        # A lone letter is an apartment/unit designator ('Apt B Killeen'),
+        # never part of a city name. Without this the unit letter is glued
+        # on -- 'B Killeen', 'N Las Vegas', 'A New Orleans'.
+        if len(bare) == 1 and city_parts:
+            break
         if not re.match(r"^[A-Za-z][A-Za-z.'\-]*$", tok):
             break
         city_parts.append(tok)

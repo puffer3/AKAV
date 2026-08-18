@@ -214,6 +214,65 @@ class TestAddresses(unittest.TestCase):
                 self.assertEqual(got["state"], state)
 
 
+    def test_unit_letters_are_not_part_of_the_city(self):
+        """Regression: 'Apt B Killeen' glued the unit letter onto the city,
+        producing 'B Killeen', 'N Las Vegas', 'A New Orleans'."""
+        cases = {
+            "1234 Elm St Apt B Killeen TX 76541 USA": "Killeen",
+            "55 Main St Unit B Killeen TX 76541": "Killeen",
+            "10 N Main St N Las Vegas NV 89030": "Las Vegas",
+        }
+        for raw, city in cases.items():
+            with self.subTest(raw=raw[:30]):
+                self.assertEqual(parse_vendors.split_address(raw)["city"], city)
+
+
+class TestMergeRules(unittest.TestCase):
+    def test_do_not_hire_clears_the_shortlist_star(self):
+        """A gold shortlist star on a red do-not-hire row is a contradiction;
+        the flag is the more recent judgment and wins."""
+        from akav_import import merge
+        recs = [
+            {"source": "rolly", "name": "Test Person",
+             "phoneDigits": "5551234567", "shortlisted": True},
+            {"source": "vcard", "name": "Test Person",
+             "phoneDigits": "5551234567", "doNotHire": True},
+        ]
+        people, _c, _w = merge.build_people(recs)
+        self.assertEqual(len(people), 1)
+        self.assertEqual(people[0]["status"], "Do Not Hire")
+        self.assertFalse(people[0]["shortlisted"])
+
+    def test_shortlist_survives_without_a_flag(self):
+        from akav_import import merge
+        people, _c, _w = merge.build_people([
+            {"source": "rolly", "name": "Test Person",
+             "phoneDigits": "5551234567", "shortlisted": True}])
+        self.assertTrue(people[0]["shortlisted"])
+
+    def test_ambiguous_name_is_not_merged(self):
+        """One name over two different phones is two humans. Merging them
+        would fuse two people's work history."""
+        from akav_import import merge
+        people, conf, _w = merge.build_people([
+            {"source": "rolly", "name": "Chris Walker", "phoneDigits": "5550000001"},
+            {"source": "rolly", "name": "Chris Walker", "phoneDigits": "5550000002"},
+        ])
+        self.assertEqual(len(people), 2)
+        self.assertTrue(any(c["type"] == "name_ambiguous" for c in conf.rows))
+
+    def test_claimed_minus_worked(self):
+        from akav_import import merge
+        people, _c, _w = merge.build_people([
+            {"source": "rolly", "name": "P", "phoneDigits": "5551110000",
+             "claimedSkills": ["AV Tech", "Rigger"]},
+            {"source": "contract", "name": "P", "phoneDigits": "5551110000",
+             "jobTitles": ["AV Tech"]},
+        ])
+        self.assertEqual(people[0]["jobTitles"], ["AV Tech"])
+        self.assertEqual(people[0]["claimedSkills"], ["Rigger"])
+
+
 class TestSensitiveFields(unittest.TestCase):
     def test_forbidden_columns_recognised(self):
         for h in ("Tax ID", "SSN", "Account #", "Routing Number", "EIN"):

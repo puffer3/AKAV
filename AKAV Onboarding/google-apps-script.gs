@@ -715,8 +715,16 @@ function findPersonRow(personIndex, person) {
   if (email && personIndex.emailMap[email]) return personIndex.emailMap[email];
   var phone = normPhone(person.phoneDigits || person.phone);
   if (phone && personIndex.phoneMap[phone]) return personIndex.phoneMap[phone];
+  // A SINGLE-TOKEN name is not an identity. The rolodexes are full of
+  // first-name-only entries ('Adam', 'Andrew', 'Jeremiah'), and matching on
+  // one would fuse unrelated people onto whichever row claimed the name
+  // first -- the second import silently overwriting the first. Verified
+  // against the real data: 39 rows were claimed by two different people
+  // this way. Two or more tokens, or no name match at all.
   var name = normName(person.name);
-  if (name && personIndex.nameMap[name]) return personIndex.nameMap[name];
+  if (name && name.indexOf(' ') !== -1 && personIndex.nameMap[name]) {
+    return personIndex.nameMap[name];
+  }
   return null;
 }
 

@@ -75,6 +75,46 @@ def fetch_roster(endpoint, token):
     return data.get("roster", [])
 
 
+def _contact_payload(c):
+    """One person, in the shape handleContactImport expects.
+
+    Legacy senders passed city/noteText/sheets; merged people carry the
+    richer fields. Both shapes are accepted so an old batch JSON still
+    uploads. Empty values are omitted, because the Apps Script writes
+    write-if-provided and must not blank a field an import doesn't know
+    about.
+    """
+    out = {
+        "name": c.get("name", ""),
+        "email": c.get("email", ""),
+        "phoneDigits": c.get("phoneDigits", ""),
+        # merged people use home_base; older batches use city
+        "city": c.get("home_base") or c.get("city", ""),
+        "grade": c.get("grade", ""),
+    }
+    notes = c.get("notes")
+    if isinstance(notes, (list, tuple)):
+        out["notes"] = "\n".join(notes)
+    else:
+        out["notes"] = c.get("noteText", "") or (notes or "")
+    lists = c.get("rollyLists") or c.get("sheets") or []
+    if lists:
+        out["lists"] = list(lists)
+    if c.get("jobTitles"):
+        out["jobTitles"] = list(c["jobTitles"])
+    if c.get("claimedSkills"):
+        out["claimedSkills"] = list(c["claimedSkills"])
+    if c.get("dayRate") not in (None, ""):
+        out["dayRate"] = c["dayRate"]
+    if c.get("status"):
+        out["status"] = c["status"]
+    # Only send the star when we actually know: a bare False from a source
+    # that never looked would unstar someone on the sheet.
+    if "shortlisted" in c:
+        out["shortlisted"] = bool(c["shortlisted"])
+    return out
+
+
 def upload_contacts(contacts, endpoint, token, chunk_size=100):
     """Chunked contact upsert (rolly import). Returns receipt dict."""
     chunks = [contacts[i:i + chunk_size]
@@ -88,13 +128,7 @@ def upload_contacts(contacts, endpoint, token, chunk_size=100):
             "batchId": batch_id,
             "chunkIndex": ci,
             "chunkCount": len(chunks),
-            "contacts": [
-                {"name": c["name"], "email": c["email"],
-                 "phoneDigits": c["phoneDigits"], "city": c["city"],
-                 "notes": c.get("noteText", ""),
-                 "grade": c.get("grade", ""),
-                 "lists": c.get("sheets", [])}
-                for c in chunk],
+            "contacts": [_contact_payload(c) for c in chunk],
         }
         print("  chunk %d/%d: %d contacts..." % (ci + 1, len(chunks), len(chunk)))
         ack = _with_retries(
