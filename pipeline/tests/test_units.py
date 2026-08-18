@@ -191,6 +191,28 @@ class TestAddresses(unittest.TestCase):
                 self.assertEqual(got["city"], city)
                 self.assertEqual(got["state"], state)
 
+    def test_st_prefixed_cities_keep_their_st(self):
+        """Regression: 'St.' reduced to the street suffix 'st', so the
+        backwards walk stopped and 'St. Louis' became 'Louis'.
+
+        Counter-cases matter more: 28 corpus addresses write the STREET
+        suffix with a period ('Gloucester Gate St. Las Vegas'), so blanket
+        'St.-means-Saint' logic manufactured cities like 'St. Las Vegas'.
+        Only a known Saint city may claim the token."""
+        cases = {
+            "1420 Market St St. Louis MO 63103 USA": ("St. Louis", "MO"),
+            "456 Oak Ave St. Paul MN 55101 USA": ("St. Paul", "MN"),
+            "200 Central Ave St. Petersburg FL 33701 US": ("St. Petersburg", "FL"),
+            "3567 Gloucester Gate St. Las Vegas NV 89122 USA": ("Las Vegas", "NV"),
+            "8964 Sperry St. Orlando FL 32827 US": ("Orlando", "FL"),
+            "123 Main St Louisville KY 40203": ("Louisville", "KY"),
+        }
+        for raw, (city, state) in cases.items():
+            with self.subTest(raw=raw[:30]):
+                got = parse_vendors.split_address(raw)
+                self.assertEqual(got["city"], city)
+                self.assertEqual(got["state"], state)
+
 
 class TestSensitiveFields(unittest.TestCase):
     def test_forbidden_columns_recognised(self):

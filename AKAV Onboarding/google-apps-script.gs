@@ -616,7 +616,10 @@ var PIPELINE_COLUMNS = [
 function ensurePipelineColumn(sheet, header, width) {
   var idx = buildHeaderIndex(sheet);
   if (idx[header]) return idx[header];
-  var after = Math.min(COLUMNS.length, sheet.getLastColumn());
+  // Append after the last header-bearing column. Anchoring on a fixed
+  // position would insert every pipeline column at the same slot,
+  // reversing their order and invalidating previously returned indices.
+  var after = sheet.getLastColumn();
   sheet.insertColumnAfter(after);
   var col = after + 1;
   var cell = sheet.getRange(1, col);

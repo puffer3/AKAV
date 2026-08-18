@@ -50,6 +50,18 @@ STREET_SUFFIX = {
 UNIT_WORD = {"apt", "unit", "ste", "suite", "no", "num", "fl", "floor",
              "bldg", "rm", "room", "trlr", "lot", "spc"}
 
+# US cities whose name BEGINS with St/St. -- the only case where an 'st'
+# token belongs to the city instead of the street. Everything else stays a
+# street suffix: the corpus has 28 addresses that write the suffix WITH a
+# period ('Gloucester Gate St. Las Vegas'), so "St.-means-Saint" is not a
+# safe rule on its own.
+SAINT_CITIES = {
+    "st louis", "st paul", "st petersburg", "st augustine", "st charles",
+    "st cloud", "st george", "st peters", "st johns", "st albans",
+    "st matthews", "st pete beach", "st rose", "st bernard", "st gabriel",
+    "st francisville", "st joseph", "st simons island",
+}
+
 
 def _find_header(rows):
     for i, r in enumerate(rows[:20]):
@@ -85,6 +97,15 @@ def split_address(raw):
     for tok in reversed(tokens):
         bare = tok.strip(".,#").lower()
         if not tok or any(ch.isdigit() for ch in tok):
+            break
+        # 'St'/'St.' before an already-collected city is ambiguous: street
+        # suffix in '...Gate St. Las Vegas', city prefix in '...St St. Louis'.
+        # Only a KNOWN Saint city claims the token; otherwise it is a suffix.
+        if bare == "st" and city_parts:
+            cand = re.sub(r"[^a-z ]", "",
+                          ("st " + " ".join(reversed(city_parts))).lower())
+            if cand in SAINT_CITIES:
+                city_parts.append(tok)
             break
         if bare in STREET_SUFFIX or bare in UNIT_WORD:
             break
