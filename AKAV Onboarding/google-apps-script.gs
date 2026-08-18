@@ -599,6 +599,72 @@ function ensureRollyListsColumn(sheet) {
   return col;
 }
 
+// ── Pipeline person columns ────────────────────────────────
+// Header-driven like Positions / Rolly Lists — deliberately NOT in COLUMNS,
+// so the onboarding 1–21 upsert can never clobber them. Populated by the
+// import pipeline; the portal reads them by header name.
+//   Job Titles     canonical positions actually worked (contracts/job sheets)
+//   Claimed Skills self-declared, never verified — ghost chips in the portal
+//   Day Rate       typical contracted day rate (median; half days excluded)
+//   Status         '' | 'Do Not Hire' | advisory text; DNH renders red
+//   Shortlisted    'Yes' | '' — replaces the retired hardcoded seed list
+var PIPELINE_COLUMNS = [
+  ['Job Titles', 200], ['Claimed Skills', 200],
+  ['Day Rate', 90], ['Status', 130], ['Shortlisted', 90],
+];
+
+function ensurePipelineColumn(sheet, header, width) {
+  var idx = buildHeaderIndex(sheet);
+  if (idx[header]) return idx[header];
+  var after = Math.min(COLUMNS.length, sheet.getLastColumn());
+  sheet.insertColumnAfter(after);
+  var col = after + 1;
+  var cell = sheet.getRange(1, col);
+  cell.setValue(header);
+  cell.setFontWeight('bold').setBackground('#222244')
+      .setFontColor('#ffffff').setHorizontalAlignment('center');
+  sheet.setColumnWidth(col, width || 120);
+  return col;
+}
+
+// header → column number for every pipeline column, creating any missing.
+function ensurePipelineColumns(sheet) {
+  var cols = {};
+  for (var i = 0; i < PIPELINE_COLUMNS.length; i++) {
+    cols[PIPELINE_COLUMNS[i][0]] =
+      ensurePipelineColumn(sheet, PIPELINE_COLUMNS[i][0], PIPELINE_COLUMNS[i][1]);
+  }
+  ensureStatusFormatting(sheet, cols['Status']);
+  return cols;
+}
+
+// 'Do Not Hire' in the Status column renders red. Idempotent: skips if a
+// rule already covers the column.
+function ensureStatusFormatting(sheet, statusCol) {
+  if (!statusCol) return;
+  var range = sheet.getRange(2, statusCol, Math.max(sheet.getMaxRows() - 1, 1), 1);
+  var rules = sheet.getConditionalFormatRules();
+  for (var i = 0; i < rules.length; i++) {
+    var rngs = rules[i].getRanges();
+    for (var j = 0; j < rngs.length; j++) {
+      if (rngs[j].getColumn() === statusCol) return;   // already formatted
+    }
+  }
+  rules.push(SpreadsheetApp.newConditionalFormatRule()
+    .whenTextContains('Do Not Hire')
+    .setBackground('#cc0000').setFontColor('#ffffff')
+    .setRanges([range]).build());
+  sheet.setConditionalFormatRules(rules);
+}
+
+// One-time / re-runnable from the Apps Script editor: adds the pipeline
+// columns + Status formatting to the master sheet. Safe to run twice.
+function migratePipelineColumns() {
+  var master = getMasterSheet(SpreadsheetApp.getActiveSpreadsheet());
+  var cols = ensurePipelineColumns(master);
+  Logger.log('pipeline columns: ' + JSON.stringify(cols));
+}
+
 // Ensure the Rolly Grade column sits right after Notes.
 function ensureGradeColumn(sheet) {
   var idx = buildHeaderIndex(sheet);
@@ -979,6 +1045,7 @@ function handleContactImport(data) {
     var notesCol = ensureNotesColumn(master);
     var gradeCol = ensureGradeColumn(master);
     var listsCol = ensureRollyListsColumn(master);
+    var pipeCols = ensurePipelineColumns(master);
     var idx = buildHeaderIndex(master);
     var cityCol = idx['City'];
     var personIndex = buildPersonIndex(master);
@@ -1007,10 +1074,43 @@ function handleContactImport(data) {
         if (p2) personIndex.phoneMap[p2] = rowNum;
         if (n2) personIndex.nameMap[n2] = rowNum;
       }
-      // Skills / comments from the rolodex → Notes (merge-only, untagged)
+      // Skills / comments from the rolodex → Notes (merge-only). The
+      // pipeline supplies noteSource ('Atlanta Rolly › ATL') so every
+      // observation keeps where it came from; legacy senders without it
+      // still merge untagged.
       if (c.notes && notesCol) {
         var noteCell = master.getRange(rowNum, notesCol);
-        noteCell.setValue(mergeNotes(noteCell.getValue(), c.notes, ''));
+        noteCell.setValue(mergeNotes(noteCell.getValue(), c.notes,
+                                     c.noteSource || ''));
+      }
+      // Pipeline person fields — write-if-provided, never blanked by an
+      // import that omits them.
+      if (c.jobTitles && c.jobTitles.length) {
+        master.getRange(rowNum, pipeCols['Job Titles']).setValue(
+          Array.isArray(c.jobTitles) ? c.jobTitles.join(', ') : String(c.jobTitles));
+      }
+      if (c.claimedSkills && c.claimedSkills.length) {
+        master.getRange(rowNum, pipeCols['Claimed Skills']).setValue(
+          Array.isArray(c.claimedSkills) ? c.claimedSkills.join(', ') : String(c.claimedSkills));
+      }
+      if (c.dayRate != null && c.dayRate !== '') {
+        master.getRange(rowNum, pipeCols['Day Rate']).setValue(c.dayRate);
+      }
+      // Status: Do Not Hire is STICKY — the ❌ is the most recent judgment
+      // and only an explicit client resolution lifts it, so a later import
+      // carrying a softer status must not overwrite it.
+      if (c.status) {
+        var stCell = master.getRange(rowNum, pipeCols['Status']);
+        var cur = String(stCell.getValue() || '');
+        if (cur.indexOf('Do Not Hire') === -1 || c.status.indexOf('Do Not Hire') !== -1) {
+          stCell.setValue(c.status);
+        }
+      }
+      // Shortlisted: current-state like Rolly Lists — latest import wins,
+      // but only when the sender actually says (true/false, not absent).
+      if (typeof c.shortlisted === 'boolean') {
+        master.getRange(rowNum, pipeCols['Shortlisted'])
+              .setValue(c.shortlisted ? 'Yes' : '');
       }
       // General grade → Grade column (write-if-provided, never blanked)
       if (c.grade && gradeCol) {

@@ -563,7 +563,11 @@ class Component extends DCLogic {
       willTravel:yes(g('Will Travel')), travel:g('Travel Radius'), workedBefore:yes(g('Worked Before')),
       photo:!!photo, photoUrl:/^https?:\/\//i.test(photo)?photo:'',
       sheetNotes:g('Notes'), rollyGrade:g('Rolly Grade'),
-      positions:this.normPositions(rawPos), rawPositions:rawPos,
+      /* Canonical worked titles from the pipeline's Job Titles column join
+         the per-show positions for role search. */
+      positions:this.normPositions(rawPos.concat(g('Job Titles')?[g('Job Titles')]:[])), rawPositions:rawPos,
+      shortlistedOnSheet:/^(y|yes|true|1)/i.test(g('Shortlisted')),
+      status:g('Status'), dayRate:g('Day Rate'),
       /* Self-reported skills the person has never actually been booked into.
          Searchable like positions, but rendered as ghost chips so they never
          read as proven. Empty until the Claimed Skills column exists. */
@@ -706,7 +710,14 @@ class Component extends DCLogic {
   markNudged(k){ this.setState(s=>{ const m={...(s.nudged||{}), [k]:new Date().toISOString()};
     try{ localStorage.setItem('akav_nudged', JSON.stringify(m)); }catch(e){}
     return { nudged:m }; }); }
-  toggleShortlist(id){ this.setState(s=>{ const m={...(s.shortlist||{})}; if(m[id]) delete m[id]; else m[id]=true; try{ localStorage.setItem('akav_shortlist', JSON.stringify(m)); }catch(e){} return { shortlist:m }; }); }
+  toggleShortlist(id){ this.setState(s=>{ const m={...(s.shortlist||{})};
+    const rec=(s.submissions||[]).find(x=>x.id===id);
+    const cur=(id in m) ? !!m[id] : !!(rec&&rec.shortlistedOnSheet);
+    // Store the explicit choice (true OR false): a plain delete could never
+    // unstar someone the Sheet marks Shortlisted.
+    m[id]=!cur;
+    try{ localStorage.setItem('akav_shortlist', JSON.stringify(m)); }catch(e){}
+    return { shortlist:m }; }); }
 
   /* ── Which role each person is filling ──────────────────────────────
      `roleOf` (on a day, or on a day-less job) is the explicit assignment.
@@ -1012,7 +1023,12 @@ class Component extends DCLogic {
         return el('span',{key:i,onClick:()=>searchRole(role,j&&j.city),title:'Find '+role+((j&&j.city)?(' in '+j.city):'')+' — click to search',style:{display:'inline-flex',alignItems:'baseline',gap:5,fontSize:11.5,color:'#c7cdd9',background:'#222834',border:'1px solid #2e3542',borderRadius:6,padding:'3px 8px',whiteSpace:'nowrap',cursor:'zoom-in'}},
           role, el('span',{style:{fontFamily:"'Geist',system-ui,sans-serif",fontWeight:700,color: have>=need?'#5ad48f':'#e8bd63'}}, have+'/'+need)); });
     };
-    const isShort=(id)=> !!(st.shortlist && st.shortlist[id]);
+    /* Shortlist truth: the Sheet's Shortlisted column is the baseline
+       (written by the import pipeline — 805 people from the rolly shortlist
+       tabs); a local star/unstar stored in this browser overrides it. */
+    const sheetStar={}; (st.submissions||[]).forEach(x=>{ if(x.shortlistedOnSheet) sheetStar[x.id]=1; });
+    const isShort=(id)=>{ const m=st.shortlist||{};
+      return (id in m) ? !!m[id] : !!sheetStar[id]; };
     const bySort=(a,b)=>{
       /* Anyone who has actually WORKED the searched role outranks anyone who
          merely claims it, whatever their grade or shortlist status. */
