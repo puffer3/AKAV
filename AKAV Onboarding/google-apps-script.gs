@@ -903,6 +903,64 @@ function mergeNotes(existing, incoming, label) {
   return ex ? ex + '\n' + tagged : tagged;
 }
 
+// ── Notes cleanup ──────────────────────────────────────────
+//
+// Notes imported before source tagging arrived went in semicolon-mashed and
+// unattributed, several observations crushed onto one line:
+//
+//   GAV; Stagehand; from a lead - do not rehire, late; Decent attitude
+//
+// When one fragment says "do not rehire" and another says "Decent attitude"
+// there is no way to tell who said which. This splits them onto their own
+// lines. It cannot recover a source that was never recorded -- a re-import
+// fills those in -- but separated lines are already readable, and the merge
+// dedupes against them properly afterwards.
+//
+// Run once from the editor. Idempotent: already-split lines are untouched.
+function cleanUpLegacyNotes() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var master = getMasterSheet(ss);
+  var notesCol = buildHeaderIndex(master)[NOTES_HEADER];
+  if (!notesCol) { Logger.log('no Notes column'); return; }
+  var lastRow = master.getLastRow();
+  if (lastRow < 2) { Logger.log('nothing to clean'); return; }
+
+  var range = master.getRange(2, notesCol, lastRow - 1, 1);
+  var vals = range.getValues();
+  var changed = 0;
+
+  for (var i = 0; i < vals.length; i++) {
+    var blob = String(vals[i][0] || '');
+    if (!blob.trim() || blob.indexOf(';') === -1) continue;
+
+    var lines = blob.split('\n');
+    var out = [];
+    var touched = false;
+    for (var j = 0; j < lines.length; j++) {
+      var line = lines[j].trim();
+      if (!line) continue;
+      // A tagged line is already one observation -- leave it alone.
+      if (line.charAt(0) === '[' || line.indexOf(';') === -1) {
+        out.push(line);
+        continue;
+      }
+      var parts = line.split(';');
+      for (var k = 0; k < parts.length; k++) {
+        var t = parts[k].trim().replace(/^[-,.\s]+|[-,.\s]+$/g, '');
+        if (t && out.indexOf(t) === -1) out.push(t);
+      }
+      touched = true;
+    }
+    if (touched) {
+      var joined = out.join('\n');
+      if (joined !== blob) { vals[i][0] = joined; changed++; }
+    }
+  }
+
+  if (changed) range.setValues(vals);
+  Logger.log('cleanUpLegacyNotes: split ' + changed + ' of ' + vals.length + ' notes');
+}
+
 // ── Summary recompute (runs on the finalize chunk) ─────────
 
 function recomputeShowSummary(ss, show, people) {
@@ -1062,76 +1120,116 @@ function handleContactImport(data) {
     var personIndex = buildPersonIndex(master);
     var matched = 0, created = 0, cityWritten = 0, cityKept = 0;
 
+    // Values are staged per row and flushed in as few range writes as
+    // possible. The previous version made 8-12 separate setValue calls per
+    // person plus a buildHeaderIndex() per created row, which ran at about
+    // 50 rows/minute -- roughly 90 minutes for a full import.
+    var lastCol = master.getLastColumn();
+    var newRows = [];          // 2D block appended in one setValues call
+    var edits = [];            // {row, col, value} for people already present
+    var nextRow = master.getLastRow() + 1;
+
+    function stage(rowNum, col, value) {
+      if (col) edits.push({ row: rowNum, col: col, value: value });
+    }
+
     (data.contacts || []).forEach(function(c) {
       var rowNum = findPersonRow(personIndex, c);
-      if (rowNum) {
+      var isNew = !rowNum;
+      var rowArr = null;
+
+      if (isNew) {
+        rowNum = nextRow++;
+        created++;
+        rowArr = new Array(lastCol);
+        for (var z = 0; z < lastCol; z++) rowArr[z] = '';
+        var d = new Date();
+        var put = function(header, v) {
+          if (idx[header]) rowArr[idx[header] - 1] = v;
+        };
+        put('Date Created', (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear());
+        put('Name', c.name || '');
+        put('Email', c.email || '');
+        put('Phone', String(c.phoneDigits || ''));
+        if (c.city) { put('City', c.city); cityWritten++; }
+        put('ID', 'imp_' + (c.personKey || '').replace(/[^a-zA-Z0-9]/g, '_').substring(0, 40));
+        newRows.push(rowArr);
+        var e2 = normEmail(c.email), p2 = normPhone(c.phoneDigits), n2 = normName(c.name);
+        if (e2) personIndex.emailMap[e2] = rowNum;
+        if (p2) personIndex.phoneMap[p2] = rowNum;
+        if (n2 && n2.indexOf(' ') !== -1) personIndex.nameMap[n2] = rowNum;
+      } else {
         matched++;
         if (c.city && cityCol) {
           var cell = master.getRange(rowNum, cityCol);
           if (!String(cell.getValue() || '').trim()) {
-            cell.setValue(c.city);
-            cityWritten++;
-          } else {
-            cityKept++;
-          }
+            cell.setValue(c.city); cityWritten++;
+          } else { cityKept++; }
         }
-      } else {
-        rowNum = createPersonRow(master, c);
-        created++;
-        if (c.city) cityWritten++;
-        var e2 = normEmail(c.email), p2 = normPhone(c.phoneDigits),
-            n2 = normName(c.name);
-        if (e2) personIndex.emailMap[e2] = rowNum;
-        if (p2) personIndex.phoneMap[p2] = rowNum;
-        if (n2) personIndex.nameMap[n2] = rowNum;
       }
-      // Skills / comments from the rolodex → Notes (merge-only). The
-      // pipeline supplies noteSource ('Atlanta Rolly › ATL') so every
-      // observation keeps where it came from; legacy senders without it
-      // still merge untagged.
+
+      // For a NEW row every field goes straight into the staged array, so
+      // the whole person lands in the single block write.
+      function setField(header, col, value) {
+        if (!col) return;
+        if (isNew) { rowArr[col - 1] = value; }
+        else { stage(rowNum, col, value); }
+      }
+
       if (c.notes && notesCol) {
-        var noteCell = master.getRange(rowNum, notesCol);
-        noteCell.setValue(mergeNotes(noteCell.getValue(), c.notes,
-                                     c.noteSource || ''));
+        if (isNew) {
+          rowArr[notesCol - 1] = mergeNotes('', c.notes, c.noteSource || '');
+        } else {
+          var noteCell = master.getRange(rowNum, notesCol);
+          noteCell.setValue(mergeNotes(noteCell.getValue(), c.notes, c.noteSource || ''));
+        }
       }
-      // Pipeline person fields — write-if-provided, never blanked by an
-      // import that omits them.
       if (c.jobTitles && c.jobTitles.length) {
-        master.getRange(rowNum, pipeCols['Job Titles']).setValue(
+        setField('Job Titles', pipeCols['Job Titles'],
           Array.isArray(c.jobTitles) ? c.jobTitles.join(', ') : String(c.jobTitles));
       }
       if (c.claimedSkills && c.claimedSkills.length) {
-        master.getRange(rowNum, pipeCols['Claimed Skills']).setValue(
+        setField('Claimed Skills', pipeCols['Claimed Skills'],
           Array.isArray(c.claimedSkills) ? c.claimedSkills.join(', ') : String(c.claimedSkills));
       }
       if (c.dayRate != null && c.dayRate !== '') {
-        master.getRange(rowNum, pipeCols['Day Rate']).setValue(c.dayRate);
+        setField('Day Rate', pipeCols['Day Rate'], c.dayRate);
       }
-      // Status: Do Not Hire is STICKY — the ❌ is the most recent judgment
-      // and only an explicit client resolution lifts it, so a later import
-      // carrying a softer status must not overwrite it.
+      // Do Not Hire is STICKY -- only re-read the cell for an existing row,
+      // where a previous flag could be present.
       if (c.status) {
-        var stCell = master.getRange(rowNum, pipeCols['Status']);
-        var cur = String(stCell.getValue() || '');
-        if (cur.indexOf('Do Not Hire') === -1 || c.status.indexOf('Do Not Hire') !== -1) {
-          stCell.setValue(c.status);
+        if (isNew) {
+          rowArr[pipeCols['Status'] - 1] = c.status;
+        } else {
+          var stCell = master.getRange(rowNum, pipeCols['Status']);
+          var cur = String(stCell.getValue() || '');
+          if (cur.indexOf('Do Not Hire') === -1 || c.status.indexOf('Do Not Hire') !== -1) {
+            stCell.setValue(c.status);
+          }
         }
       }
-      // Shortlisted: current-state like Rolly Lists — latest import wins,
-      // but only when the sender actually says (true/false, not absent).
       if (typeof c.shortlisted === 'boolean') {
-        master.getRange(rowNum, pipeCols['Shortlisted'])
-              .setValue(c.shortlisted ? 'Yes' : '');
+        setField('Shortlisted', pipeCols['Shortlisted'], c.shortlisted ? 'Yes' : '');
       }
-      // General grade → Grade column (write-if-provided, never blanked)
-      if (c.grade && gradeCol) {
-        master.getRange(rowNum, gradeCol).setValue(c.grade);
-      }
-      // Rolodex tab membership ('LA Short list' → portal shortlist).
-      // Latest import wins — list membership is current-state, not history.
+      if (c.grade && gradeCol) setField('Rolly Grade', gradeCol, c.grade);
       if (c.lists && c.lists.length && listsCol) {
-        master.getRange(rowNum, listsCol).setValue(c.lists.join(', '));
+        setField('Rolly Lists', listsCol, c.lists.join(', '));
       }
+    });
+
+    // One write for every new person in this chunk.
+    if (newRows.length) {
+      var startRow = master.getLastRow() + 1;
+      master.getRange(startRow, 1, newRows.length, lastCol).setValues(newRows);
+      if (idx['Phone']) {
+        master.getRange(startRow, idx['Phone'], newRows.length, 1)
+              .setNumberFormat('@');
+      }
+    }
+    // Remaining single-cell edits belong to people who were already on the
+    // sheet; there are far fewer of these.
+    edits.forEach(function(e) {
+      master.getRange(e.row, e.col).setValue(e.value);
     });
 
     logImport(ss, {

@@ -158,6 +158,33 @@ def upload():
     ep, tok = os.environ.get("AKAV_ENDPOINT"), os.environ.get("AKAV_TOKEN")
     if not (ep and tok):
         sys.exit("set AKAV_ENDPOINT and AKAV_TOKEN first")
+
+    # --resume skips people already on the Sheet. Apps Script writes are
+    # slow (~50 rows/min), so re-sending 3,800 rows that already landed
+    # costs an hour for nothing. Upserts stay idempotent either way; this
+    # only avoids the redundant work after an interrupted run.
+    if "--resume" in sys.argv:
+        from .normalize import norm_email, norm_name, norm_phone
+        roster = uploader.fetch_roster(ep, tok) or []
+        have_e = {norm_email(r.get("email")) for r in roster if r.get("email")}
+        have_p = {norm_phone(r.get("phoneDigits")) for r in roster if r.get("phoneDigits")}
+        have_n = {norm_name(r.get("name")) for r in roster
+                  if r.get("name") and " " in norm_name(r.get("name"))}
+        todo = []
+        for p in people:
+            n = norm_name(p["name"])
+            on_sheet = (norm_email(p["email"]) in have_e
+                        or (norm_phone(p["phoneDigits"]) in have_p
+                            and norm_phone(p["phoneDigits"]))
+                        or (" " in n and n in have_n))
+            if not on_sheet:
+                todo.append(p)
+        print("resume: %d of %d already on the Sheet, sending %d"
+              % (len(people) - len(todo), len(people), len(todo)))
+        people = todo
+        if not people:
+            print("nothing left to send")
+            return
     print("about to write %d people to:\n  %s\n" % (len(people), ep))
     if "--yes" not in sys.argv:
         if input("type 'yes' to continue: ").strip().lower() != "yes":
