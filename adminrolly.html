@@ -199,6 +199,12 @@
    See HANDOFF.md.
    ══════════════════════════════════════════════════════════════════════ */
 const TOKEN_KEY = 'akav_token';
+/* Endpoint override, for pointing the portal at a COPY of the Sheet before
+   an import touches the live one: #endpoint=<exec-url>. Held in
+   sessionStorage like the token and scrubbed from the address bar. Reading
+   still needs the token, so this exposes nothing on its own.
+   #endpoint=live (or clearing session storage) returns to the real Sheet. */
+const ENDPOINT_KEY = 'akav_endpoint';
 const DEMO_ARCHIVE_KEY = 'akav_demo_archived_v1';
 /* Only still here so purgeDemo() can delete the flag from older browsers. */
 
@@ -369,8 +375,23 @@ class Component extends DCLogic {
   /* ── Live crew from the Sheet ─────────────────────────────────────── */
 
   /* #t=… → sessionStorage, then wipe it out of the address bar. */
+  readEndpoint(){
+    try{
+      const m=/[#&?]endpoint=([^&]+)/.exec(String(location.hash||''))
+             || /[?&]endpoint=([^&#]+)/.exec(String(location.search||''));
+      if(m && m[1]){
+        const v=decodeURIComponent(m[1]).trim();
+        if(!v || v==='live'){ sessionStorage.removeItem(ENDPOINT_KEY); }
+        else if(/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(v)){
+          sessionStorage.setItem(ENDPOINT_KEY, v);
+        }
+      }
+    }catch(e){}
+  }
+
   readToken(){
     let t='';
+    this.readEndpoint();
     try{
       const m=/[#&?](?:t|token)=([^&]+)/.exec(String(location.hash||''))
              || /[?&](?:t|token)=([^&#]+)/.exec(String(location.search||''));
@@ -418,7 +439,9 @@ class Component extends DCLogic {
   }
 
   peopleUrl(){
-    const base=String((this.props&&this.props.sheetEndpoint)||API_ENDPOINT||'').trim();
+    let override='';
+    try{ override=sessionStorage.getItem(ENDPOINT_KEY)||''; }catch(e){}
+    const base=String((this.props&&this.props.sheetEndpoint)||override||API_ENDPOINT||'').trim();
     if(!base || !this.token()) return '';
     return base+'?action=people&token='+encodeURIComponent(this.token());
   }
